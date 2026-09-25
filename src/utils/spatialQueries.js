@@ -44,6 +44,7 @@ export function sweepPlayer(physics,delta) {
   const steps=Math.max(1,Math.ceil(delta.length()/.12)),step=delta.clone().divideScalar(steps);
   for(let i=0;i<steps;i++) {
     const next=physics.camera.position.clone().add(step),feet=next.clone(); feet.y-=physics.height;
+    physics.world.city.streaming?.ensureCollisionAt(next);
     if(!capsuleClear(physics.world,feet,physics.height+.15,physics.radius)) return false;
     physics.camera.position.copy(next);
   }

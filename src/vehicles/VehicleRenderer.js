@@ -3,6 +3,7 @@ import { DynamicInstances } from '../utils/DynamicInstances.js';
 
 export class VehicleRenderer {
   constructor(scene, city) {
+    this.city=city;
     this.group = new Group(); scene.add(this.group);
     this.body = new DynamicInstances(this.group, city.resources.box, city.resources.materials.metal, 100);
     this.glow = new DynamicInstances(this.group, city.resources.box, city.resources.materials.windows, 60);
@@ -13,7 +14,7 @@ export class VehicleRenderer {
   render(vehicles, playerVehicle, camera, time, visible, headlightEnabled) {
     this.body.begin(); this.glow.begin(); this.group.visible = visible;
     for (const v of vehicles) {
-      if (!v.active || v.position.distanceTo(camera.position) > 220) continue;
+      if (!v.active || v.position.distanceTo(camera.position) > 220 || !this.city.isLoadedAt(v.position.x,v.position.z)) continue;
       const { x, y, z } = v.position, c = Math.cos(v.rotation), s = Math.sin(v.rotation), colors = this.colors;
       const part = (batch, dx, dy, dz, w, h, d, color) => batch.add(x + dx*c + dz*s, y+dy, z-dx*s+dz*c, w,h,d,v.rotation,color);
       const color = v.type === 'POLICE' ? colors.police : v.type === 'TARGET' ? colors.target : colors.black;

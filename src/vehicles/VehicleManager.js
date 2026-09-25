@@ -69,7 +69,7 @@ export class VehicleManager {
     this.physics.setObstacles([...obstacles,...this.activeVehicles]);
     const input=this.driving&&running?this.controller.read():{throttle:0,steering:0,handbrake:false,boost:false};
     if(this.driving&&!running){this.vehicle.boosting=false;}
-    if(running||!this.driving) {
+    if((running||!this.driving)&&(this.driving||this.vehicle.position.distanceTo(this.living.camera.position)<(this.living.performance.profile.vehicleSimulationDistance??120))) {
       if(this.repairing&&(input.throttle||!this.garage))this.repairing=false;
       this.physics.update(dt,this.vehicle,input,this.living.rain.enabled?this.living.rain.intensity:0);
       if(this.repairing){this.vehicle.repair(dt);if(this.vehicle.integrity===100){this.repairing=false;this.vehicle.state='DRIVING';}}

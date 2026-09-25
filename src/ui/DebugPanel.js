@@ -13,7 +13,7 @@ export class DebugPanel {
     this.element.dataset.stats = JSON.stringify(s);
     if (this.element.hidden) return;
     this.element.textContent = [
-      `VEHICLES & PURSUIT / ${s.quality}`,
+      `WORLD POLISH & PERSISTENCE / ${s.quality}`,
       `FPS ${s.fps.toFixed(1)} · draw calls ${s.drawCalls.toFixed(0)}`,
       `Position ${s.position.map(v=>v.toFixed(1)).join(' / ')}`,
       `${s.district} · chunk ${s.chunk}`,
@@ -39,6 +39,14 @@ export class DebugPanel {
       `Poursuite ${s.pursuitState} · unités ${s.policeUnits} · ${(s.pursuitTimer??0).toFixed(1)} s`,
       `Dernier contact ${(s.lastKnownPosition??[]).map(v=>v.toFixed(0)).join('/')}`,
       `CPU véhicules ${(s.vehicleUpdateMs??0).toFixed(3)} ms · colliders ${s.activeVehicleColliders??0}`,
+      `Session ${s.sessionState} · save ${s.saveBytes??0} octets`,
+      `Chunks ${s.chunksLoaded??64} · pending ${s.chunksPending??0} · queue ${s.streamingQueue??0}`,
+      `Streaming ${(s.chunkBuildMs??0).toFixed(2)} ms · pic ${(s.chunkBuildPeakMs??0).toFixed(2)}`,
+      `Moyenne ${(s.averageFPS??0).toFixed(1)} FPS · 1% ${(s.low1FPS??0).toFixed(1)} FPS`,
+      `Frame ${(s.frameTimeMean??0).toFixed(2)} ms · max ${(s.frameTimeMax??0).toFixed(1)} ms`,
+      `Géométries ${s.geometries??0} · textures ${s.textures??0} · programmes ${s.programs??0}`,
+      `Objets ${s.activeObjects??0} · heap JS ${s.heapMB?.toFixed(1)??'n/d'} Mo`,
+      `Pools ${(s.pools??[]).map(p=>p.name+':'+p.active+'/'+p.capacity).join(' ')}`,
       'F3 pour masquer',
     ].join('\n');
   }

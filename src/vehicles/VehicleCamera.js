@@ -23,7 +23,8 @@ export class VehicleCamera {
     }
     const look = pivot.clone().addScaledVector(forward, 6);
     look.x += Math.cos(vehicle.rotation) * vehicle.steering * .55; look.z -= Math.sin(vehicle.rotation) * vehicle.steering * .55;
-    look.y += vehicle.impact * .12; this.camera.lookAt(look);
+    look.y += this.effectsManaged?0:vehicle.impact * .12; this.camera.lookAt(look);
+    if(this.effectsManaged)return;
     const fov = this.baseFov + (vehicle.boosting ? 5 : 0);
     this.camera.fov += (fov - this.camera.fov) * (1 - Math.exp(-4 * dt)); this.camera.updateProjectionMatrix();
   }

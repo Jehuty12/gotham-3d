@@ -1,0 +1,9 @@
+{
+  "date": "2026-09-25T20:48:29.251Z",
+  "target": "http://127.0.0.1:4177/",
+  "checks": "passed",
+  "continuedMode": "VIGILANTE",
+  "storageDeniedStillPlayable": true,
+  "errors": [],
+  "warnings": []
+}

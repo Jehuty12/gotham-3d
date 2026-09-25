@@ -4,6 +4,7 @@ import { softParticleTexture } from '../utils/DynamicInstances.js';
 
 export class SteamSystem {
   constructor(scene, city, capacity = 600) {
+    this.city=city;
     this.capacity = capacity; this.budget = 320; this.count = 0;
     this.sources = []; this.nearby = []; this.last = new THREE.Vector3(Infinity, 0, Infinity);
     for (const chunk of city.chunks.values()) {
@@ -37,7 +38,7 @@ export class SteamSystem {
   update(time, player) {
     if (this.last.distanceToSquared(player) > 16) {
       this.last.copy(player);
-      this.nearby = this.sources.filter(s => (s.x - player.x) ** 2 + (s.z - player.z) ** 2 < 65 ** 2 && Math.abs(s.y-player.y)<12 && (s.y<0)===(player.y<0))
+      this.nearby = this.sources.filter(s => this.city.isLoadedAt(s.x,s.z)&&(s.x - player.x) ** 2 + (s.z - player.z) ** 2 < 65 ** 2 && Math.abs(s.y-player.y)<12 && (s.y<0)===(player.y<0))
         .sort((a, b) => (a.x - player.x) ** 2 + (a.z - player.z) ** 2 - (b.x - player.x) ** 2 - (b.z - player.z) ** 2).slice(0, 12);
     }
     this.count = Math.min(this.budget, this.nearby.length * 36);

@@ -1,8 +1,73 @@
-# Vehicles & Pursuit — V6
+# World Polish & Persistence — V7
+
+V7 conserve les systèmes V2 à V6 et ajoute une sauvegarde locale versionnée, une reprise sécurisée, le streaming effectif des instances et collisions, une vraie pause et des réglages d’accessibilité. Le monde reste déterministe : **CITY_SEED = 1989, quatre quartiers, 64 chunks logiques, 210 bâtiments et trois landmarks**.
+
+## Sauvegarde, menu et pause
+
+**NOUVELLE PARTIE** utilise le mode EXPLORATION ou VIGILANTE choisi dans le menu. Une confirmation est demandée seulement si une sauvegarde valide sera remplacée. **CONTINUER** apparaît uniquement lorsqu’une sauvegarde valide existe. Échap ouvre **REPRENDRE / OPTIONS / SAUVEGARDER / RETOUR AU MENU**. La pause arrête physique, IA, circulation, train et temps météo ; le rendu et la file de streaming restent disponibles. Les touches et accumulateurs sont réinitialisés à la reprise.
+
+La sauvegarde `localStorage['world-polish:save']`, `SAVE_VERSION = 1`, contient position/orientation, mode, santé, point sûr, découvertes, landmarks visités, missions terminées et mission active, événements résolus liés aux missions, réglages et NIGHTRIDER (position, rotation, intégrité, boost, caméra, garage). Les petits crimes et l’IA sont reconstruits, pas sérialisés. Les identifiants de progression sont dédupliqués et limités à 512 entrées par catégorie. Une future migration s’ajoute comme fonction pure dans `SaveMigrations.js` ; une version future inconnue est refusée.
+
+Autosauvegarde aux découvertes, points sûrs, fins de mission, retour au garage, pause, modifications des options et toutes les 40 secondes de jeu. Les demandes sont regroupées, avec au moins trois secondes entre écritures automatiques. Le bouton manuel et la fermeture de page effectuent une écriture immédiate. Les erreurs de quota ou de stockage sont signalées discrètement sans interrompre le jeu.
+
+À la reprise, le chunk et ses collisions sont chargés avant validation de la capsule. Une position bloquée ou sous le sol est remplacée par le point sûr validé, puis le départ si nécessaire. Un véhicule invalide revient au garage déterministe. Les vitesses ne sont pas restaurées. Une mission active reconstruit son événement et ses ennemis ; une mission automobile reconstruit sa route à partir de son numéro et de la seed.
+
+**Le stockage dépend de l’origine du navigateur** : `localhost:5173`, `127.0.0.1:5177` et la preview ont des sauvegardes distinctes. Effacer les données du site efface la progression. Aucun cloud ni fichier disque n’est utilisé.
+
+## Streaming et budgets V7
+
+`ChunkStreamingManager` conserve les descriptions déterministes des 64 chunks, mais retire réellement les groupes éloignés de la scène, libère leurs buffers `InstancedMesh` et retire leurs volumes de l’index de collision. Le rechargement réutilise les mêmes transformations/couleurs, géométries et matériaux partagés. Une couronne de collision d’un chunk est synchronisée avant les déplacements. Le déplacement précharge environ 2,5 secondes devant le joueur ; une marge de 70 m évite les oscillations au bord des zones. Le chunk joueur et la mission active sont prioritaires. Trafic, piétons, ennemis, vapeur, feux et marqueurs respectent les zones chargées. Trois petites silhouettes gardent les monuments lisibles dans le lointain.
+
+Le budget indicatif est **2 ms/frame**, avec une construction par lot instancié. Il est souple : un lot individuel, la préparation initiale, une téléportation ou une reprise peuvent dépasser ce budget. Le démarrage génère encore les descriptions de toute la ville, par étapes avec rendu de la progression. Les métadonnées, tableaux CPU des transformations, ressources partagées et quelques objets interactifs restent en mémoire ; il ne s’agit pas encore d’un monde illimité ni d’une génération dans un Worker.
+
+| Profil | Préchargement | Pluie max | Trafic | Piétons | IA complexe max | Police max |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| LOW | 160 m | 450 | 10 | 0 | 6 | 2 |
+| MEDIUM | 224 m | 1 800 | 20 | 10 | 12 | 3 |
+| HIGH | 288 m | 4 000 | 40 | 25 | 20 | 4 |
+| AUTO | 160–288 m | 2 200–4 000 | 22–40 | 14–25 | 11–20 | 4 |
+
+AUTO part du budget HIGH et évalue les FPS toutes les quatre secondes. Il réduit les budgets de 5 % ou les remonte de 2,5 % par étape, entre 55 % et 100 %. Seuls populations, pluie, distances et détails sont ajustés ; aucune régénération de la ville. Les rayons et distances de détail sont internes aux profils. Le paramètre de distance des détails de toit est réservé : les lots historiques mélangent certains accessoires à l’architecture et ne sont pas supprimés arbitrairement.
+
+## Présentation et accessibilité V7
+
+Le ciel utilise un dôme à gradient, lune, étoiles déterministes et sept nuages légers. Un seul brouillard évolue progressivement selon quartier et pluie. Les routes s’humidifient puis sèchent, avec au maximum 48 flaques instanciées (12 en LOW), sans réflexion coûteuse. Les lampes restent limitées au pool existant ; les enseignes utilisent surtout leurs matériaux lumineux.
+
+OPTIONS ajoute mouvement de caméra, secousses, FOV, sensibilité, volumes global/ambiance/effets, taille de carte, taille du HUD, marqueurs contrastés et rotation de carte. **Mouvement caméra à 0 désactive bob, impulsions, secousses et variations dynamiques de FOV**. Les offsets sont appliqués uniquement au rendu, jamais à la position physique. La carte élargit progressivement son zoom en conduite et regroupe les découvertes proches. Les bus audio MASTER / AMBIENCE / VEHICLES / UI / GAMEPLAY utilisent Web Audio, avec fondus et une légère atténuation d’ambiance pendant les notifications. UI/GAMEPLAY sont prêts pour des sons futurs, sans assets téléchargés.
+
+## Nouveaux modules V7
+
+```text
+src/save/SaveSchema.js             DTO versionné, validation et normalisation
+src/save/SaveMigrations.js         Registre de migrations pures
+src/save/SaveManager.js            Stockage, erreurs, autosave et indicateur
+src/save/WorldPersistence.js       Adaptation explicite runtime ↔ DTO
+src/world/ChunkStreamingManager.js File de reconstruction et collisions
+src/rendering/MaterialManager.js   Cache et propriété des matériaux partagés
+src/rendering/SkySystem.js         Dôme, lune, étoiles et nuages
+src/rendering/WeatherPolish.js     Brouillard, humidité et flaques
+src/rendering/LandmarkSilhouettes.js Repères de skyline hors résidence
+src/camera/CameraEffects.js        Effets subtils appliqués au rendu
+src/systems/WorldRuntime.js        Coordination session, streaming et persistance
+src/systems/SessionState.js        Pause et garde du delta
+src/systems/FramePacing.js          Fenêtre glissante de 600 frames
+src/systems/RuntimeDiagnostics.js  Objets et ressources Three.js observables
+src/systems/PoolRegistry.js        Observation des pools existants, sans réécriture
+src/ui/OptionsController.js        Réglages d’accessibilité persistants
+src/ui/LoadingScreen.js            Étapes pondérées du chargement
+src/ui/Transitions.js              Fondus courts sans timers
+tests/persistence.test.js          Schéma, streaming, budget, caméra et ressources
+tests/resume.test.js               Reprise réelle des objets runtime et pause
+scripts/persistence-browser-check.mjs Scénario reload / continuer
+scripts/cdp.mjs                    Client DevTools léger
+scripts/soak-test.mjs              Circuits, pause, véhicule et reload (~80 s)
+```
+
+F3 conserve les compteurs historiques et ajoute chunks chargés/en attente, file, coût de streaming, FPS moyen, 1 % low approximatif, temps de frame, géométries, textures, programmes, objets et occupation des pools. Le heap JavaScript est affiché si Chrome le fournit ; aucune estimation précise de mémoire GPU n’est inventée. Le compteur de listeners couvre les abonnements possédés par la session, pas les internes de Three.js.
 
 Vertical City conserve **quatre quartiers, 64 chunks, CITY_SEED = 1989, 210 bâtiments et trois landmarks**, ainsi que tous les systèmes vivants de V3. V4 ajoute la navigation verticale, des intérieurs et un réseau souterrain limité.
 
-V5 ajoute un mode d’action/infiltration original, **VIGILANTE**, tout en conservant le mode **EXPLORATION** et les fonctionnalités V2/V3/V4. Choisir le mode dans le menu avant de cliquer sur **Explorer la ville** ; Échap permet de revenir au menu et de changer de mode. Exploration désactive crimes, ennemis, combat, scanner et déplacements spéciaux V5. Changer de mode réinitialise les missions et ennemis, sans régénérer la ville.
+V5 ajoute un mode d’action/infiltration original, **VIGILANTE**, tout en conservant le mode **EXPLORATION** et les fonctionnalités V2/V3/V4. Choisir le mode dans le menu avant de cliquer sur **NOUVELLE PARTIE** ; Échap permet de revenir au menu et de changer de mode. Exploration désactive crimes, ennemis, combat, scanner et déplacements spéciaux V5. Changer de mode réinitialise les missions et ennemis, sans régénérer la ville.
 
 V6 ajoute **NIGHTRIDER**, une voiture sportive originale en primitives, des garages, une conduite arcade, six missions de conduite et des poursuites limitées. Le véhicule est disponible en Exploration comme en Vigilante. Exploration ne déclenche aucune poursuite hostile ni mission obligatoire. Tous les systèmes V5 restent disponibles à pied en Vigilante.
 
@@ -18,7 +83,7 @@ npm install
 npm run dev
 ```
 
-Ouvrir l’URL affichée par Vite, généralement http://localhost:5173, puis **Explorer la ville**. Le clic autorise Pointer Lock et initialise le son. Ne pas ouvrir `index.html` directement.
+Ouvrir l’URL affichée par Vite, généralement http://localhost:5173, puis **NOUVELLE PARTIE**. Le clic autorise Pointer Lock et initialise le son. Ne pas ouvrir `index.html` directement.
 
 ```powershell
 npm test
@@ -42,12 +107,12 @@ La production est dans `dist/`, servie localement par défaut sur http://localho
 | V | Vigilante : scanner temporaire |
 | Clic gauche | Vigilante : attaque courte portée |
 | Alt + direction | Vigilante : esquive courte au sol ; Maj reste le sprint |
-| Échap | Pause du déplacement, libération de la souris, atténuation du son |
-| Qualité, dans le pied de page | Cycle LOW → MEDIUM → HIGH |
+| Échap | Pause complète, libération de la souris, atténuation du son |
+| Qualité, dans le pied de page | Cycle LOW → MEDIUM → HIGH → AUTO |
 | Réglages | Choix direct de qualité, pluie activée/désactivée, intensité, volume global |
 | F3 | Affichage/masquage des diagnostics |
 
-La ville continue de s’animer derrière le menu, comme une scène d’accueil vivante. Le panneau F3 indique FPS, draw calls, position, quartier, chunk, bâtiments dans le champ, voitures actives, piétons et particules. Les draw calls incluent le post-traitement. Le nombre de bâtiments est une estimation par boîtes englobantes/frustum, sans calcul d’occlusion.
+Le rendu reste affiché derrière le menu ; les simulations sont en pause. Les draw calls incluent le post-traitement. Le nombre de bâtiments visibles est une estimation par boîtes englobantes/frustum des chunks chargés, sans calcul d’occlusion.
 
 ## Conduite V6
 
@@ -116,7 +181,7 @@ scripts/vehicle-browser-check.mjs
 
 Le véhicule joueur et une cible éventuelle s’ajoutent à ces budgets. Les poursuites ne créent jamais plus de quatre unités ; elles abandonnent à grande distance. Audio moteur, accélération, frein, pneus, boost et collision est généré localement et raccordé au volume général de `AudioManager`. Le canal sirènes existant sert également aux poursuites. Des buffers peuvent remplacer les sons procéduraux via `VehicleAudio.registerBuffer`.
 
-Limites : les poursuites suivent les rues sans tactique d’encerclement, les véhicules NPC attendent les obstacles, la voiture ne circule pas dans les domaines d’intérieur/souterrain. Pas de remorquage, d’appel à distance ou de sauvegarde : une voiture immobilisée loin d’un garage reste sur place jusqu’au rechargement. Les agents V5 ne combattent pas le conducteur à travers la carrosserie. Les essais ergonomiques et longs trajets sont décrits dans `VALIDATION.md`.
+Limites : les poursuites suivent les rues sans tactique d’encerclement, les véhicules NPC attendent les obstacles, la voiture ne circule pas dans les domaines d’intérieur/souterrain. Pas de remorquage ni d’appel à distance : une voiture immobilisée loin d’un garage reste sur place, y compris après sauvegarde. Une nouvelle partie la réinitialise ; seule une position invalide est récupérée au garage. Les agents V5 ne combattent pas le conducteur à travers la carrosserie. Les essais ergonomiques et longs trajets sont décrits dans `VALIDATION.md`.
 
 ## Gameplay V5 conservé
 
@@ -156,7 +221,7 @@ tests/gameplay.test.js
 scripts/gameplay-browser-check.mjs
 ```
 
-`LivingCity` conserve les systèmes urbains ; `VerticalCity` conserve les accès V4 ; `PlayerController` et `PlayerPhysics` conservent le mouvement. `GameDirector` les assemble sans dépendance circulaire. La physique reste à 120 Hz ; gameplay et IA tournent à 30 Hz, seulement lorsque la souris est capturée. La météo et la circulation continuent derrière le menu.
+`LivingCity` conserve les systèmes urbains ; `VerticalCity` conserve les accès V4 ; `PlayerController` et `PlayerPhysics` conservent le mouvement. `GameDirector` les assemble sans dépendance circulaire. La physique reste à 120 Hz ; gameplay et IA tournent à 30 Hz lorsque la session est active. V7 interrompt aussi météo et circulation pendant la pause.
 
 | Profil | Crimes | Plafond IA complexe | Ennemis par événement |
 | --- | ---: | ---: | ---: |
@@ -166,7 +231,7 @@ scripts/gameplay-browser-check.mjs
 
 Le pool contient 20 slots ennemis, avec deux lots instanciés pour corps/têtes et un lot de marqueurs réutilisé. L’IA complexe exige proximité (95 m) et visibilité approximative ; les ennemis hors zone sont suspendus. Deux échantillons de perception maximum par tick, au plus un contrôle de ligne de vue d’attaque rapprochée par tick. Aucun raycast sur tous les triangles de la ville, aucun matériau par ennemi, aucune lumière par marqueur. Les placements initiaux des sites, missions, patrouilles et checkpoints sont reproductibles avec la seed 1989 ; les interactions et déplacements du joueur font naturellement diverger les comportements suivants.
 
-Les événements sont des scénarios abstraits avec silhouettes, sans véhicule volé animé ni simulation de cambriolage. L’IA reste locale, sans navigation globale ou poursuite dans les escaliers et intérieurs ; les gardes d’un objectif intérieur restent dehors. Aucun nouveau conduit complexe n’est généré. La sauvegarde des points sûrs et découvertes est uniquement en mémoire.
+Les événements sont des scénarios abstraits avec silhouettes, sans véhicule volé animé ni simulation de cambriolage. L’IA reste locale, sans navigation globale ou poursuite dans les escaliers et intérieurs ; les gardes d’un objectif intérieur restent dehors. Aucun nouveau conduit complexe n’est généré. V7 persiste les points sûrs et découvertes dans localStorage.
 
 ## Exploration verticale V4 conservée
 
@@ -219,7 +284,7 @@ tests/vertical.test.js
 scripts/vertical-browser-check.mjs
 ```
 
-`LivingCity` reste l’orchestrateur V3 ; `VerticalCity` coordonne V4 sans ajouter cette logique au rendu. Géométries et matériaux sont partagés ; marches, garde-corps et panneaux sont instanciés par chunk. Les 64 chunks restent en mémoire : le masquage prépare le streaming, sans simuler un déchargement réel.
+`LivingCity` reste l’orchestrateur V3 ; `VerticalCity` coordonne V4 sans ajouter cette logique au rendu. Géométries et matériaux sont partagés ; marches, garde-corps et panneaux sont instanciés par chunk. V7 conserve les 64 descriptions mais gère la résidence graphique et les collisions via `ChunkStreamingManager`.
 
 F3 ajoute état du joueur, zone, altitude, intérieur actif, étage de cabine, colliders proches, tests de collision et triangles. Les compteurs incluent toutes les passes : ce sont des primitives soumises au GPU, pas des triangles uniques après occlusion.
 
@@ -371,17 +436,17 @@ scripts/browser-check.mjs      Contrôle Chrome et benchmark sans dépendance
 artifacts/                     Rapports JSON et captures de validation
 ```
 
-Tous les chunks sont encore créés au démarrage. `City.createChunk` génère indépendamment, `attach`/`detach` contrôlent le groupe, `disposeInstances` libère ses buffers et `CityResources` possède les ressources partagées. Le masquage par distance n’est pas du streaming. Un futur chargeur devra coordonner collisions, éclairage, voies et populations lors des chargements/déchargements. Les décorations statiques nouvelles appartiennent aux groupes de chunks ; les pools animés ont leurs propriétaires séparés.
+Les descriptions des chunks sont créées par étapes au démarrage. `City.createChunk` génère indépendamment et `ChunkStreamingManager` gère ensuite les instances résidentes et les collisions. `CityResources` possède les ressources partagées. Les décorations statiques appartiennent aux groupes de chunks ; les pools animés conservent leurs propriétaires séparés.
 
 Les collisions des acteurs d’ambiance restent une approximation 2D ; celles du joueur utilisent les volumes 3D locaux de V4. Les lampadaires principaux sont solides pour la conduite V6 ; les très petits accessoires restent décoratifs. Pas de nage, dégâts de chute, commandes tactiles ou embarquement dans le métro. La pluie est masquée en intérieur et sous terre, mais pas individuellement sous chaque pont. Le grappin exige encore une validation ergonomique en jeu.
 
 ## Validation et mesures
 
-`npm test` exécute **102 tests** : les 77 tests historiques V2/V3/V4/V5 conservés et 25 tests V6 de conduite, collisions, entrée/sortie, réparation, caméras, poursuite, routes, objectifs, trafic et audio. La physique, le grappin, le planage et la conduite sont comparés à 30, 60 et 120 FPS.
+`npm test` exécute **131 tests** : les 102 tests historiques V2 à V6 conservés et 29 nouveaux tests V7. La physique, le grappin, le planage et la conduite sont comparés à 30, 60 et 120 FPS. Les nouveaux tests couvrent schéma, migrations, stockage indisponible, autosave, reprise, sécurité des positions, missions, streaming déterministe, ressources partagées, pause, caméra et AUTO.
 
 Le contrôle Chrome V5 ajoute Exploration/Vigilante, apparition et activation de mission, scanner et HUD dans les deux builds. En développement, des fixtures sur les objets réels vérifient aussi neutralisation, dégâts, réapparition et transition grappin/planage. Elles ne sont pas exposées dans le produit. La procédure manuelle complémentaire et l’inventaire complet des fichiers figurent dans [VALIDATION.md](VALIDATION.md).
 
-V6 étend ce contrôle à l’entrée/sortie du véhicule, conduite, boost, freinage, caméras, mission de fuite et poursuite. La production rejoint le garage par de vraies commandes clavier. Les benchmarks séparent exploration à pied et conduite avec police active. La dernière mesure de production est proche de 60 FPS dans les trois profils, avec 318/569/571 draw calls en conduite ; les limites de cette mesure courte sont détaillées dans `VALIDATION.md`.
+V7 ajoute sauvegarde, reload complet, CONTINUER, restauration de la voiture, progression et options, pause et streaming aux contrôles V6. La production rejoint le garage par de vraies commandes clavier. Les benchmarks séparent exploration à pied et conduite avec police active, avec LOW/MEDIUM/HIGH/AUTO à pied. Les chiffres à jour et limites de mesure figurent dans `VALIDATION.md`.
 
 Le contrôle Chrome vérifie en développement et en production les commandes FPS, sprint, souris, mini-carte, pluie, réglages, volume, audio, train, trafic, F3 et absence d’erreurs/avertissements du navigateur. En développement, il contrôle aussi les quatre quartiers et une collision par saisie réelle. Les tests de trajet et de collision indépendants du navigateur couvrent les rues complètes.
 
@@ -391,6 +456,7 @@ Pour reproduire, lancer Vite ou preview, puis Chrome avec un **profil de test d�
 Start-Process -FilePath 'C:/Program Files/Google/Chrome/Application/chrome.exe' -WindowStyle Hidden -ArgumentList '--headless=new','--remote-debugging-port=9222','--user-data-dir=C:/Users/Maxime/Documents/Town/gotham-3d/node_modules/.cache/living-city-browser','--no-first-run','about:blank'
 npm run test:browser
 npm run test:browser -- http://127.0.0.1:4173/ --production
+npm run test:soak -- http://127.0.0.1:5173/
 ```
 
 Le script utilise uniquement les API intégrées à Node et le protocole DevTools de Chrome. Il génère les rapports dans `artifacts/benchmark-development.json` et `artifacts/benchmark-production.json`, ainsi que des captures. Les résultats chiffrés et le matériel de mesure sont détaillés dans `VALIDATION.md`. Ce sont des mesures courtes sur une vue fixe, pas une garantie pour tous les appareils ou tous les quartiers.

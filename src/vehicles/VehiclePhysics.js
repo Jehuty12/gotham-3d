@@ -60,6 +60,8 @@ export class VehiclePhysics {
     return false;
   }
   move(vehicle, delta, rotation = vehicle.rotation) {
+    if(vehicle.type==='NIGHTRIDER')this.world.city.streaming?.ensureCollisionAt(vehicle.position.clone().add(delta));
+    else if(!this.world.city.isLoadedAt?.(vehicle.position.x+delta.x,vehicle.position.z+delta.z)&&this.world.city.streaming)return false;
     this.prepare(vehicle.position, 5 + delta.length());
     const count = Math.max(1, Math.ceil(delta.length() / .25)), step = delta.clone().divideScalar(count);
     for (let i = 0; i < count; i++) {

@@ -1,5 +1,6 @@
 ﻿import * as THREE from 'three';
-import { InstanceBatch, glowTexture, seededRandom, deriveSeed } from '../utils/procedural.js';
+import { InstanceBatch, glowTexture, deriveSeed } from '../utils/procedural.js';
+import { SkySystem } from '../rendering/SkySystem.js';
 import { DISTRICTS } from '../world/districts.js';
 
 const SIGN_NAMES = {
@@ -60,22 +61,7 @@ export class CityLights {
     this.localLights = Array.from({ length: 6 }, () => {
       const light = new THREE.PointLight('#ffcb8c', 35, 17, 2); scene.add(light); return light;
     });
-    const random = seededRandom(deriveSeed(city.seed, 'sky'));
-    const vertices = [];
-    for (let i = 0; i < 1500; i++) {
-      const azimuth = random() * Math.PI * 2, y = 0.15 + random() * 0.85;
-      const r = Math.sqrt(1 - y * y);
-      vertices.push(Math.cos(azimuth) * r * 550, y * 550, Math.sin(azimuth) * r * 550);
-    }
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    this.sky = new THREE.Group();
-    this.sky.add(new THREE.Points(geometry, new THREE.PointsMaterial({ color: '#b4c9db', size: 0.65, transparent: true, opacity: 0.75, fog: false, depthWrite: false })));
-    const moon = new THREE.Mesh(new THREE.SphereGeometry(10, 24, 16), new THREE.MeshBasicMaterial({ color: '#c8dfdd', fog: false }));
-    moon.position.set(-160, 230, -420); this.sky.add(moon);
-    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: '#89b8ce', opacity: 0.25, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
-    halo.position.copy(moon.position); halo.scale.set(100, 100, 1); this.sky.add(halo);
-    scene.add(this.sky);
+    this.skySystem=new SkySystem(scene,city.seed,glow);this.sky=this.skySystem.group;
   }
 
   createSignMaterial(p) {
@@ -111,7 +97,7 @@ export class CityLights {
       .map(item => ({ ...item, distance: item.position.distanceToSquared(position) })).sort((a, b) => a.distance - b.distance);
     this.localLights.forEach((light, i) => {
       light.visible = Boolean(nearest[i]) && i < this.activeLightCount;
-      if (nearest[i]) { light.position.copy(nearest[i].position); light.color.set(nearest[i].color); }
+      if (nearest[i]) { light.position.copy(nearest[i].position); light.color.set(nearest[i].color);light.intensity=nearest[i].chunk.district.id==='old'?29:nearest[i].chunk.district.id==='industrial'?32:37; }
     });
   }
 }

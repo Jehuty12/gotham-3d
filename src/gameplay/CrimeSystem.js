@@ -37,6 +37,8 @@ export class CrimeSystem {
     while(this.events.length>limit){const i=this.events.findIndex(e=>e.id!==protectedId);if(i<0)break;this.events.splice(i,1);}
     for(let attempts=0;this.events.length<limit&&attempts<this.sites.length;attempts++) {
       const site=this.sites[this.cursor++%this.sites.length],distance=site.position.distanceTo(player);
+      if(this.isLoaded&&!this.isLoaded(site.position))continue;
+      if(this.isCompleted?.(site))continue;
       if(distance<35||distance>110||this.events.some(e=>e.site.id===site.id))continue;
       this.events.push({id:`crime-${++this.serial}`,site,type:site.type,position:site.position.clone(),started:this.time,resolvedAt:null});
     }

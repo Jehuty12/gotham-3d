@@ -9,6 +9,7 @@ export class AudioManager {
     this.seed = seed; this.volume = 0.22; this.active = false; this.context = null;
     this.contextFactory = contextFactory; this.channels = new Map(); this.sources = [];
     this.buffers = new Map(); this.status = 'ready';
+    this.buses=new Map();this.ambienceVolume=1;this.effectsVolume=1;this.duckUntil=0;
   }
   async activate() {
     try {
@@ -18,8 +19,10 @@ export class AudioManager {
         this.context = this.contextFactory ? this.contextFactory() : new Constructor();
         const ctx = this.context;
         this.master = ctx.createGain(); this.master.gain.value = 0; this.master.connect(ctx.destination);
+        this.buses.set('MASTER',this.master);
+        for(const name of ['AMBIENCE','VEHICLES','UI','GAMEPLAY']){const bus=ctx.createGain();bus.connect(this.master);this.buses.set(name,bus);}
         for (const name of AUDIO_CATEGORIES) {
-          const gain = ctx.createGain(); gain.gain.value = 0; gain.connect(this.master);
+          const gain = ctx.createGain(); gain.gain.value = 0; gain.connect(this.buses.get('AMBIENCE'));
           this.channels.set(name, gain);
         }
         const random = seededRandom(deriveSeed(this.seed, 'audio-noise'));
@@ -46,10 +49,13 @@ export class AudioManager {
   setVehicle(state) {
     this.vehicleState=state;
     if(this.context?.state!=='running')return;
-    if(!this.vehicleAudio&&state.driving)this.vehicleAudio=new VehicleAudio(this.context,this.master);
+    if(!this.vehicleAudio&&state.driving)this.vehicleAudio=new VehicleAudio(this.context,this.buses.get('VEHICLES')??this.master);
     this.vehicleAudio?.update(state);
   }
   applyVolume() { if (this.master) this.master.gain.setTargetAtTime(this.active ? this.volume : 0, this.context.currentTime, 0.1); }
+  setMix(ambience=1,effects=1){this.ambienceVolume=Math.max(0,Math.min(1,ambience));this.effectsVolume=Math.max(0,Math.min(1,effects));this.applyMix();}
+  duck(){if(this.context)this.duckUntil=this.context.currentTime+.7;this.applyMix();}
+  applyMix(){if(!this.context)return;for(const [name,bus] of this.buses)if(name!=='MASTER')bus.gain.setTargetAtTime((name==='AMBIENCE'?this.ambienceVolume*(this.context.currentTime<this.duckUntil?.82:1):this.effectsVolume),this.context.currentTime,.15);}
   registerBuffer(category, buffer) {
     if (!AUDIO_CATEGORIES.includes(category)) throw new RangeError('Unknown audio category');
     this.buffers.set(category, buffer);
@@ -68,12 +74,13 @@ export class AudioManager {
     for (const name of AUDIO_CATEGORIES) this.channels.get(name).gain.setTargetAtTime(levels[name], this.context.currentTime, 0.3);
     const sirens = this.sources.find(s => s.category === 'sirens' && !s.asset);
     if (sirens) sirens.source.frequency.setTargetAtTime(590 + Math.sin(time * 2.5) * 110, this.context.currentTime, 0.12);
-    this.applyVolume();
+    this.applyVolume();this.applyMix();
   }
   dispose() {
     this.vehicleAudio?.dispose();
     for (const { source, filter } of this.sources) { source.stop(); source.disconnect(); filter?.disconnect(); }
     this.sources.length = 0;
+    for(const bus of this.buses.values())bus.disconnect();this.buses.clear();for(const gain of this.channels.values())gain.disconnect();this.channels.clear();
     if (this.context && this.context.state !== 'closed') this.context.close().catch(() => {});
   }
 }

@@ -5,6 +5,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { checkVertical } from './vertical-browser-check.mjs';
 import { checkGameplay, selectMode } from './gameplay-browser-check.mjs';
 import { checkVehicles, approachGarage } from './vehicle-browser-check.mjs';
+import { checkPersistence } from './persistence-browser-check.mjs';
 
 const target = process.argv[2] ?? 'http://127.0.0.1:5173/';
 const production = process.argv.includes('--production');
@@ -35,11 +36,13 @@ async function evaluate(expression) {
 }
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const stats = () => evaluate(`JSON.parse(document.querySelector('#debug-panel').dataset.stats)`);
+async function zoneReady(zone){for(let i=0;i<20;i++){if((await stats()).zone===zone)return;await pause(100);}assert.equal((await stats()).zone,zone);}
 const key = async (code, value, keyCode, down) => send('Input.dispatchKeyEvent', { type: down ? 'keyDown' : 'keyUp', code, key: value, windowsVirtualKeyCode: keyCode });
 async function press(code, value, keyCode) { await key(code, value, keyCode, true); await key(code, value, keyCode, false); }
 async function click(selector) {
   const p = await evaluate(`(()=>{const r=document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
   for (const type of ['mousePressed', 'mouseReleased']) await send('Input.dispatchMouseEvent', { type, ...p, button: 'left', clickCount: 1 });
+  if(selector==='#enter'&&await evaluate(`!document.querySelector('#new-game-confirm').hidden`))await click('#confirm-new');
   return p;
 }
 async function quality(level) {
@@ -62,7 +65,7 @@ try {
   }
   assert.ok(ready, `Scene failed to start: ${JSON.stringify(errors.slice(0,2))}`);
   assert.equal(await evaluate(`document.querySelector('#error').textContent`), '');
-  assert.match(await evaluate('document.title'), /Vehicles & Pursuit/);
+  assert.match(await evaluate('document.title'), /World Polish & Persistence/);
   let state = await stats();
   assert.equal(state.seed, 1989); assert.equal(state.chunks, 64); assert.equal(state.landmarks, 3); assert.equal(state.totalBuildings, 210);
   assert.equal(state.cars, 20); assert.equal(state.pedestrians, 10); assert.equal(state.rain, 1800);
@@ -140,7 +143,7 @@ try {
     await key('KeyW','w',87,true);await pause(140);await key('KeyW','w',87,false);await pause(350);
     assert.match(await evaluate(`document.querySelector('#interaction-prompt').textContent`),/Ouvrir/,'Municipal entrance approached from spawn');
     await press('KeyE','e',69);await pause(650);await press('KeyE','e',69);await pause(400);
-    assert.equal((await stats()).zone,'interior');
+    await zoneReady('interior');
     await screenshot('vertical-city-production-interior');
     for(let attempt=0;attempt<20;attempt++) {
       const heading=(await stats()).heading;
@@ -151,13 +154,14 @@ try {
     }
     assert.match(await evaluate(`document.querySelector('#interaction-prompt').textContent`),/Ouvrir/,'Interior exit aimed with pointer lock');
     await press('KeyE','e',69);await pause(650);await press('KeyE','e',69);await pause(400);
-    assert.equal((await stats()).zone,'exterior');
+    await zoneReady('exterior');
     console.log('production: native keyboard/mouse door, interior entry and exit passed');
     await checkGameplay({evaluate,stats,key,press,pause,click,screenshot,production});
     // Restore the exact same initial benchmark view as development.
     await send('Page.navigate',{url:target});await pause(3000);
   }
   await checkVehicles({evaluate,stats,key,press,pause,click,screenshot,send,production});
+  await checkPersistence({evaluate,stats,key,press,pause,click,screenshot,send,production,target,approachGarage});
   await send('Page.navigate',{url:target});await pause(3000);
   await selectMode(evaluate,pause,'VIGILANTE');
   const benchmarkMouse=await click('#enter');await pause(300);
@@ -169,10 +173,10 @@ try {
     await send('Input.dispatchMouseEvent',{type:'mouseMoved',...benchmarkMouse,button:'none'});await pause(300);
   }
   const benchmark = [];
-  for (const level of ['LOW', 'MEDIUM', 'HIGH']) {
+  for (const level of ['LOW', 'MEDIUM', 'HIGH', 'AUTO']) {
     await quality(level); state = await stats();
-    assert.equal(state.cars, { LOW: 10, MEDIUM: 20, HIGH: 40 }[level]);
-    assert.equal(state.pedestrians, { LOW: 0, MEDIUM: 10, HIGH: 25 }[level]);
+    assert.ok(state.cars>0&&state.cars<=({LOW:10,MEDIUM:20,HIGH:40,AUTO:40}[level]));
+    assert.ok(state.pedestrians<=({LOW:0,MEDIUM:10,HIGH:25,AUTO:25}[level]));
     const measured = await evaluate(`new Promise(resolve=>{let frames=0,start=null,last=0,calls=0,triangles=0,aiMs=0,activeAI=0;const sample=t=>{if(start===null)start=t;frames++;last=t;calls+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).drawCalls;triangles+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).triangles;aiMs+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).aiUpdateMs;activeAI+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).activeAI;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(last-start),drawCalls:calls/frames,triangles:triangles/frames,aiMs:aiMs/frames,activeAI:activeAI/frames,seconds:(last-start)/1000})};requestAnimationFrame(sample)})`);
     benchmark.push({ level, ...measured, ...(await stats()), measuredFPS: measured.fps, measuredDrawCalls: measured.drawCalls });
     console.log(mode, level, measured);
@@ -193,6 +197,7 @@ try {
   assert.match(await evaluate(`document.querySelector('#debug-panel').textContent`), /FPS/);
   await screenshot(`vehicles-${mode}-debug`);
   assert.deepEqual(errors, []);
+  assert.deepEqual(warnings, []);
   const report = { mode, target, gpu, benchmark, drivingBenchmark, errors, warnings, checks: 'passed', date: new Date().toISOString() };
   await writeFile(`artifacts/benchmark-${mode}.json`, JSON.stringify(report, null, 2));
   console.log(`${mode}: complete; ${warnings.length} browser warnings`);

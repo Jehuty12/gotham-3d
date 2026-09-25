@@ -47,6 +47,7 @@ export class TrafficSystem {
       car.mode = 'road'; this.place(car);
       const distance = Math.hypot(car.position.x - player.x, car.position.z - player.z);
       if (distance < 8 || distance > this.radius) continue;
+      if(!this.city.isLoadedAt(car.position.x,car.position.z))continue;
       if(this.vehicleObstacles?.some(v=>v.position.distanceToSquared(car.position)<64))continue;
       if (this.cars.every((other, index) => index >= this.count || other === car || !other.initialized || other.position.distanceToSquared(car.position) > 64)) {
         car.initialized = true; car.stopped = false; this.recycles++; return true;
@@ -78,7 +79,7 @@ export class TrafficSystem {
     this.simplifiedCount=0;
     for (let i = 0; i < this.count; i++) {
       const car = this.cars[i];
-      if (!car.initialized || Math.hypot(car.position.x - player.x, car.position.z - player.z) > this.radius) {
+      if (!car.initialized || !this.city.isLoadedAt(car.position.x,car.position.z) || Math.hypot(car.position.x - player.x, car.position.z - player.z) > this.radius) {
         if (!this.spawn(car, player)) continue;
       }
       let step=delta;
@@ -86,6 +87,7 @@ export class TrafficSystem {
         this.simplifiedCount++;car.slowTime=(car.slowTime??0)+delta;if(car.slowTime<.1-1e-9)continue;step=car.slowTime;car.slowTime=0;
       } else car.slowTime=0;
       const fx = Math.sin(car.yaw), fz = Math.cos(car.yaw);
+      if(!this.city.isLoadedAt(car.position.x+fx*3,car.position.z+fz*3)){car.stopped=true;continue;}
       const ahead = (x, z, gap) => { const dx = x - car.position.x, dz = z - car.position.z;
         return dx * fx + dz * fz > 0 && dx * fx + dz * fz < gap && Math.abs(dx * fz - dz * fx) < 1.8; };
       car.stopped = ahead(player.x, player.z, 4);
@@ -118,6 +120,7 @@ export class TrafficSystem {
     this.eventLight.intensity = 0; this.eventActive = false;
     for (let i = 0; i < this.count; i++) {
       const car = this.cars[i]; if (!car.initialized) continue;
+      if(!this.city.isLoadedAt(car.position.x,car.position.z))continue;
       const type = VEHICLE_TYPES.get(car.type), p = car.position;
       const part = (batch, x, y, z, w, h, d, color) => {
         const cos = Math.cos(car.yaw), sin = Math.sin(car.yaw);

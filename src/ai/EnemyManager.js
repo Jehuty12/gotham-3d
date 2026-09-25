@@ -50,7 +50,7 @@ export class EnemyManager {
     for(const e of this.pool) {
       if(!e.active||e.state==='DISABLED')continue;
       const delta=e.position.clone().sub(position),distance=delta.length();
-      e.complex=!hidden && distance<95 && (distance<28||delta.normalize().dot(direction)>-.25) && active.length<budget.enemies;
+      e.complex=!hidden && this.city.isLoadedAt(e.position.x,e.position.z) && distance<95 && (distance<28||delta.normalize().dot(direction)>-.25) && active.length<Math.min(budget.enemies,this.aiBudget??20);
       if(!e.complex)continue;active.push(e);e.tick(dt);
       if(e.state==='ALERT') {
         this.move(e,position.clone().sub(e.position),dt,2.7);
@@ -80,6 +80,7 @@ export class EnemyManager {
     if(!this.bodies)return;this.bodies.begin();this.heads.begin();
     for(const e of this.enemies) {
       if(e.position.distanceTo(position)>100)continue;
+      if(!this.city.isLoadedAt(e.position.x,e.position.z))continue;
       const p=e.position,disabled=e.state==='DISABLED',color=scanner.reveals(e,position)?new Color('#75efc4'):this.colors[e.state],yaw=Math.atan2(e.direction.x,e.direction.z);
       this.bodies.add(p.x,p.y+(disabled?.25:.85),p.z,disabled?1.3:.55,disabled?.35:1.2,.4,yaw,color);
       this.heads.add(p.x,p.y+(disabled?.35:1.62),p.z,.34,.34,.34,yaw,this.colors.DISABLED);

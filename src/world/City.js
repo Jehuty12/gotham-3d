@@ -4,7 +4,7 @@ import { CityResources } from './CityResources.js';
 import { CITY_CONFIG, CITY_SEED, districtForChunk } from './districts.js';
 
 export class City {
-  constructor(scene, seed = CITY_SEED) {
+  constructor(scene, seed = CITY_SEED, {defer=false}={}) {
     if (!Number.isSafeInteger(seed)) throw new TypeError('City seed must be a safe integer');
     this.seed = seed;
     this.config = CITY_CONFIG;
@@ -14,7 +14,7 @@ export class City {
     this.chunks = new Map(); this.blocks = new Map();
     this.buildings = []; this.landmarks = []; this.water = [];
     this.lampPositions = []; this.neonPositions = [];
-    for (let ix = 0; ix < this.config.count; ix++) for (let iz = 0; iz < this.config.count; iz++) {
+    if(!defer)for (let ix = 0; ix < this.config.count; ix++) for (let iz = 0; iz < this.config.count; iz++) {
       const chunk = this.createChunk(ix, iz);
       this.chunks.set(chunk.id, chunk); this.blocks.set(chunk.id, chunk.colliders);
       chunk.attach(this.group);
@@ -22,6 +22,18 @@ export class City {
       this.lampPositions.push(...chunk.lamps); this.neonPositions.push(...chunk.signs);
     }
   }
+
+  static async create(scene,seed,onProgress=()=>{},yieldFrame=()=>new Promise(resolve=>requestAnimationFrame(resolve))) {
+    const city=new City(scene,seed,{defer:true});let started=performance.now();
+    for(let ix=0;ix<city.config.count;ix++)for(let iz=0;iz<city.config.count;iz++) {
+      const chunk=city.createChunk(ix,iz);city.chunks.set(chunk.id,chunk);city.blocks.set(chunk.id,chunk.colliders);chunk.attach(city.group);
+      city.buildings.push(...chunk.buildings);city.landmarks.push(...chunk.landmarks);city.water.push(...chunk.water);city.lampPositions.push(...chunk.lamps);city.neonPositions.push(...chunk.signs);
+      onProgress(city.chunks.size,64,chunk.district.name);
+      if(performance.now()-started>=2){await yieldFrame();started=performance.now();}
+    }
+    return city;
+  }
+  isLoadedAt(x,z){return !this.streaming||this.streaming.isLoadedAt(x,z);}
 
   // Pure with respect to City registries: suitable for future asynchronous loading.
   createChunk(ix, iz) {

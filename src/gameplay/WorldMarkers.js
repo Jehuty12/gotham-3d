@@ -7,7 +7,7 @@ export class WorldMarkers {
     const {camera,missions,crimes,scanner,vertical}=director,p=camera.position;this.batch.begin();
     if(director.mode!=='VIGILANTE'){this.batch.end();return;}
     const add=(position,color,range=110)=>{
-      const distance=p.distanceTo(position);if(distance<2||distance>range||this.batch.cursor>=125)return;
+      const distance=p.distanceTo(position);if(distance<2||distance>range||this.batch.cursor>=125||!director.city.isLoadedAt(position.x,position.z))return;
       this.batch.add(position.x,position.y,position.z,.14,.8,.14,0,color);
       this.batch.add(position.x,position.y+.3,position.z,.65,.1,.1,0,color);
     };

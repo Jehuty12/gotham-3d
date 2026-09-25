@@ -4,7 +4,7 @@ export function mountInterface() {
 document.querySelector('#app').innerHTML = `
   <div id="viewport" aria-label="Ville 3D à explorer"></div><div class="vignette"></div>
   <header class="topbar">
-    <a class="brand" href="./" aria-label="Vehicles & Pursuit, accueil"><span class="brand-mark">L<span>·</span></span><span>VEHICLES & PURSUIT<small>V6 / CONDUITE & EXPLORATION</small></span></a>
+    <a class="brand" href="./" aria-label="World Polish & Persistence, accueil"><span class="brand-mark">L<span>·</span></span><span>WORLD POLISH & PERSISTENCE<small>V7 / UNE VILLE À RETROUVER</small></span></a>
     <div class="top-right"><span class="live-dot"></span> MONDE PROCÉDURAL <span class="divider"></span> <span>01:27 <span class="moon-icon">◔</span></span></div>
   </header>
   <main id="menu">
@@ -21,7 +21,7 @@ document.querySelector('#app').innerHTML = `
     <div class="controls-guide"><div><span class="key-group"><kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd><span class="or">/</span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><small>SE DÉPLACER</small></div><div><span class="control-text">↔ &nbsp; SOURIS</span><small>REGARDER</small></div><div><kbd>MAJ</kbd><small>COURIR</small></div><div><kbd>ÉCHAP</kbd><small>PAUSE</small></div></div>
   </main>
   <div id="reticle" hidden></div><div id="walking-hint" hidden>ESPACE <span>saut</span> · CTRL <span>accroupir</span> · E <span>interaction</span> · ÉCHAP <span>pause</span></div>
-  <aside class="map-panel"><div class="map-heading"><span><i></i> <span id="district-name">VEHICLES & PURSUIT</span></span><span>N ↑</span></div><canvas id="minimap" width="224" height="170" aria-label="Plan du quartier et position du joueur"></canvas><div class="district-legend"><span class="downtown">Downtown</span><span class="old">Old Gotham</span><span class="industrial">Industrial</span><span class="docks">Docks</span></div><div class="landmark-legend" title="Cathédrale des Veilleurs · Tour Meridian · Hôtel de la Garde">C Cathédrale · T Tour · M Mairie</div><div class="map-footer"><span id="coordinates">X 000 · Z 000</span><span id="sector">CHUNK 4,4</span></div></aside>
+  <aside class="map-panel"><div class="map-heading"><span><i></i> <span id="district-name">WORLD POLISH & PERSISTENCE</span></span><span>N ↑</span></div><canvas id="minimap" width="224" height="170" aria-label="Plan du quartier et position du joueur"></canvas><div class="district-legend"><span class="downtown">Downtown</span><span class="old">Old Gotham</span><span class="industrial">Industrial</span><span class="docks">Docks</span></div><div class="landmark-legend" title="Cathédrale des Veilleurs · Tour Meridian · Hôtel de la Garde">C Cathédrale · T Tour · M Mairie</div><div class="map-footer"><span id="coordinates">X 000 · Z 000</span><span id="sector">CHUNK 4,4</span></div></aside>
   <footer><span><i></i> LIBRE D’EXPLORER</span><span class="world-details">4 QUARTIERS <b>·</b> 64 CHUNKS <b>·</b> GRAINE ${CITY_SEED}</span><span class="footer-actions"><button id="quality" title="Changer la qualité graphique">QUALITÉ : MEDIUM</button><button id="settings-toggle" aria-expanded="false" aria-controls="settings-panel">RÉGLAGES ☷</button></span></footer>
 `;
 
@@ -30,9 +30,9 @@ document.querySelector('#app').innerHTML = `
 export function bindSettings(living, signal) {
   const panel = document.createElement('aside');
   panel.id = 'settings-panel'; panel.hidden = true;
-  panel.setAttribute('aria-label', 'Réglages de Vehicles & Pursuit');
+  panel.setAttribute('aria-label', 'Réglages de World Polish & Persistence');
   panel.innerHTML = `<div class="settings-title">ATMOSPHÈRE <button id="settings-close" aria-label="Fermer les réglages">×</button></div>
-    <label>Qualité <select id="quality-select"><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option></select></label>
+    <label>Qualité <select id="quality-select"><option>LOW</option><option selected>MEDIUM</option><option>HIGH</option><option>AUTO</option></select></label>
     <label>Pluie <input id="rain-enabled" type="checkbox" checked></label>
     <label>Intensité <input id="rain-intensity" type="range" min="0" max="1" step="0.05" value="1" aria-label="Intensité de la pluie"></label>
     <label>Volume <input id="master-volume" type="range" min="0" max="1" step="0.01" value="0.22" aria-label="Volume global"></label>
@@ -48,7 +48,7 @@ export function bindSettings(living, signal) {
     panel.querySelector('#quality-select').value = level;
   };
   document.querySelector('#quality').addEventListener('click', () => {
-    const levels = ['LOW', 'MEDIUM', 'HIGH']; applyQuality(levels[(levels.indexOf(living.performance.level) + 1) % levels.length]);
+    const levels = ['LOW', 'MEDIUM', 'HIGH', 'AUTO']; applyQuality(levels[(levels.indexOf(living.performance.requestedLevel??living.performance.level) + 1) % levels.length]);
   }, options);
   panel.querySelector('#quality-select').addEventListener('change', e => applyQuality(e.target.value), options);
   panel.querySelector('#rain-enabled').addEventListener('change', e => living.rain.setEnabled(e.target.checked), options);

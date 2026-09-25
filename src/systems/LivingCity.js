@@ -22,10 +22,15 @@ export class LivingCity {
     this.setQuality('MEDIUM');
   }
   setQuality(level) {
-    const profile = this.performance.setLevel(level);
+    this.performance.setLevel(level);
+    this.applyBudgets();
+  }
+  applyBudgets() {
+    const profile=this.performance.profile,level=this.performance.level;
+    if(this.gameplay)this.gameplay.enemies.aiBudget=profile.aiBudget;
     for (const system of [this.rain, this.steam, this.traffic, this.pedestrians]) system.configure(profile);
-    this.renderer.setPixelRatio(Math.min(globalThis.devicePixelRatio ?? 1, profile.pixelRatio));
-    this.composer.setPixelRatio(this.renderer.getPixelRatio());
+    const ratio=Math.min(globalThis.devicePixelRatio??1,profile.pixelRatio);
+    if(this.renderer.getPixelRatio()!==ratio){this.renderer.setPixelRatio(ratio);this.composer.setPixelRatio(ratio);}
     this.scene.fog.density = level === 'LOW' ? 0.006 : level === 'MEDIUM' ? 0.0042 : 0.0035;
     this.lights.activeLightCount = profile.lamps; this.lights.haloDistance = profile.haloDistance;
     this.lights.lastPosition.set(Infinity, 0, Infinity);
@@ -52,13 +57,13 @@ export class LivingCity {
       this.audio.update(this.time, { rain: this.rain.enabled ? this.rain.intensity : 0, traffic: this.traffic.count / 40,
         district: this.city.districtAt(p.x, p.z).id, trainDistance: p.distanceTo(this.rail.position), siren: this.traffic.eventActive });
     }
-    const wet = this.rain.enabled ? this.rain.intensity : 0;
+    const wet = this.runtime ? this.runtime.weather.wet : this.rain.enabled ? this.rain.intensity : 0;
     this.city.resources.materials.asphalt.roughness = 0.7 - wet * 0.38;
     this.city.resources.materials.asphalt.metalness = 0.25 + wet * 0.22;
     this.city.resources.materials.pavement.roughness = 0.9 - wet * 0.27;
   }
   snapshot() {
-    return { ...this.vertical?.snapshot(), ...this.gameplay?.snapshot(), triangles: this.performance.triangles ?? 0, fps: this.performance.fps, drawCalls: this.performance.drawCalls, quality: this.performance.level,
+    return { ...this.runtime?.snapshot(), ...this.vertical?.snapshot(), ...this.gameplay?.snapshot(), triangles: this.performance.triangles ?? 0, fps: this.performance.fps, drawCalls: this.performance.drawCalls, quality: this.performance.requestedLevel??this.performance.level,
       seed: this.city.seed, chunks: this.city.chunks.size, totalBuildings: this.city.buildings.length, landmarks: this.city.landmarks.length,
       heading: this.camera.rotation.y,
       position: this.camera.position.toArray(), district: this.city.districtAt(this.camera.position.x, this.camera.position.z).name,

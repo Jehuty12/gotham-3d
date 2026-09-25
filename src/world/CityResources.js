@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { InstanceBatch } from '../utils/procedural.js';
+import { MaterialManager } from '../rendering/MaterialManager.js';
 
 // One resource owner per city, never per building. Instance colors provide variety.
 export class CityResources {
   constructor() {
+    this.materialManager=new MaterialManager();
     this.box = new THREE.BoxGeometry(1, 1, 1);
     this.cone = new THREE.ConeGeometry(1, 1, 4);
     this.cylinder = new THREE.CylinderGeometry(0.5, 0.5, 1, 10);
@@ -20,6 +22,7 @@ export class CityResources {
       paint: new THREE.MeshBasicMaterial({ color: '#909c98' }),
       water: new THREE.MeshStandardMaterial({ color: '#0b3544', roughness: 0.23, metalness: 0.65 }),
     };
+    for(const [key,material] of Object.entries(this.materials))this.materialManager.materials.set(key,material);
   }
 
   batches() {
@@ -35,6 +38,6 @@ export class CityResources {
 
   dispose() {
     for (const geometry of [this.box, this.cone, this.cylinder, this.roof, this.rosette]) geometry.dispose();
-    for (const material of Object.values(this.materials)) material.dispose();
+    this.materialManager.dispose();
   }
 }

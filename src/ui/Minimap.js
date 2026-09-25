@@ -13,9 +13,13 @@ export class Minimap {
   draw() {
     const { canvas, ctx, city, camera } = this;
     const { x, z } = camera.position;
-    const scale = 0.68, cx = canvas.width / 2, cy = canvas.height / 2;
+    const settings=this.vertical?.living.runtime?.options.settings,vehicles=this.vertical?.gameplay?.vehicles;
+    const targetScale=vehicles?.driving? .58-Math.min(.14,Math.abs(vehicles.vehicle.speed)*.004):.68;
+    this.scale=(this.scale??targetScale)+(targetScale-(this.scale??targetScale))*.12;
+    const scale = this.scale, cx = canvas.width / 2, cy = canvas.height / 2;
+    camera.getWorldDirection(this.direction);const heading=Math.atan2(this.direction.x,-this.direction.z),rotation=settings?.mapRotation?-heading:0;
     ctx.fillStyle = '#0e1b20'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.save(); ctx.translate(cx - x * scale, cy - z * scale); ctx.scale(scale, scale);
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(rotation);ctx.scale(scale,scale);ctx.translate(-x,-z);
     for (const chunk of city.chunks.values()) {
       ctx.fillStyle = chunk.district.mapGround;
       ctx.fillRect(chunk.x - chunk.platformSize / 2, chunk.z - chunk.platformSize / 2, chunk.platformSize, chunk.platformSize);
@@ -36,7 +40,9 @@ export class Minimap {
       ctx.font='bold 11px sans-serif';
       for(const station of this.vertical.living.rail.stations)ctx.fillText('M',station.x,station.z);
       ctx.fillStyle='#efd582';
-      for(const point of this.vertical.discoveries.points)if(this.vertical.discoveries.visited.has(point.id)){ctx.beginPath();ctx.arc(point.x,point.z,4,0,Math.PI*2);ctx.fill();}
+      const clusters=new Map();
+      for(const point of this.vertical.discoveries.points)if(this.vertical.discoveries.visited.has(point.id)){const key=`${Math.floor(point.x*scale/12)},${Math.floor(point.z*scale/12)}`;const item=clusters.get(key);if(item)item.count++;else clusters.set(key,{...point,count:1});}
+      for(const point of clusters.values()){ctx.beginPath();ctx.arc(point.x,point.z,4,0,Math.PI*2);ctx.fill();if(point.count>1)ctx.fillText(String(point.count),point.x+6,point.z);}
       const game=this.vertical.gameplay;
       const vehicles=game?.vehicles;
       if(vehicles&&!city.collisionWorld.domain){
@@ -64,14 +70,14 @@ export class Minimap {
     // Edge-clamped markers retain the direction of distant city landmarks.
     ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center';
     for (const landmark of city.landmarks) {
-      const dx = (landmark.x - x) * scale, dz = (landmark.z - z) * scale;
+      const a=(landmark.x-x)*scale,b=(landmark.z-z)*scale,dx=a*Math.cos(rotation)-b*Math.sin(rotation),dz=a*Math.sin(rotation)+b*Math.cos(rotation);
       const ratio = Math.max(1, Math.abs(dx) / (cx - 12), Math.abs(dz) / (cy - 12));
       const px = cx + dx / ratio, py = cy + dz / ratio;
       ctx.fillStyle = this.vertical?.discoveries.visited.has(landmark.type)?'#91e2c0':'#e6c785'; ctx.fillRect(px - 3, py - 3, 6, 6);
       ctx.fillText({ cathedral: 'C', tower: 'T', municipal: 'M' }[landmark.type], px, py - 6);
     }
     ctx.save(); ctx.translate(cx, cy);
-    camera.getWorldDirection(this.direction); ctx.rotate(Math.atan2(this.direction.x, -this.direction.z));
+    ctx.rotate(heading+rotation);
     ctx.fillStyle = '#b9f9e8'; ctx.shadowColor = '#71dec7'; ctx.shadowBlur = 10;
     ctx.beginPath(); ctx.moveTo(0, -7); ctx.lineTo(5, 5); ctx.lineTo(0, 3); ctx.lineTo(-5, 5); ctx.closePath(); ctx.fill(); ctx.restore();
     this.coords.textContent = `${this.vertical?.zone==='underground'?'▼ ':''}X ${Math.round(x)} · Z ${Math.round(z)}`;

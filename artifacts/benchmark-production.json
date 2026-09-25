@@ -11,12 +11,71 @@
   "benchmark": [
     {
       "level": "LOW",
-      "fps": 60.00521784503012,
-      "drawCalls": 309,
-      "triangles": 190482,
-      "aiMs": 0.031664131159010844,
-      "activeAI": 3,
-      "seconds": 6.0165,
+      "fps": 59.99200106652443,
+      "drawCalls": 241,
+      "triangles": 68342,
+      "aiMs": 0.0037674960749254816,
+      "activeAI": 0,
+      "seconds": 6.016400000000002,
+      "chunksLoaded": 36,
+      "chunksPending": 0,
+      "streamingQueue": 0,
+      "chunkBuildMs": 0,
+      "chunkBuildPeakMs": 2.300000000745058,
+      "chunkLoads": 0,
+      "chunkUnloads": 28,
+      "averageFPS": 59.60481899730467,
+      "low1FPS": 35.04672803486455,
+      "frameTimeMean": 16.77716696103414,
+      "frameTimeMax": 83.30000305175781,
+      "geometries": 18,
+      "textures": 44,
+      "programs": 59,
+      "activeObjects": 880,
+      "pools": [
+        {
+          "name": "traffic",
+          "capacity": 40,
+          "active": 10
+        },
+        {
+          "name": "police",
+          "capacity": 4,
+          "active": 0
+        },
+        {
+          "name": "enemies",
+          "capacity": 20,
+          "active": 3
+        },
+        {
+          "name": "pedestrians",
+          "capacity": 25,
+          "active": 0
+        },
+        {
+          "name": "rain",
+          "capacity": 4000,
+          "active": 450
+        },
+        {
+          "name": "steam",
+          "capacity": 600,
+          "active": 100
+        },
+        {
+          "name": "markers",
+          "capacity": 128,
+          "active": 2
+        }
+      ],
+      "heapMB": 60.383849143981934,
+      "managedTimers": 0,
+      "managedListeners": 13,
+      "sessionState": "PLAYING",
+      "saveBytes": 831,
+      "saveWrites": 1,
+      "wetness": 0.999951456002194,
       "playerState": "grounded",
       "grounded": true,
       "crouching": false,
@@ -48,7 +107,7 @@
       "suspicious": 0,
       "alerted": 0,
       "disabled": 0,
-      "aiUpdateMs": 0.044845271586325654,
+      "aiUpdateMs": 0.0061712888986189185,
       "raycasts": 0,
       "scanner": 0,
       "completedMissions": 0,
@@ -73,7 +132,7 @@
       ],
       "vehicleCollisionTests": 48,
       "activeVehicleColliders": 7,
-      "vehicleUpdateMs": 0.20309746240219964,
+      "vehicleUpdateMs": 0.1527339724578194,
       "activeVehicles": 1,
       "pursuitState": "NONE",
       "policeUnits": 0,
@@ -90,7 +149,7 @@
       "chunks": 64,
       "totalBuildings": 210,
       "landmarks": 3,
-      "heading": -1.4711086772749447,
+      "heading": 0.8364528381310931,
       "position": [
         0,
         1.75,
@@ -98,35 +157,94 @@
       ],
       "district": "Docks",
       "chunk": "4,4",
-      "buildings": 29,
+      "buildings": 15,
       "cars": 10,
       "pedestrians": 0,
       "particles": 550,
-      "simplifiedTraffic": 5,
+      "simplifiedTraffic": 6,
       "rain": 450,
       "steam": 100,
       "train": [
-        -20.87956012100301,
+        -17.15092569662366,
         10.6,
         64
       ],
-      "time": 12.799999999999965,
-      "turns": 7,
-      "redStops": 1007,
+      "time": 12.4333333333333,
+      "turns": 5,
+      "redStops": 979,
       "audio": "running",
       "volume": 0.22,
-      "stoppedCars": 4,
-      "measuredFPS": 60.00166209590294,
-      "measuredDrawCalls": 309
+      "stoppedCars": 5,
+      "measuredFPS": 60.00265939764642,
+      "measuredDrawCalls": 241
     },
     {
       "level": "MEDIUM",
-      "fps": 60.02870938274836,
-      "drawCalls": 412,
-      "triangles": 280096,
-      "aiMs": 0.03945150952485873,
-      "activeAI": 8,
-      "seconds": 6.016299999999999,
+      "fps": 59.997391417764696,
+      "drawCalls": 267,
+      "triangles": 71722,
+      "aiMs": 0.03842874991811169,
+      "activeAI": 4,
+      "seconds": 6.0165,
+      "chunksLoaded": 36,
+      "chunksPending": 0,
+      "streamingQueue": 0,
+      "chunkBuildMs": 0,
+      "chunkBuildPeakMs": 2.300000000745058,
+      "chunkLoads": 0,
+      "chunkUnloads": 28,
+      "averageFPS": 60.00239877181652,
+      "low1FPS": 57.91505770180655,
+      "frameTimeMean": 16.666000367800393,
+      "frameTimeMax": 17.799999237060547,
+      "geometries": 18,
+      "textures": 44,
+      "programs": 59,
+      "activeObjects": 880,
+      "pools": [
+        {
+          "name": "traffic",
+          "capacity": 40,
+          "active": 20
+        },
+        {
+          "name": "police",
+          "capacity": 4,
+          "active": 0
+        },
+        {
+          "name": "enemies",
+          "capacity": 20,
+          "active": 8
+        },
+        {
+          "name": "pedestrians",
+          "capacity": 25,
+          "active": 10
+        },
+        {
+          "name": "rain",
+          "capacity": 4000,
+          "active": 1800
+        },
+        {
+          "name": "steam",
+          "capacity": 600,
+          "active": 180
+        },
+        {
+          "name": "markers",
+          "capacity": 128,
+          "active": 4
+        }
+      ],
+      "heapMB": 44.285736083984375,
+      "managedTimers": 0,
+      "managedListeners": 13,
+      "sessionState": "PLAYING",
+      "saveBytes": 831,
+      "saveWrites": 1,
+      "wetness": 0.9999998779945352,
       "playerState": "grounded",
       "grounded": true,
       "crouching": false,
@@ -158,7 +276,7 @@
       "suspicious": 0,
       "alerted": 0,
       "disabled": 0,
-      "aiUpdateMs": 0.05744444497513539,
+      "aiUpdateMs": 0.020899491720819396,
       "raycasts": 0,
       "scanner": 0,
       "completedMissions": 0,
@@ -183,7 +301,7 @@
       ],
       "vehicleCollisionTests": 48,
       "activeVehicleColliders": 7,
-      "vehicleUpdateMs": 0.1614795963764223,
+      "vehicleUpdateMs": 0.12711556723284173,
       "activeVehicles": 1,
       "pursuitState": "NONE",
       "policeUnits": 0,
@@ -200,7 +318,7 @@
       "chunks": 64,
       "totalBuildings": 210,
       "landmarks": 3,
-      "heading": -1.4711086772749447,
+      "heading": 0.8364528381310931,
       "position": [
         0,
         1.75,
@@ -208,35 +326,94 @@
       ],
       "district": "Docks",
       "chunk": "4,4",
-      "buildings": 44,
+      "buildings": 15,
       "cars": 20,
       "pedestrians": 10,
       "particles": 1980,
-      "simplifiedTraffic": 5,
+      "simplifiedTraffic": 4,
       "rain": 1800,
       "steam": 180,
       "train": [
-        -96.58000004446217,
+        -91.85106440546417,
         10.6,
         64
       ],
-      "time": 20.400000000000173,
-      "turns": 16,
-      "redStops": 2201,
+      "time": 19.900000000000148,
+      "turns": 15,
+      "redStops": 2122,
       "audio": "running",
       "volume": 0.22,
-      "stoppedCars": 10,
-      "measuredFPS": 60.00365673254326,
-      "measuredDrawCalls": 412
+      "stoppedCars": 9,
+      "measuredFPS": 60.00166209590294,
+      "measuredDrawCalls": 267
     },
     {
       "level": "HIGH",
-      "fps": 60.01304631441621,
-      "drawCalls": 416,
-      "triangles": 285444,
-      "aiMs": 0.03592058277972514,
-      "activeAI": 18,
-      "seconds": 6.016400000000002,
+      "fps": 59.992001066524615,
+      "drawCalls": 352,
+      "triangles": 107366,
+      "aiMs": 0.04779571950126288,
+      "activeAI": 6,
+      "seconds": 6.0162,
+      "chunksLoaded": 56,
+      "chunksPending": 0,
+      "streamingQueue": 0,
+      "chunkBuildMs": 0.10000000149011612,
+      "chunkBuildPeakMs": 2.300000000745058,
+      "chunkLoads": 20,
+      "chunkUnloads": 28,
+      "averageFPS": 59.70446156013836,
+      "low1FPS": 38.75969011350967,
+      "frameTimeMean": 16.749167044957478,
+      "frameTimeMax": 66.5,
+      "geometries": 18,
+      "textures": 44,
+      "programs": 66,
+      "activeObjects": 1330,
+      "pools": [
+        {
+          "name": "traffic",
+          "capacity": 40,
+          "active": 40
+        },
+        {
+          "name": "police",
+          "capacity": 4,
+          "active": 0
+        },
+        {
+          "name": "enemies",
+          "capacity": 20,
+          "active": 18
+        },
+        {
+          "name": "pedestrians",
+          "capacity": 25,
+          "active": 25
+        },
+        {
+          "name": "rain",
+          "capacity": 4000,
+          "active": 4000
+        },
+        {
+          "name": "steam",
+          "capacity": 600,
+          "active": 180
+        },
+        {
+          "name": "markers",
+          "capacity": 128,
+          "active": 6
+        }
+      ],
+      "heapMB": 51.93549346923828,
+      "managedTimers": 0,
+      "managedListeners": 13,
+      "sessionState": "PLAYING",
+      "saveBytes": 831,
+      "saveWrites": 1,
+      "wetness": 0.9999999996852363,
       "playerState": "grounded",
       "grounded": true,
       "crouching": false,
@@ -268,7 +445,7 @@
       "suspicious": 0,
       "alerted": 0,
       "disabled": 0,
-      "aiUpdateMs": 0.03799313300418355,
+      "aiUpdateMs": 0.057010494967474165,
       "raycasts": 0,
       "scanner": 0,
       "completedMissions": 0,
@@ -293,7 +470,7 @@
       ],
       "vehicleCollisionTests": 48,
       "activeVehicleColliders": 7,
-      "vehicleUpdateMs": 0.14763927168185387,
+      "vehicleUpdateMs": 0.19986989595011073,
       "activeVehicles": 1,
       "pursuitState": "NONE",
       "policeUnits": 0,
@@ -310,7 +487,7 @@
       "chunks": 64,
       "totalBuildings": 210,
       "landmarks": 3,
-      "heading": -1.4711086772749447,
+      "heading": 0.8364528381310931,
       "position": [
         0,
         1.75,
@@ -318,38 +495,266 @@
       ],
       "district": "Docks",
       "chunk": "4,4",
-      "buildings": 44,
+      "buildings": 24,
       "cars": 40,
       "pedestrians": 25,
       "particles": 4180,
-      "simplifiedTraffic": 9,
+      "simplifiedTraffic": 8,
       "rain": 4000,
       "steam": 180,
       "train": [
         -128,
         10.6,
-        18.421630771265995
+        23.646723799151346
       ],
-      "time": 27.900000000000546,
+      "time": 27.366666666667186,
       "turns": 36,
-      "redStops": 4392,
+      "redStops": 4366,
       "audio": "running",
       "volume": 0.22,
-      "stoppedCars": 17,
-      "measuredFPS": 60.00265939764642,
-      "measuredDrawCalls": 416
+      "stoppedCars": 16,
+      "measuredFPS": 60.004654100595054,
+      "measuredDrawCalls": 351.9310034690993
+    },
+    {
+      "level": "AUTO",
+      "fps": 59.9973914177641,
+      "drawCalls": 352,
+      "triangles": 107366,
+      "aiMs": 0.03949183479048629,
+      "activeAI": 6,
+      "seconds": 6.016399999999994,
+      "chunksLoaded": 56,
+      "chunksPending": 0,
+      "streamingQueue": 0,
+      "chunkBuildMs": 0.10000000149011612,
+      "chunkBuildPeakMs": 2.300000000745058,
+      "chunkLoads": 20,
+      "chunkUnloads": 28,
+      "averageFPS": 60.00239867453395,
+      "low1FPS": 58.0832520186737,
+      "frameTimeMean": 16.666000394821168,
+      "frameTimeMax": 17.399999618530273,
+      "geometries": 18,
+      "textures": 44,
+      "programs": 66,
+      "activeObjects": 1330,
+      "pools": [
+        {
+          "name": "traffic",
+          "capacity": 40,
+          "active": 40
+        },
+        {
+          "name": "police",
+          "capacity": 4,
+          "active": 0
+        },
+        {
+          "name": "enemies",
+          "capacity": 20,
+          "active": 18
+        },
+        {
+          "name": "pedestrians",
+          "capacity": 25,
+          "active": 25
+        },
+        {
+          "name": "rain",
+          "capacity": 4000,
+          "active": 4000
+        },
+        {
+          "name": "steam",
+          "capacity": 600,
+          "active": 180
+        },
+        {
+          "name": "markers",
+          "capacity": 128,
+          "active": 6
+        }
+      ],
+      "heapMB": 63.245293617248535,
+      "managedTimers": 0,
+      "managedListeners": 13,
+      "sessionState": "PLAYING",
+      "saveBytes": 831,
+      "saveWrites": 1,
+      "wetness": 0.9999999999993437,
+      "playerState": "grounded",
+      "grounded": true,
+      "crouching": false,
+      "zone": "exterior",
+      "nearbyColliders": 0,
+      "collisionTests": 0,
+      "activeInterior": null,
+      "floor": 0,
+      "accessibleRoofs": 53,
+      "interiors": 8,
+      "discoveries": [],
+      "stairs": 27,
+      "gameMode": "VIGILANTE",
+      "activeMission": null,
+      "missionState": null,
+      "availableMissions": 3,
+      "activeCrimes": 3,
+      "health": 100,
+      "movementMode": "grounded",
+      "grappleState": "idle",
+      "glideState": false,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "speed": 0,
+      "totalEnemies": 18,
+      "suspicious": 0,
+      "alerted": 0,
+      "disabled": 0,
+      "aiUpdateMs": 0.02374726928806879,
+      "raycasts": 0,
+      "scanner": 0,
+      "completedMissions": 0,
+      "driving": false,
+      "vehicleSpeed": 0,
+      "vehicleAcceleration": 0,
+      "vehicleSteering": 0,
+      "vehicleIntegrity": 100,
+      "vehicleBoost": 100,
+      "currentVehicleId": null,
+      "vehicleCamera": "CHASE",
+      "vehicleRotation": 3.141592653589793,
+      "vehiclePosition": [
+        -7,
+        0,
+        32
+      ],
+      "garagePosition": [
+        -7,
+        0,
+        32
+      ],
+      "vehicleCollisionTests": 48,
+      "activeVehicleColliders": 7,
+      "vehicleUpdateMs": 0.20735826423766027,
+      "activeVehicles": 1,
+      "pursuitState": "NONE",
+      "policeUnits": 0,
+      "lastKnownPosition": [
+        0,
+        0,
+        0
+      ],
+      "pursuitTimer": 0,
+      "vehicleMission": null,
+      "vehicleMissionState": null,
+      "quality": "AUTO",
+      "seed": 1989,
+      "chunks": 64,
+      "totalBuildings": 210,
+      "landmarks": 3,
+      "heading": 0.8364528381310931,
+      "position": [
+        0,
+        1.75,
+        54
+      ],
+      "district": "Docks",
+      "chunk": "4,4",
+      "buildings": 24,
+      "cars": 40,
+      "pedestrians": 25,
+      "particles": 4180,
+      "simplifiedTraffic": 7,
+      "rain": 4000,
+      "steam": 180,
+      "train": [
+        -72.48532352411655,
+        10.6,
+        0
+      ],
+      "time": 35.06666666666724,
+      "turns": 48,
+      "redStops": 7966,
+      "audio": "running",
+      "volume": 0.22,
+      "stoppedCars": 25,
+      "measuredFPS": 60.00265939764649,
+      "measuredDrawCalls": 352
     }
   ],
   "drivingBenchmark": [
     {
       "level": "LOW",
-      "fps": 60.001662095902915,
-      "drawCalls": 318,
-      "triangles": 271078,
-      "vehicleMs": 0.34290957573651765,
+      "fps": 60.00365673254326,
+      "drawCalls": 313,
+      "triangles": 271718,
+      "vehicleMs": 0.4546513483938045,
       "policeUnits": 2,
-      "seconds": 6.0165000000000015,
+      "seconds": 6.016299999999999,
       "stats": {
+        "chunksLoaded": 40,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0,
+        "chunkBuildPeakMs": 2,
+        "chunkLoads": 4,
+        "chunkUnloads": 28,
+        "averageFPS": 59.40829225112681,
+        "low1FPS": 29.62962962962963,
+        "frameTimeMean": 16.83266699155172,
+        "frameTimeMax": 116.5999984741211,
+        "geometries": 18,
+        "textures": 44,
+        "programs": 59,
+        "activeObjects": 964,
+        "pools": [
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 10
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 2
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 3
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 0
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 450
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 100
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 2
+          }
+        ],
+        "heapMB": 67.34673595428467,
+        "managedTimers": 0,
+        "managedListeners": 13,
+        "sessionState": "PLAYING",
+        "saveBytes": 876,
+        "saveWrites": 2,
+        "wetness": 0.9999996979882763,
         "playerState": "grounded",
         "grounded": true,
         "crouching": false,
@@ -360,7 +765,9 @@
         "floor": 0,
         "accessibleRoofs": 53,
         "interiors": 8,
-        "discoveries": [],
+        "discoveries": [
+          "garage-3,4"
+        ],
         "stairs": 27,
         "gameMode": "VIGILANTE",
         "activeMission": null,
@@ -382,7 +789,7 @@
         "suspicious": 0,
         "alerted": 0,
         "disabled": 0,
-        "aiUpdateMs": 0.014008524411549454,
+        "aiUpdateMs": 0.013413207543856685,
         "raycasts": 1,
         "scanner": 0,
         "completedMissions": 0,
@@ -407,7 +814,7 @@
         ],
         "vehicleCollisionTests": 48,
         "activeVehicleColliders": 7,
-        "vehicleUpdateMs": 0.26888329745203093,
+        "vehicleUpdateMs": 0.3841001380474246,
         "activeVehicles": 3,
         "pursuitState": "PURSUIT",
         "policeUnits": 2,
@@ -416,12 +823,12 @@
           0,
           32
         ],
-        "pursuitTimer": 6.833333333333319,
+        "pursuitTimer": 6.9333333333333185,
         "vehicleMission": "evade",
         "vehicleMissionState": "ACTIVE",
-        "triangles": 271078,
-        "fps": 60.00521784502986,
-        "drawCalls": 318,
+        "triangles": 271718,
+        "fps": 60.01304631441621,
+        "drawCalls": 313,
         "quality": "LOW",
         "seed": 1989,
         "chunks": 64,
@@ -439,31 +846,90 @@
         "cars": 10,
         "pedestrians": 0,
         "particles": 550,
-        "simplifiedTraffic": 4,
+        "simplifiedTraffic": 5,
         "rain": 450,
         "steam": 100,
         "train": [
-          -110.26741506563963,
+          -80.54027322619504,
           10.6,
           64
         ],
-        "time": 21.766666666666907,
-        "turns": 17,
-        "redStops": 2234,
+        "time": 18.766666666666758,
+        "turns": 15,
+        "redStops": 1650,
         "audio": "running",
         "volume": 0.22,
-        "stoppedCars": 6
+        "stoppedCars": 4
       }
     },
     {
       "level": "MEDIUM",
-      "fps": 60.004654100595054,
-      "drawCalls": 569,
-      "triangles": 489852,
-      "vehicleMs": 0.30333595272671154,
+      "fps": 60.00365673254326,
+      "drawCalls": 338,
+      "triangles": 275382,
+      "vehicleMs": 0.4247144304369453,
       "policeUnits": 3,
-      "seconds": 6.0162,
+      "seconds": 6.016299999999999,
       "stats": {
+        "chunksLoaded": 40,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0.09999999776482582,
+        "chunkBuildPeakMs": 2,
+        "chunkLoads": 4,
+        "chunkUnloads": 28,
+        "averageFPS": 60.002998725075614,
+        "low1FPS": 57.91505770180655,
+        "frameTimeMean": 16.665833729108176,
+        "frameTimeMax": 17.899999618530273,
+        "geometries": 18,
+        "textures": 44,
+        "programs": 59,
+        "activeObjects": 964,
+        "pools": [
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 20
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 3
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 8
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 10
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 1800
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 216
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 4
+          }
+        ],
+        "heapMB": 63.95165824890137,
+        "managedTimers": 0,
+        "managedListeners": 13,
+        "sessionState": "PLAYING",
+        "saveBytes": 876,
+        "saveWrites": 2,
+        "wetness": 0.9999999998153056,
         "playerState": "grounded",
         "grounded": true,
         "crouching": false,
@@ -474,7 +940,9 @@
         "floor": 0,
         "accessibleRoofs": 53,
         "interiors": 8,
-        "discoveries": [],
+        "discoveries": [
+          "garage-3,4"
+        ],
         "stairs": 27,
         "gameMode": "VIGILANTE",
         "activeMission": null,
@@ -496,7 +964,7 @@
         "suspicious": 0,
         "alerted": 0,
         "disabled": 0,
-        "aiUpdateMs": 0.00810389240006922,
+        "aiUpdateMs": 0.0066638274059721645,
         "raycasts": 1,
         "scanner": 0,
         "completedMissions": 0,
@@ -519,9 +987,9 @@
           0,
           32
         ],
-        "vehicleCollisionTests": 124,
-        "activeVehicleColliders": 17,
-        "vehicleUpdateMs": 0.27016633332529294,
+        "vehicleCollisionTests": 48,
+        "activeVehicleColliders": 7,
+        "vehicleUpdateMs": 0.39218535316792247,
         "activeVehicles": 4,
         "pursuitState": "PURSUIT",
         "policeUnits": 3,
@@ -530,12 +998,12 @@
           0,
           32
         ],
-        "pursuitTimer": 6.833333333333319,
+        "pursuitTimer": 6.899999999999985,
         "vehicleMission": "evade",
         "vehicleMissionState": "ACTIVE",
-        "triangles": 489852,
-        "fps": 59.99739141776441,
-        "drawCalls": 569,
+        "triangles": 275382,
+        "fps": 59.9973914177647,
+        "drawCalls": 338,
         "quality": "MEDIUM",
         "seed": 1989,
         "chunks": 64,
@@ -549,35 +1017,94 @@
         ],
         "district": "Industrial District",
         "chunk": "3,4",
-        "buildings": 128,
+        "buildings": 63,
         "cars": 20,
         "pedestrians": 10,
         "particles": 2016,
-        "simplifiedTraffic": 3,
+        "simplifiedTraffic": 6,
         "rain": 1800,
         "steam": 216,
         "train": [
-          -113.30337662580405,
+          -128,
           10.6,
-          0
+          16.994021908714558
         ],
-        "time": 31.0000000000007,
-        "turns": 26,
-        "redStops": 3424,
+        "time": 28.033333333333886,
+        "turns": 25,
+        "redStops": 3130,
         "audio": "running",
         "volume": 0.22,
-        "stoppedCars": 12
+        "stoppedCars": 11
       }
     },
     {
       "level": "HIGH",
-      "fps": 60.00166209590294,
-      "drawCalls": 571,
-      "triangles": 495184,
-      "vehicleMs": 0.29451492075925645,
+      "fps": 60.00365673254323,
+      "drawCalls": 464,
+      "triangles": 394144,
+      "vehicleMs": 0.4160111504313055,
       "policeUnits": 4,
-      "seconds": 6.0165,
+      "seconds": 6.016300000000003,
       "stats": {
+        "chunksLoaded": 56,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0,
+        "chunkBuildPeakMs": 2.199999999254942,
+        "chunkLoads": 20,
+        "chunkUnloads": 28,
+        "averageFPS": 59.70505566643901,
+        "low1FPS": 39.06250038805108,
+        "frameTimeMean": 16.749000379244485,
+        "frameTimeMax": 66.5999984741211,
+        "geometries": 18,
+        "textures": 44,
+        "programs": 66,
+        "activeObjects": 1335,
+        "pools": [
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 40
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 4
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 18
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 25
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 4000
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 216
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 6
+          }
+        ],
+        "heapMB": 67.52889823913574,
+        "managedTimers": 0,
+        "managedListeners": 13,
+        "sessionState": "PLAYING",
+        "saveBytes": 876,
+        "saveWrites": 2,
+        "wetness": 0.9999999999998886,
         "playerState": "grounded",
         "grounded": true,
         "crouching": false,
@@ -588,7 +1115,9 @@
         "floor": 0,
         "accessibleRoofs": 53,
         "interiors": 8,
-        "discoveries": [],
+        "discoveries": [
+          "garage-3,4"
+        ],
         "stairs": 27,
         "gameMode": "VIGILANTE",
         "activeMission": null,
@@ -610,7 +1139,7 @@
         "suspicious": 0,
         "alerted": 0,
         "disabled": 0,
-        "aiUpdateMs": 0.0032850956425789896,
+        "aiUpdateMs": 0.004686853041488743,
         "raycasts": 1,
         "scanner": 0,
         "completedMissions": 0,
@@ -633,9 +1162,9 @@
           0,
           32
         ],
-        "vehicleCollisionTests": 146,
-        "activeVehicleColliders": 16,
-        "vehicleUpdateMs": 0.29474969833421366,
+        "vehicleCollisionTests": 60,
+        "activeVehicleColliders": 8,
+        "vehicleUpdateMs": 0.35178109108666544,
         "activeVehicles": 5,
         "pursuitState": "PURSUIT",
         "policeUnits": 4,
@@ -644,12 +1173,12 @@
           0,
           32
         ],
-        "pursuitTimer": 7.066666666666651,
+        "pursuitTimer": 6.899999999999985,
         "vehicleMission": "evade",
         "vehicleMissionState": "ACTIVE",
-        "triangles": 495184,
-        "fps": 60.00521784503013,
-        "drawCalls": 571,
+        "triangles": 394144,
+        "fps": 60.0130463144162,
+        "drawCalls": 464,
         "quality": "HIGH",
         "seed": 1989,
         "chunks": 64,
@@ -663,7 +1192,7 @@
         ],
         "district": "Industrial District",
         "chunk": "3,4",
-        "buildings": 128,
+        "buildings": 98,
         "cars": 40,
         "pedestrians": 25,
         "particles": 4216,
@@ -671,21 +1200,21 @@
         "rain": 4000,
         "steam": 216,
         "train": [
-          -18.302713766005127,
+          -50.35989855446779,
           10.6,
           0
         ],
-        "time": 40.50000000000026,
+        "time": 37.300000000000445,
         "turns": 41,
-        "redStops": 7152,
+        "redStops": 6705,
         "audio": "running",
         "volume": 0.22,
-        "stoppedCars": 29
+        "stoppedCars": 27
       }
     }
   ],
   "errors": [],
   "warnings": [],
   "checks": "passed",
-  "date": "2026-09-25T11:32:14.689Z"
+  "date": "2026-09-25T16:19:06.368Z"
 }

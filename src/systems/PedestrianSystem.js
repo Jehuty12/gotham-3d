@@ -28,7 +28,7 @@ export class PedestrianSystem {
       person.path = (choices.length ? choices : this.paths)[Math.floor(person.random() * (choices.length || this.paths.length))];
       person.distance = (attempt ? person.random() : person.offset) * 2 * (person.path.width + person.path.depth);
       this.place(person);
-      if (!this.city.collides(person.position.x, person.position.z, 0.22) && person.position.y === 0.24) return true;
+      if (this.city.isLoadedAt(person.position.x,person.position.z)&&!this.city.collides(person.position.x, person.position.z, 0.22) && person.position.y === 0.24) return true;
     }
     person.path = null; return false;
   }
@@ -45,7 +45,7 @@ export class PedestrianSystem {
   update(delta, player) {
     for (let i = 0; i < this.count; i++) {
       const person = this.people[i];
-      if (!person.path || Math.hypot(person.position.x - player.x, person.position.z - player.z) > this.radius + 35) {
+      if (!person.path || !this.city.isLoadedAt(person.position.x,person.position.z)||Math.hypot(person.position.x - player.x, person.position.z - player.z) > this.radius + 35) {
         if (!this.spawn(person, player)) continue;
       }
       const previous = person.distance;
@@ -58,7 +58,7 @@ export class PedestrianSystem {
   render(time) {
     this.body.begin(); this.head.begin(); this.legs.begin();
     for (let i = 0; i < this.count; i++) {
-      const person = this.people[i]; if (!person.path) continue;
+      const person = this.people[i]; if (!person.path||!this.city.isLoadedAt(person.position.x,person.position.z)) continue;
       const p = person.position, bob = Math.sin(time * 6 + person.walkPhase) * 0.025;
       this.body.add(p.x, p.y + 1.03 + bob, p.z, 1, 1, 1, person.yaw, person.color);
       this.head.add(p.x, p.y + 1.66 + bob, p.z, 1, 1, 1);

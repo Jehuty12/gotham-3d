@@ -13,6 +13,8 @@ import { GameDirector } from './gameplay/GameDirector.js';
 import { LivingCity } from './systems/LivingCity.js';
 import { DebugPanel } from './ui/DebugPanel.js';
 import { mountInterface, bindSettings } from './ui/Interface.js';
+import { WorldRuntime } from './systems/WorldRuntime.js';
+import { LoadingScreen } from './ui/LoadingScreen.js';
 import './style.css';
 
 mountInterface();
@@ -21,7 +23,8 @@ const enter = document.querySelector('#enter');
 const error = document.querySelector('#error');
 function showError(message) { error.textContent = message; error.hidden = false; }
 
-function start() {
+async function start() {
+  const loading=new LoadingScreen();loading.phase('Génération des districts',.05);
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.setSize(innerWidth, innerHeight);
@@ -33,7 +36,8 @@ function start() {
   scene.fog = new THREE.FogExp2('#172e3b', 0.0035);
   const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, 0.08, 800);
   camera.position.set(0, 1.75, 54); camera.lookAt(11, 12, -65);
-  const city = new City(scene, CITY_SEED);
+  const city = await City.create(scene,CITY_SEED,(count,total,district)=>loading.phase('Génération des districts',.05+count/total*.5,district));
+  loading.phase('Éclairage et trafic',.6);await new Promise(requestAnimationFrame);
   const lights = new CityLights(scene, city);
   const player = new PlayerController(camera, renderer.domElement, city);
   const composer = new EffectComposer(renderer);
@@ -44,40 +48,24 @@ function start() {
   const living = new LivingCity({ scene, city, camera, renderer, composer, lights });
   const events = new AbortController();
   const options = { signal: events.signal };
+  loading.phase('Accès et intérieurs',.75);await new Promise(requestAnimationFrame);
   living.vertical = new VerticalCity(living, player, events.signal);
+  loading.phase('Initialisation du gameplay',.9);await new Promise(requestAnimationFrame);
   living.gameplay = new GameDirector(living, player, events.signal);
   const debug = new DebugPanel(living, events.signal);
   bindSettings(living, events.signal);
-  const menu = document.querySelector('#menu');
-  const reticle = document.querySelector('#reticle');
-  const hint = document.querySelector('#walking-hint');
-  let hasEntered = false;
-  enter.addEventListener('click', () => {
-    error.hidden = true;
-    living.audio.activate();
-    if (!renderer.domElement.requestPointerLock) {
-      showError('Utilisez un navigateur sur ordinateur compatible avec le verrouillage de la souris.'); return;
-    }
-    // PointerLockControls listens to the native lock event. Keep the request's
-    // promise here because its lock() helper does not return it on all versions.
-    const rejected = () => showError('La souris n’a pas pu être activée. Cliquez à nouveau pour réessayer.');
-    try { Promise.resolve(renderer.domElement.requestPointerLock()).catch(rejected); } catch { rejected(); }
-  }, options);
-  document.addEventListener('pointerlockerror', () => showError('Le navigateur a refusé le verrouillage de la souris. Réessayez avec le bouton Explorer.'), options);
-  player.controls.addEventListener('lock', () => {
-    hasEntered = true; menu.hidden = true; reticle.hidden = false; hint.hidden = false;
-    document.body.classList.add('playing');
-    document.querySelector('#settings-panel').hidden = true;
-    document.querySelector('#settings-toggle').setAttribute('aria-expanded', 'false');
-    living.audio.setActive(true);
-  });
-  player.controls.addEventListener('unlock', () => {
-    menu.hidden = false; reticle.hidden = true; hint.hidden = true;
-    document.body.classList.remove('playing');
-    living.audio.setActive(false);
-    if (hasEntered) enter.innerHTML = 'Reprendre l’exploration <span>↗</span>';
-    enter.focus();
-  });
+  const runtime=new WorldRuntime(living,player,events.signal,showError);
+  living.session=runtime;
+  living.update(1/30);living.vertical.update(0);living.gameplay.update(0);
+  city.resources.materialManager.adoptScene(scene);
+  // Warm shader variants and shared textures behind the loading screen, before
+  // frame pacing starts. Later residency changes mainly upload instance buffers.
+  loading.phase('Préparation graphique',.96);await new Promise(requestAnimationFrame);
+  await renderer.compileAsync(scene,camera);
+  const initialTextures=new Set();for(const material of city.resources.materialManager.materials.values())for(const value of Object.values(material))if(value?.isTexture)initialTextures.add(value);
+  for(const texture of initialTextures)renderer.initTexture(texture);
+  composer.render(0);await new Promise(requestAnimationFrame);
+  loading.dispose();
   window.addEventListener('resize', () => {
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
@@ -91,24 +79,24 @@ function start() {
   let mapElapsed = 1;
   renderer.setAnimationLoop(now => {
     const rawDelta = (now - previous) / 1000; previous = now;
-    const delta = Math.min(rawDelta, 0.05);
+    const delta = runtime.update(rawDelta);
     city.collisionWorld.raycasts=0;city.collisionWorld.extraTests=0;
-    living.gameplay.vehicles?.update(delta);
-    if(!living.gameplay.vehicles?.driving)player.update(delta);
-    living.update(Math.min(rawDelta, 0.1)); living.vertical.update(delta); living.gameplay.update(delta); mapElapsed += delta;
+    if(delta>0)living.gameplay.vehicles?.update(delta);
+    if(delta>0&&!living.gameplay.vehicles?.driving)player.update(delta);
+    if(delta>0){living.update(delta);living.vertical.update(delta);living.gameplay.update(delta);}else{living.update(0);living.gameplay.vehicles?.render(living.gameplay);}
+    mapElapsed += Math.min(rawDelta,.1);
     if (mapElapsed > 0.1) { minimap.draw(); mapElapsed = 0; }
     renderer.info.reset();
-    const mantleOffset=player.physics.mantleOffset;
-    camera.position.y+=mantleOffset;
+    runtime.camera.apply(delta,living,player,runtime.options.settings);
     if (living.performance.profile.bloom) composer.render(delta); else renderer.render(scene, camera);
-    camera.position.y-=mantleOffset;
+    runtime.camera.restore();runtime.afterFrame(rawDelta);
     living.performance.recordFrame(rawDelta, renderer.info.render.calls, renderer.info.render.triangles);
     debug.update(Math.min(rawDelta, 0.25));
   });
   if (import.meta.hot) import.meta.hot.dispose(() => {
     renderer.setAnimationLoop(null);
     if (player.controls.isLocked) player.controls.unlock();
-    living.dispose(); debug.dispose(); player.dispose(); events.abort();
+    runtime.dispose();living.dispose(); debug.dispose(); player.dispose(); events.abort();
     const geometries = new Set(), materials = new Set(), textures = new Set();
     scene.traverse(object => {
       if (object.geometry) geometries.add(object.geometry);
@@ -121,15 +109,15 @@ function start() {
     }
     for (const geometry of geometries) geometry.dispose();
     for (const texture of textures) texture.dispose();
+    city.resources.dispose();
     for (const pass of composer.passes) pass.dispose();
     composer.dispose(); renderer.dispose(); renderer.domElement.remove();
   });
 }
 
-try { start(); } catch (cause) {
+start().catch(cause => {
+  document.querySelector('#loading-screen')?.remove();
   console.error(cause);
   showError('Impossible de démarrer la scène 3D. Vérifiez que WebGL 2 et l’accélération graphique sont activés.');
   enter.disabled = true;
-}
-
-
+});

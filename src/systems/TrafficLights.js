@@ -4,6 +4,7 @@ import { DynamicInstances } from '../utils/DynamicInstances.js';
 
 export class TrafficLights {
   constructor(scene, city) {
+    this.city=city;
     this.seed = city.seed; this.time = 0;
     this.signals = [...city.chunks.values()].flatMap(c => c.trafficSignals);
     this.bulbs = new DynamicInstances(scene, city.resources.box,
@@ -20,6 +21,7 @@ export class TrafficLights {
   update(time, player, distance = 180) {
     this.time = time; this.bulbs.begin();
     for (const signal of this.signals) {
+      if(!this.city.isLoadedAt(signal.x,signal.z))continue;
       if ((signal.x - player.x) ** 2 + (signal.z - player.z) ** 2 > distance ** 2) continue;
       const active = this.state({ x: signal.nodeX, z: signal.nodeZ }, signal.axis);
       ['red', 'amber', 'green'].forEach((color, i) => {

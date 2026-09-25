@@ -25,6 +25,7 @@ export class CollisionWorld {
     return b;
   }
   prepare(p, height) {
+    if(!this.domain)this.city.streaming?.ensureCollisionAt(p);
     this.tests=0;
     if(this.domain) { this.local=this.domain.colliders; return; }
     const found = new Set();
@@ -43,4 +44,10 @@ export class CollisionWorld {
     return hits;
   }
   ground(x,z) { return this.domain ? -Infinity : this.city.groundHeight(x,z); }
+  remove(colliders) {
+    const removed=new Set(colliders),keys=new Set();
+    for(const b of colliders)for(let x=Math.floor(b.minX/64);x<=Math.floor(b.maxX/64);x++)for(let z=Math.floor(b.minZ/64);z<=Math.floor(b.maxZ/64);z++)keys.add(`${x},${z}`);
+    for(const key of keys){const kept=(this.cells.get(key)??[]).filter(b=>!removed.has(b));if(kept.length)this.cells.set(key,kept);else this.cells.delete(key);}
+    this.local=[];
+  }
 }
