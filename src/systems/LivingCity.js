@@ -58,7 +58,7 @@ export class LivingCity {
     this.city.resources.materials.pavement.roughness = 0.9 - wet * 0.27;
   }
   snapshot() {
-    return { ...this.vertical?.snapshot(), triangles: this.performance.triangles ?? 0, fps: this.performance.fps, drawCalls: this.performance.drawCalls, quality: this.performance.level,
+    return { ...this.vertical?.snapshot(), ...this.gameplay?.snapshot(), triangles: this.performance.triangles ?? 0, fps: this.performance.fps, drawCalls: this.performance.drawCalls, quality: this.performance.level,
       seed: this.city.seed, chunks: this.city.chunks.size, totalBuildings: this.city.buildings.length, landmarks: this.city.landmarks.length,
       heading: this.camera.rotation.y,
       position: this.camera.position.toArray(), district: this.city.districtAt(this.camera.position.x, this.camera.position.z).name,
@@ -70,5 +70,5 @@ export class LivingCity {
       volume: this.audio.volume,
       stoppedCars: this.traffic.cars.slice(0, this.traffic.count).filter(car => car.stopped).length };
   }
-  dispose() { this.vertical?.dispose(); this.audio.dispose(); }
+  dispose() { this.gameplay?.dispose(); this.vertical?.dispose(); this.audio.dispose(); }
 }

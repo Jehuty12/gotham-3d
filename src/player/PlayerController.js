@@ -17,7 +17,7 @@ export class PlayerController {
     this.wish = new THREE.Vector3();
     this.events = new AbortController();
     const options = { signal: this.events.signal };
-    const codes = ['KeyW', 'KeyZ', 'KeyA', 'KeyQ', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight', 'Space', 'ControlLeft', 'ControlRight', 'KeyE', 'KeyG', 'Digit1', 'Digit2', 'Digit3'];
+    const codes = ['KeyW', 'KeyZ', 'KeyA', 'KeyQ', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight', 'Space', 'ControlLeft', 'ControlRight', 'KeyE', 'KeyG', 'KeyV', 'KeyM', 'AltLeft', 'AltRight', 'Digit1', 'Digit2', 'Digit3'];
     window.addEventListener('keydown', event => {
       if (!this.controls.isLocked || !codes.includes(event.code)) return;
       event.preventDefault();

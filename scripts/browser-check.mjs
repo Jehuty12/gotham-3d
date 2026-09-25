@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { checkVertical } from './vertical-browser-check.mjs';
+import { checkGameplay, selectMode } from './gameplay-browser-check.mjs';
 
 const target = process.argv[2] ?? 'http://127.0.0.1:5173/';
 const production = process.argv.includes('--production');
@@ -59,7 +60,7 @@ try {
   }
   assert.ok(ready, `Scene failed to start: ${JSON.stringify(errors.slice(0,2))}`);
   assert.equal(await evaluate(`document.querySelector('#error').textContent`), '');
-  assert.match(await evaluate('document.title'), /Vertical City/);
+  assert.match(await evaluate('document.title'), /Vigilante Gameplay/);
   let state = await stats();
   assert.equal(state.seed, 1989); assert.equal(state.chunks, 64); assert.equal(state.landmarks, 3); assert.equal(state.totalBuildings, 210);
   assert.equal(state.cars, 20); assert.equal(state.pedestrians, 10); assert.equal(state.rain, 1800);
@@ -122,6 +123,7 @@ try {
     assert.ok((await stats()).position[2] >= wall.maxZ + 0.42);
     await evaluate('document.exitPointerLock()'); await pause(200);
     await checkVertical({evaluate,stats,press,pause,click,screenshot});
+    await checkGameplay({evaluate,stats,key,press,pause,click,screenshot,production});
     await evaluate('__testLiving.vertical.player.physics.teleport(__testLiving.camera.position.clone().set(0,1.75,54));__testLiving.camera.lookAt(11,12,-65)');
     assert.equal(await evaluate('__testLiving.traffic.cars.slice(0,__testLiving.traffic.count).every(c=>!__testLiving.city.collides(c.position.x,c.position.z,2.3))'), true);
     console.log('development: all districts, collision and road trajectory checks passed');
@@ -149,16 +151,25 @@ try {
     await press('KeyE','e',69);await pause(650);await press('KeyE','e',69);await pause(400);
     assert.equal((await stats()).zone,'exterior');
     console.log('production: native keyboard/mouse door, interior entry and exit passed');
+    await checkGameplay({evaluate,stats,key,press,pause,click,screenshot,production});
     // Restore the exact same initial benchmark view as development.
     await send('Page.navigate',{url:target});await pause(3000);
   }
-  await evaluate(`document.querySelector('#menu').hidden=true;document.body.classList.add('playing')`);
+  await selectMode(evaluate,pause,'VIGILANTE');
+  const benchmarkMouse=await click('#enter');await pause(300);
+  // Face the nearby events so AI is actually active during the benchmark.
+  for(let attempt=0;attempt<15;attempt++) {
+    const heading=(await stats()).heading,error=Math.atan2(Math.sin(heading+1.5),Math.cos(heading+1.5));
+    if(Math.abs(error)<.03)break;
+    benchmarkMouse.x+=Math.max(-200,Math.min(200,error/.0013));
+    await send('Input.dispatchMouseEvent',{type:'mouseMoved',...benchmarkMouse,button:'none'});await pause(300);
+  }
   const benchmark = [];
   for (const level of ['LOW', 'MEDIUM', 'HIGH']) {
     await quality(level); state = await stats();
     assert.equal(state.cars, { LOW: 10, MEDIUM: 20, HIGH: 40 }[level]);
     assert.equal(state.pedestrians, { LOW: 0, MEDIUM: 10, HIGH: 25 }[level]);
-    const measured = await evaluate(`new Promise(resolve=>{let frames=0,start=null,last=0,calls=0,triangles=0;const sample=t=>{if(start===null)start=t;frames++;last=t;calls+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).drawCalls;triangles+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).triangles;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(last-start),drawCalls:calls/frames,triangles:triangles/frames,seconds:(last-start)/1000})};requestAnimationFrame(sample)})`);
+    const measured = await evaluate(`new Promise(resolve=>{let frames=0,start=null,last=0,calls=0,triangles=0,aiMs=0,activeAI=0;const sample=t=>{if(start===null)start=t;frames++;last=t;calls+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).drawCalls;triangles+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).triangles;aiMs+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).aiUpdateMs;activeAI+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).activeAI;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(last-start),drawCalls:calls/frames,triangles:triangles/frames,aiMs:aiMs/frames,activeAI:activeAI/frames,seconds:(last-start)/1000})};requestAnimationFrame(sample)})`);
     benchmark.push({ level, ...measured, ...(await stats()), measuredFPS: measured.fps, measuredDrawCalls: measured.drawCalls });
     console.log(mode, level, measured);
   }

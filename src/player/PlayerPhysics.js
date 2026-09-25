@@ -23,6 +23,8 @@ export class PlayerPhysics {
   }
   step(dt,wish,input) {
     const p=this.camera.position;
+    if(this.frozen)return;
+    if(this.traversal?.beforeStep(dt,input,wish))return;
     if(this.carried) {this.state='climbing';this.vy=0;return;}
     if(this.motion) {
       const m=this.motion, target=m.points[m.index], distance=p.distanceTo(target);
@@ -41,7 +43,8 @@ export class PlayerPhysics {
     this.crouching=this.height<1.5;
     if(input.jump && !this.jumpHeld && this.grounded && !this.crouching) { this.vy=6.5; this.grounded=false; }
     this.jumpHeld=input.jump;
-    this.velocity.lerp(wish,1-Math.exp(-14*dt));
+    const traversal=this.traversal;
+    if(!traversal?.glide.active && !traversal?.dodgeTime) this.velocity.lerp(wish,1-Math.exp(-(traversal?.enabled&&!this.grounded?1.4:14)*dt));
     for(const axis of ['x','z']) {
       const next=this.feet.clone(); next[axis]+=this.velocity[axis]*dt;
       let hits=this.world.hits(next.x,next.y,next.z,this.height+.15);
@@ -55,7 +58,8 @@ export class PlayerPhysics {
       if(!hits.length) this.feet.copy(next); else this.velocity[axis]=0;
     }
     const before=this.feet.y;
-    this.vy-=18*dt; let target=before+this.vy*dt, floor=this.world.ground(this.feet.x,this.feet.z);
+    if(!traversal?.glide.active)this.vy=Math.max(-35,this.vy-18*dt);
+    let target=before+this.vy*dt, floor=this.world.ground(this.feet.x,this.feet.z);
     for(const b of this.world.local) {
       this.world.tests++; if(b.enabled===false || !overlaps(b,this.feet.x,this.feet.z,this.radius)) continue;
       if(b.maxY<=before+.001 && b.maxY>floor) floor=b.maxY;

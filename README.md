@@ -1,6 +1,8 @@
-# Vertical City — V4
+# Vigilante Gameplay — V5
 
 Vertical City conserve **quatre quartiers, 64 chunks, CITY_SEED = 1989, 210 bâtiments et trois landmarks**, ainsi que tous les systèmes vivants de V3. V4 ajoute la navigation verticale, des intérieurs et un réseau souterrain limité.
+
+V5 ajoute un mode d’action/infiltration original, **VIGILANTE**, tout en conservant le mode **EXPLORATION** et les fonctionnalités V2/V3/V4. Choisir le mode dans le menu avant de cliquer sur **Explorer la ville** ; Échap permet de revenir au menu et de changer de mode. Exploration désactive crimes, ennemis, combat, scanner et déplacements spéciaux V5. Changer de mode réinitialise les missions et ennemis, sans régénérer la ville.
 
 Vite, JavaScript, Three.js et modules officiels `three/addons`. Audio via Web Audio natif. Aucun modèle externe, bibliothèque de physique ou téléchargement d’assets. Le contrôleur FPS et les collisions sont étendus à la verticale.
 
@@ -29,11 +31,15 @@ La production est dans `dist/`, servie localement par défaut sur http://localho
 | ZQSD / WASD ou flèches | Déplacement à la première personne |
 | Souris | Orientation avec PointerLockControls |
 | Maj | Sprint |
-| Espace | Saut depuis le sol, un saut par pression |
+| Espace | Saut ; en Vigilante, maintenir pendant une chute haute pour planer, relâcher pour tomber normalement |
 | Ctrl | S’accroupir ; se relever nécessite de la place |
-| E | Porte, échelle, ascenseur, accès souterrain |
+| E | Porte, échelle, ascenseur, accès souterrain ; neutraliser par derrière / inspecter lorsque proposé |
 | 1 / 2 / 3 dans la cabine | RDC / mezzanine / toit |
-| G / clic droit | Grappin si activé dans le code |
+| G / clic droit | Vigilante : grappin sur cible valide ; G ou Espace annule la traction |
+| M | Vigilante : accepter la mission disponible la plus proche |
+| V | Vigilante : scanner temporaire |
+| Clic gauche | Vigilante : attaque courte portée |
+| Alt + direction | Vigilante : esquive courte au sol ; Maj reste le sprint |
 | Échap | Pause du déplacement, libération de la souris, atténuation du son |
 | Qualité, dans le pied de page | Cycle LOW → MEDIUM → HIGH |
 | Réglages | Choix direct de qualité, pluie activée/désactivée, intensité, volume global |
@@ -41,7 +47,57 @@ La production est dans `dist/`, servie localement par défaut sur http://localho
 
 La ville continue de s’animer derrière le menu, comme une scène d’accueil vivante. Le panneau F3 indique FPS, draw calls, position, quartier, chunk, bâtiments dans le champ, voitures actives, piétons et particules. Les draw calls incluent le post-traitement. Le nombre de bâtiments est une estimation par boîtes englobantes/frustum, sans calcul d’occlusion.
 
-## Exploration verticale V4
+## Gameplay V5
+
+**Déplacement.** Le grappin vise des points compatibles sur corniches, toits, stations, grues et monuments. Le raycast depuis la caméra sélectionne un point dans une sphère de tolérance, à **55 m maximum** (`GrappleSystem.maxDistance`) ; une croix verte indique une cible valide. La visibilité et le trajet du joueur sont vérifiés contre les volumes solides locaux. La traction accélère de 3 à 24 m/s, à pas fixe de 120 Hz. G/Espace annule et conserve une partie de l’élan ; recharge de 0,18 s. Maintenir Espace après le lâcher permet la transition impulsion → chute → planage. Le planage demande plus de 3 m sous les pieds et une vitesse verticale descendante ; il est interdit dans les intérieurs, souterrains, échelles et ascenseurs. Descente cible 2,8 m/s, vitesse horizontale cible 11 m/s et virage progressif. Les plafonds de momentum sont 24 m/s horizontal et −35/+18 m/s vertical. L’esquive dure 0,18 s à 17 m/s, avec recharge 0,85 s et collisions normales.
+
+**Crimes et missions.** Des sites déterministes appartiennent aux chunks : agression simulée, cambriolage, groupe hostile, vol de véhicule simulé, activité sur un toit et entrepôt occupé. Un site de toit sans toit compatible devient un groupe hostile. Les événements apparaissent entre 35 et 110 m du joueur, jamais directement à ses pieds. Les événements éloignés non suivis sont recyclés ; les événements résolus restent huit secondes avant recyclage. LOW/MEDIUM/HIGH autorisent respectivement 1/2/3 événements. Une seule mission peut être ACTIVE : rejoindre, observer deux secondes, neutraliser le groupe, atteindre un toit, inspecter avec E ou entrer dans un bâtiment. Les autres états sont AVAILABLE, COMPLETED et FAILED ; un objectif expire après 240 secondes. M accepte l’offre la plus proche. Les accès RUE/TOIT et parfois INTÉRIEUR réutilisent les ruelles, toits et accès V4 ; tous les sites n’offrent pas les trois approches.
+
+**Infiltration et combat.** Patrouilleurs, gardes et guetteurs utilisent les états IDLE, PATROL, SUSPICIOUS, ALERT, SEARCHING et DISABLED. La perception teste distance, angle, hauteur et occlusion par les AABB proches. La pluie réduit légèrement la portée visuelle et celle du bruit. Marcher accroupi est discret ; courir, sauter et atterrir fortement attire l’attention. Approcher derrière un ennemi non alerté à moins de 2,1 m affiche `[E] Neutraliser`. Le clic gauche porte à 2,3 m, avec recharge de 0,4 s : trois impacts désactivent un ennemi. Le réticule réagit, sans sang ni animation graphique. Un ennemi alerté proche inflige 8 PV par attaque. À zéro PV, écran assombri puis réapparition après 1,5 s au dernier point sûr, avec 100 PV. Les checkpoints de découverte en surface/hauteur sont sauvegardés en mémoire lorsque le joueur les atteint au sol, sans ennemi alerté proche.
+
+**Scanner et interface.** V révèle pendant 4 s les ennemis proches, interactions et points de grappin, à 55 m maximum ; recharge de 7 s depuis l’activation. Les silhouettes changent de couleur et des marqueurs instanciés apparaissent, sans passe graphique supplémentaire. Les marqueurs 3D respectent la profondeur et les limites de distance. La mini-carte ajoute événements, zone d’objectif et altitude relative ; les ennemis n’apparaissent que pendant le scanner. Le HUD indique objectif, distance, approches et santé. F3 conserve tous les compteurs historiques et ajoute mode, mission, crimes, vitesse XYZ, santé, grappin, planage, états ennemis, coût CPU IA et raycasts de visibilité gameplay.
+
+### Architecture V5 et budgets
+
+```text
+src/
+  player/
+    GrappleSystem.js       Visée, traction et annulation
+    GlideSystem.js         Planage conditionnel
+    Momentum.js            Limites et transfert de vitesse
+    PlayerTraversal.js     Coordination avec la physique et esquive
+    PlayerHealth.js        Santé, checkpoint et réapparition
+  gameplay/
+    GameDirector.js        Assemblage gameplay, modes, horloge 30 Hz
+    CrimeSystem.js         Sites seedés, budgets et recyclage
+    MissionManager.js      Objectifs et transitions
+    NoiseSystem.js         Bruits temporaires bornés
+    CombatSystem.js        Attaque et neutralisation
+    ScannerSystem.js       Durée, portée et recharge
+    WorldMarkers.js        Pool de marqueurs 3D
+  ai/
+    Enemy.js              État individuel et archétypes
+    EnemyManager.js       Pool, mise à jour répartie et rendu instancié
+    EnemyPerception.js    Cône de vision, occlusion et approche arrière
+  ui/MissionHUD.js         Objectif, distance, santé et feedback
+  utils/spatialQueries.js  Requêtes locales, balayage et ligne de vue
+tests/gameplay.test.js
+scripts/gameplay-browser-check.mjs
+```
+
+`LivingCity` conserve les systèmes urbains ; `VerticalCity` conserve les accès V4 ; `PlayerController` et `PlayerPhysics` conservent le mouvement. `GameDirector` les assemble sans dépendance circulaire. La physique reste à 120 Hz ; gameplay et IA tournent à 30 Hz, seulement lorsque la souris est capturée. La météo et la circulation continuent derrière le menu.
+
+| Profil | Crimes | Plafond IA complexe | Ennemis par événement |
+| --- | ---: | ---: | ---: |
+| LOW | 1 | 6 | 3 |
+| MEDIUM | 2 | 12 | 4 |
+| HIGH | 3 | 20 | 6 |
+
+Le pool contient 20 slots ennemis, avec deux lots instanciés pour corps/têtes et un lot de marqueurs réutilisé. L’IA complexe exige proximité (95 m) et visibilité approximative ; les ennemis hors zone sont suspendus. Deux échantillons de perception maximum par tick, au plus un contrôle de ligne de vue d’attaque rapprochée par tick. Aucun raycast sur tous les triangles de la ville, aucun matériau par ennemi, aucune lumière par marqueur. Les placements initiaux des sites, missions, patrouilles et checkpoints sont reproductibles avec la seed 1989 ; les interactions et déplacements du joueur font naturellement diverger les comportements suivants.
+
+Les événements sont des scénarios abstraits avec silhouettes, sans véhicule volé animé ni simulation de cambriolage. L’IA reste locale, sans navigation globale ou poursuite dans les escaliers et intérieurs ; les gardes d’un objectif intérieur restent dehors. Aucun nouveau conduit complexe n’est généré. La sauvegarde des points sûrs et découvertes est uniquement en mémoire.
+
+## Exploration verticale V4 conservée
 
 **53 toits accessibles**, soit 25 % des 210 bâtiments : 25 escaliers de secours, des échelles, huit ascenseurs et une passerelle entre voisins. Les équipements de RoofDetails sont conservés et leurs principaux volumes deviennent solides. Les deux stations aériennes ont aussi des escaliers depuis les trottoirs, des quais, bancs et panneaux. Le métro reste visible depuis les quais, sans embarquement.
 
@@ -63,7 +119,7 @@ Les intérieurs utilisent une **transition explicite à la porte**, aux coordonn
 
 Dehors, les intérieurs sont masqués ; sous terre, les extérieurs invisibles sont cachés. La vapeur est filtrée par altitude et les catégories audio s’adaptent à la zone. Les accès V4 restent identiques entre LOW/MEDIUM/HIGH.
 
-Le grappin expérimental est désactivé par défaut : `ENABLE_GRAPPLE = false` dans `src/player/GrappleSystem.js`. Activé, il ne sélectionne que des points explicitement compatibles, élevés, dans l’axe de visée et à moins de 45 unités. La traction vérifie les collisions par petits déplacements. Désactivé, il n’effectue aucune recherche de cible.
+Le mode Exploration conserve le défaut V4 `ENABLE_GRAPPLE = false`. Le mode Vigilante active automatiquement le grappin V5, sans modification du code. La traction vérifie les collisions par petits déplacements. Désactivé, il n’effectue aucune recherche de cible.
 
 ### Architecture ajoutée
 
@@ -72,7 +128,7 @@ src/
   player/
     PlayerPhysics.js             Physique à pas fixe
     PlayerInteraction.js         Raycast et registre générique
-    GrappleSystem.js             Option expérimentale
+    GrappleSystem.js             Grappin activé par le mode Vigilante
   interiors/
     InteriorGenerator.js         Sélection déterministe
     Interior.js                  Pièces, mezzanine, portes et cabine
@@ -250,7 +306,9 @@ Les collisions des acteurs d’ambiance restent une approximation 2D ; celles du
 
 ## Validation et mesures
 
-`npm test` exécute **53 tests** : les 30 régressions V2/V3, plus physique, plafonds, accroupissement, marches, escaliers à plusieurs volées, parcours complets vers les deux quais, sélection des toits, intérieurs, portes, ascenseurs, interactions, échelles, souterrains, découvertes, grappin et moyennes de triangles. La physique est comparée à 30, 60 et 120 FPS.
+`npm test` exécute **77 tests** : les 53 tests historiques V2/V3/V4 conservés, plus 24 tests V5 pour grappin, planage, momentum, esquive, crimes, missions, IA, vision, bruit, neutralisation, combat, santé, réapparition, scanner et modes. La physique, le grappin et le planage sont comparés à 30, 60 et 120 FPS.
+
+Le contrôle Chrome V5 ajoute Exploration/Vigilante, apparition et activation de mission, scanner et HUD dans les deux builds. En développement, des fixtures sur les objets réels vérifient aussi neutralisation, dégâts, réapparition et transition grappin/planage. Elles ne sont pas exposées dans le produit. La procédure manuelle complémentaire et l’inventaire complet des fichiers figurent dans [VALIDATION.md](VALIDATION.md).
 
 Le contrôle Chrome vérifie en développement et en production les commandes FPS, sprint, souris, mini-carte, pluie, réglages, volume, audio, train, trafic, F3 et absence d’erreurs/avertissements du navigateur. En développement, il contrôle aussi les quatre quartiers et une collision par saisie réelle. Les tests de trajet et de collision indépendants du navigateur couvrent les rues complètes.
 

@@ -9,6 +9,7 @@ import { PlayerController } from './player/PlayerController.js';
 import { CITY_SEED } from './world/districts.js';
 import { Minimap } from './ui/Minimap.js';
 import { VerticalCity } from './systems/VerticalCity.js';
+import { GameDirector } from './gameplay/GameDirector.js';
 import { LivingCity } from './systems/LivingCity.js';
 import { DebugPanel } from './ui/DebugPanel.js';
 import { mountInterface, bindSettings } from './ui/Interface.js';
@@ -44,6 +45,7 @@ function start() {
   const events = new AbortController();
   const options = { signal: events.signal };
   living.vertical = new VerticalCity(living, player, events.signal);
+  living.gameplay = new GameDirector(living, player, events.signal);
   const debug = new DebugPanel(living, events.signal);
   bindSettings(living, events.signal);
   const menu = document.querySelector('#menu');
@@ -90,8 +92,9 @@ function start() {
   renderer.setAnimationLoop(now => {
     const rawDelta = (now - previous) / 1000; previous = now;
     const delta = Math.min(rawDelta, 0.05);
-    if (!living.vertical.grapple.active) player.update(delta);
-    living.update(Math.min(rawDelta, 0.1)); living.vertical.update(delta); mapElapsed += delta;
+    city.collisionWorld.raycasts=0;city.collisionWorld.extraTests=0;
+    player.update(delta);
+    living.update(Math.min(rawDelta, 0.1)); living.vertical.update(delta); living.gameplay.update(delta); mapElapsed += delta;
     if (mapElapsed > 0.1) { minimap.draw(); mapElapsed = 0; }
     renderer.info.reset();
     const mantleOffset=player.physics.mantleOffset;

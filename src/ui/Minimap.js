@@ -37,6 +37,18 @@ export class Minimap {
       for(const station of this.vertical.living.rail.stations)ctx.fillText('M',station.x,station.z);
       ctx.fillStyle='#efd582';
       for(const point of this.vertical.discoveries.points)if(this.vertical.discoveries.visited.has(point.id)){ctx.beginPath();ctx.arc(point.x,point.z,4,0,Math.PI*2);ctx.fill();}
+      const game=this.vertical.gameplay;
+      if(game?.mode==='VIGILANTE') {
+        ctx.fillStyle='#e8aa69';
+        for(const event of game.crimes.events)if(event.resolvedAt===null&&event.position.distanceTo(camera.position)<170)ctx.fillText('!',event.position.x,event.position.z);
+        const m=game.missions.active;
+        if(m) {
+          ctx.strokeStyle='#94efc7';ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(m.position.x,m.position.z,7,0,Math.PI*2);ctx.stroke();
+          ctx.fillStyle='#c9ffe1';ctx.fillText(Math.abs(m.position.y-camera.position.y)>5?(m.position.y>camera.position.y?'↑':'↓'):'◇',m.position.x,m.position.z-9);
+        }
+        ctx.fillStyle='#f07a70';
+        for(const enemy of game.enemies.enemies)if(enemy.state!=='DISABLED'&&game.scanner.reveals(enemy,camera.position))ctx.fillRect(enemy.position.x-2,enemy.position.z-2,4,4);
+      }
     }
     ctx.restore();
     // Edge-clamped markers retain the direction of distant city landmarks.

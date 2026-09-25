@@ -13,7 +13,7 @@ export class DebugPanel {
     this.element.dataset.stats = JSON.stringify(s);
     if (this.element.hidden) return;
     this.element.textContent = [
-      `VERTICAL CITY / ${s.quality}`,
+      `VIGILANTE GAMEPLAY / ${s.quality}`,
       `FPS ${s.fps.toFixed(1)} · draw calls ${s.drawCalls.toFixed(0)}`,
       `Position ${s.position.map(v=>v.toFixed(1)).join(' / ')}`,
       `${s.district} · chunk ${s.chunk}`,
@@ -26,6 +26,12 @@ export class DebugPanel {
       `Collisions ${s.nearbyColliders} proches / ${s.collisionTests} tests`,
       `Intérieur ${s.activeInterior ?? '—'} · étage ${s.floor}`,
       `Triangles ${Math.round(s.triangles)} · toits ${s.accessibleRoofs}`,
+      `Mode ${s.gameMode} · mission ${s.activeMission??'—'} · crimes ${s.activeCrimes}`,
+      `PV ${s.health} · mouvement ${s.movementMode}`,
+      `Grappin ${s.grappleState} · planage ${s.glideState}`,
+      `Vitesse ${(s.speed??0).toFixed(1)} · XYZ ${(s.velocity??[]).map(v=>v.toFixed(1)).join(' / ')}`,
+      `IA ${s.activeAI}/${s.totalEnemies} · suspects ${s.suspicious} · alertés ${s.alerted} · neutralisés ${s.disabled}`,
+      `CPU IA ${(s.aiUpdateMs??0).toFixed(3)} ms/tick · raycasts/frame ${s.raycasts}`,
       'F3 pour masquer',
     ].join('\n');
   }
