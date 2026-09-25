@@ -13,7 +13,7 @@ export class DebugPanel {
     this.element.dataset.stats = JSON.stringify(s);
     if (this.element.hidden) return;
     this.element.textContent = [
-      `VIGILANTE GAMEPLAY / ${s.quality}`,
+      `VEHICLES & PURSUIT / ${s.quality}`,
       `FPS ${s.fps.toFixed(1)} · draw calls ${s.drawCalls.toFixed(0)}`,
       `Position ${s.position.map(v=>v.toFixed(1)).join(' / ')}`,
       `${s.district} · chunk ${s.chunk}`,
@@ -32,6 +32,13 @@ export class DebugPanel {
       `Vitesse ${(s.speed??0).toFixed(1)} · XYZ ${(s.velocity??[]).map(v=>v.toFixed(1)).join(' / ')}`,
       `IA ${s.activeAI}/${s.totalEnemies} · suspects ${s.suspicious} · alertés ${s.alerted} · neutralisés ${s.disabled}`,
       `CPU IA ${(s.aiUpdateMs??0).toFixed(3)} ms/tick · raycasts/frame ${s.raycasts}`,
+      `Conduite ${s.driving} · ${s.currentVehicleId??'à pied'} · ${s.vehicleCamera}`,
+      `Véhicule ${(s.vehicleSpeed??0).toFixed(1)} m/s · accel ${(s.vehicleAcceleration??0).toFixed(1)} · direction ${(s.vehicleSteering??0).toFixed(2)}`,
+      `Intégrité ${Math.round(s.vehicleIntegrity??0)} · boost ${Math.round(s.vehicleBoost??0)}`,
+      `Trafic ${s.cars} / ${s.simplifiedTraffic??0} simplifiés · collisions véhicule ${s.vehicleCollisionTests??0}`,
+      `Poursuite ${s.pursuitState} · unités ${s.policeUnits} · ${(s.pursuitTimer??0).toFixed(1)} s`,
+      `Dernier contact ${(s.lastKnownPosition??[]).map(v=>v.toFixed(0)).join('/')}`,
+      `CPU véhicules ${(s.vehicleUpdateMs??0).toFixed(3)} ms · colliders ${s.activeVehicleColliders??0}`,
       'F3 pour masquer',
     ].join('\n');
   }

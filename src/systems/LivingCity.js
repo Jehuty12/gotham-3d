@@ -32,7 +32,7 @@ export class LivingCity {
     this.performance.updateVisibility(this.camera);
   }
   update(delta) {
-    const p = this.camera.position;
+    const p = this.gameplay?.vehicles?.driving ? this.gameplay.vehicles.vehicle.position : this.camera.position;
     // Fixed simulation ticks make decisions independent of rendering frequency.
     this.accumulator += Math.min(delta, 0.1);
     const step = 1 / 30;
@@ -65,6 +65,7 @@ export class LivingCity {
       chunk: this.city.chunkAt(this.camera.position.x, this.camera.position.z)?.id,
       buildings: ['interior','underground'].includes(this.vertical?.zone) ? 0 : this.performance.visibleBuildings,
       cars: this.traffic.activeCount, pedestrians: this.pedestrians.activeCount, particles: this.rain.count + this.steam.count,
+      simplifiedTraffic:this.traffic.simplifiedCount??0,
       rain: this.rain.count, steam: this.steam.count, train: this.rail.position.toArray(), time: this.time,
       turns: this.traffic.turnsCompleted, redStops: this.traffic.redStops, audio: this.audio.context?.state ?? this.audio.status,
       volume: this.audio.volume,

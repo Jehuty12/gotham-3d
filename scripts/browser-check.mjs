@@ -1,9 +1,10 @@
-// Requires a running Vite/preview server and Chrome started with --remote-debugging-port=9222.
+﻿// Requires a running Vite/preview server and Chrome started with --remote-debugging-port=9222.
 // No browser automation dependency is installed; this uses the native Chrome DevTools protocol.
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { checkVertical } from './vertical-browser-check.mjs';
 import { checkGameplay, selectMode } from './gameplay-browser-check.mjs';
+import { checkVehicles, approachGarage } from './vehicle-browser-check.mjs';
 
 const target = process.argv[2] ?? 'http://127.0.0.1:5173/';
 const production = process.argv.includes('--production');
@@ -12,10 +13,11 @@ const tabs = await (await fetch('http://127.0.0.1:9222/json/list')).json();
 const ws = new WebSocket(tabs.find(tab => tab.type === 'page').webSocketDebuggerUrl);
 await new Promise(resolve => ws.addEventListener('open', resolve, { once: true }));
 const pending = new Map(), errors = [], warnings = []; let id = 0;
+ws.addEventListener('close',()=>{for(const p of pending.values()){clearTimeout(p.timer);p.reject(new Error('Chrome DevTools connection closed during validation'));}pending.clear();});
 ws.addEventListener('message', event => {
   const data = JSON.parse(event.data);
   if (data.id) {
-    const p = pending.get(data.id); pending.delete(data.id);
+    const p = pending.get(data.id); if(!p)return;pending.delete(data.id);clearTimeout(p.timer);
     if (data.error) p.reject(data.error); else p.resolve(data.result);
   } else if (data.method === 'Runtime.exceptionThrown') errors.push(data.params);
   else if (data.method === 'Log.entryAdded') {
@@ -24,7 +26,7 @@ ws.addEventListener('message', event => {
   }
 });
 function send(method, params = {}) {
-  return new Promise((resolve, reject) => { const next = ++id; pending.set(next, { resolve, reject }); ws.send(JSON.stringify({ id: next, method, params })); });
+  return new Promise((resolve, reject) => { const next = ++id;const timer=setTimeout(()=>{pending.delete(next);reject(new Error(`Chrome timeout: ${method}`));},30000);pending.set(next, { resolve, reject,timer }); ws.send(JSON.stringify({ id: next, method, params })); });
 }
 async function evaluate(expression) {
   const result = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true, userGesture: true });
@@ -60,7 +62,7 @@ try {
   }
   assert.ok(ready, `Scene failed to start: ${JSON.stringify(errors.slice(0,2))}`);
   assert.equal(await evaluate(`document.querySelector('#error').textContent`), '');
-  assert.match(await evaluate('document.title'), /Vigilante Gameplay/);
+  assert.match(await evaluate('document.title'), /Vehicles & Pursuit/);
   let state = await stats();
   assert.equal(state.seed, 1989); assert.equal(state.chunks, 64); assert.equal(state.landmarks, 3); assert.equal(state.totalBuildings, 210);
   assert.equal(state.cars, 20); assert.equal(state.pedestrians, 10); assert.equal(state.rain, 1800);
@@ -155,6 +157,8 @@ try {
     // Restore the exact same initial benchmark view as development.
     await send('Page.navigate',{url:target});await pause(3000);
   }
+  await checkVehicles({evaluate,stats,key,press,pause,click,screenshot,send,production});
+  await send('Page.navigate',{url:target});await pause(3000);
   await selectMode(evaluate,pause,'VIGILANTE');
   const benchmarkMouse=await click('#enter');await pause(300);
   // Face the nearby events so AI is actually active during the benchmark.
@@ -174,13 +178,25 @@ try {
     console.log(mode, level, measured);
   }
   assert.ok((await stats()).turns > 0); assert.ok((await stats()).redStops > 0);
+  await evaluate('document.exitPointerLock()');await pause(200);
+  await send('Page.navigate',{url:target});await pause(3000);await selectMode(evaluate,pause,'VIGILANTE');
+  await approachGarage({evaluate,stats,key,press,pause,click,send});
+  const drivingBenchmark=[];
+  for(const level of ['LOW','MEDIUM','HIGH']) {
+    await quality(level);await selectMode(evaluate,pause,'EXPLORATION');await selectMode(evaluate,pause,'VIGILANTE');
+    await evaluate(`(()=>{const s=document.querySelector('#vehicle-mission-choice');s.value='evade';s.dispatchEvent(new Event('change'))})()`);
+    await press('KeyM','m',77);await pause(1000);
+    const measured=await evaluate(`new Promise(resolve=>{let start=null,frames=0,calls=0,triangles=0,cpu=0,units=0;const sample=t=>{start??=t;frames++;const s=JSON.parse(document.querySelector('#debug-panel').dataset.stats);calls+=s.drawCalls;triangles+=s.triangles;cpu+=s.vehicleUpdateMs;units+=s.policeUnits;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(t-start),drawCalls:calls/frames,triangles:triangles/frames,vehicleMs:cpu/frames,policeUnits:units/frames,seconds:(t-start)/1000})};requestAnimationFrame(sample)})`);
+    drivingBenchmark.push({level,...measured,stats:await stats()});console.log(mode,'DRIVING',level,measured);
+  }
   await press('F3', 'F3', 114); await pause(350);
   assert.match(await evaluate(`document.querySelector('#debug-panel').textContent`), /FPS/);
-  await screenshot(`vertical-city-${mode}-debug`);
+  await screenshot(`vehicles-${mode}-debug`);
   assert.deepEqual(errors, []);
-  const report = { mode, target, gpu, benchmark, errors, warnings, checks: 'passed', date: new Date().toISOString() };
+  const report = { mode, target, gpu, benchmark, drivingBenchmark, errors, warnings, checks: 'passed', date: new Date().toISOString() };
   await writeFile(`artifacts/benchmark-${mode}.json`, JSON.stringify(report, null, 2));
   console.log(`${mode}: complete; ${warnings.length} browser warnings`);
 } finally {
   ws.close();
 }
+

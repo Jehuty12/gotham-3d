@@ -38,6 +38,16 @@ export class Minimap {
       ctx.fillStyle='#efd582';
       for(const point of this.vertical.discoveries.points)if(this.vertical.discoveries.visited.has(point.id)){ctx.beginPath();ctx.arc(point.x,point.z,4,0,Math.PI*2);ctx.fill();}
       const game=this.vertical.gameplay;
+      const vehicles=game?.vehicles;
+      if(vehicles&&!city.collisionWorld.domain){
+        ctx.font='bold 11px sans-serif';ctx.fillStyle='#97dbbc';
+        for(const garage of vehicles.garages)ctx.fillText('G',garage.position.x,garage.position.z);
+        const car=vehicles.vehicle;ctx.save();ctx.translate(car.position.x,car.position.z);ctx.rotate(-car.rotation);ctx.fillStyle='#c4f5eb';ctx.fillRect(-2,-4,4,8);ctx.restore();
+        if(vehicles.target.active){ctx.fillStyle='#f1c86d';ctx.fillText('T',vehicles.target.position.x,vehicles.target.position.z);}
+        const mission=game.vehicleMissions?.active;
+        if(mission&&mission.type!=='evade'){ctx.strokeStyle='#ebce77';ctx.beginPath();ctx.arc(mission.destination.x,mission.destination.z,6,0,Math.PI*2);ctx.stroke();}
+        ctx.fillStyle='#da7898';for(const unit of vehicles.police)if(unit.active&&unit.position.distanceTo(car.position)<95)ctx.fillText('P',unit.position.x,unit.position.z);
+      }
       if(game?.mode==='VIGILANTE') {
         ctx.fillStyle='#e8aa69';
         for(const event of game.crimes.events)if(event.resolvedAt===null&&event.position.distanceTo(camera.position)<170)ctx.fillText('!',event.position.x,event.position.z);

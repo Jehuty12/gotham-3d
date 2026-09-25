@@ -1,4 +1,5 @@
 import { seededRandom, deriveSeed } from '../utils/procedural.js';
+import { VehicleAudio } from '../vehicles/VehicleAudio.js';
 
 export const AUDIO_CATEGORIES = Object.freeze(['rain', 'traffic', 'sirens', 'metro', 'wind', 'industrial']);
 
@@ -42,6 +43,12 @@ export class AudioManager {
   }
   setVolume(value) { this.volume = Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0)); this.applyVolume(); }
   setActive(active) { this.active = Boolean(active); this.applyVolume(); }
+  setVehicle(state) {
+    this.vehicleState=state;
+    if(this.context?.state!=='running')return;
+    if(!this.vehicleAudio&&state.driving)this.vehicleAudio=new VehicleAudio(this.context,this.master);
+    this.vehicleAudio?.update(state);
+  }
   applyVolume() { if (this.master) this.master.gain.setTargetAtTime(this.active ? this.volume : 0, this.context.currentTime, 0.1); }
   registerBuffer(category, buffer) {
     if (!AUDIO_CATEGORIES.includes(category)) throw new RangeError('Unknown audio category');
@@ -55,7 +62,7 @@ export class AudioManager {
   update(time, { rain, traffic, district, trainDistance, siren }) {
     if (this.context?.state !== 'running') return;
     const levels = { rain: rain * 0.26, wind: 0.12, traffic: traffic * 0.18, industrial: district === 'industrial' ? 0.24 : 0.015,
-      metro: Math.max(0, 1 - trainDistance / 95) * 0.018, sirens: siren ? 0.009 : 0 };
+      metro: Math.max(0, 1 - trainDistance / 95) * 0.018, sirens: this.vehicleState?.siren?0.018:siren ? 0.009 : 0 };
     if(this.environment==='underground') {levels.metro=.025;levels.rain=0;levels.traffic=.015;levels.wind=.015;levels.industrial=.12;}
     else if(this.environment==='interior') {levels.rain*=.08;levels.traffic*=.15;levels.wind*=.1;}
     for (const name of AUDIO_CATEGORIES) this.channels.get(name).gain.setTargetAtTime(levels[name], this.context.currentTime, 0.3);
@@ -64,6 +71,7 @@ export class AudioManager {
     this.applyVolume();
   }
   dispose() {
+    this.vehicleAudio?.dispose();
     for (const { source, filter } of this.sources) { source.stop(); source.disconnect(); filter?.disconnect(); }
     this.sources.length = 0;
     if (this.context && this.context.state !== 'closed') this.context.close().catch(() => {});

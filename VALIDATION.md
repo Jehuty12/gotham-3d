@@ -1,142 +1,180 @@
-# Validation — Vigilante Gameplay V5
+# Validation — Vehicles & Pursuit V6
 
 ## Résultats
 
-- **77 tests Node réussis** : les 53 tests V2/V3/V4 conservés et 24 nouveaux tests V5. Aucun test ignoré.
-- `npm run build` : succès, **78 modules**, aucune erreur ni avertissement. Application 135,63 kB (44,64 kB gzip), cœur Three.js 217,10 kB, renderer 352,33 kB, CSS 9,77 kB.
-- Chrome développement et production : contrôles automatiques réussis, **zéro erreur et zéro avertissement** dans les rapports finaux.
-- Seed 1989, quatre quartiers, 64 chunks, 210 bâtiments, trois landmarks conservés. 53 toits accessibles, huit intérieurs, 25 escaliers de secours et deux escaliers de station, quatre zones souterraines.
-- Trafic, pluie/vapeur, piétons, métro, portes, ascenseurs, échelles, découvertes, mini-carte et profils conservés.
-- Aucune dépendance ajoutée et aucun asset téléchargé. Le gameplay utilise les géométries et matériaux partagés existants.
+- **102 tests Node réussis**, aucun ignoré : les 77 tests V2/V3/V4/V5 conservés et 25 tests V6.
+- `npm run build` réussi : **90 modules**, aucune erreur ni avertissement. Application **166,54 kB / 54,38 kB gzip**, cœur Three.js 218,54 kB, renderer 352,31 kB, CSS 10,13 kB.
+- Contrôles Chrome développement et production réussis, zéro erreur console et zéro avertissement. Les rapports JSON contiennent la date et les détails de chaque exécution finale.
+- Seed **1989**, **64 chunks**, quatre quartiers, 210 bâtiments et trois landmarks conservés. Les 53 toits, huit intérieurs, 27 escaliers et quatre zones souterraines restent disponibles.
+- Exploration/Vigilante, grappin, planage, momentum, crimes, missions à pied, scanner, IA, combat, santé/réapparition, métro, météo, trafic, découvertes, mini-carte et profils restent présents.
+- Aucun moteur physique, bibliothèque ou asset externe ajouté.
 
-## Mesures
+## Mesures et protocole
 
-Mesures du 25 septembre 2026, Chrome headless 154 sous Windows, **1440 × 900, DPR 1**, GPU `ANGLE / Intel(R) Graphics (0x00007D45) / Direct3D11`.
+Chrome headless 154 sous Windows, **1440 × 900, DPR 1**, GPU `ANGLE / Intel(R) Graphics (0x00007D45) / Direct3D11`. Mesures du 25 septembre 2026. Chaque fenêtre dure environ six secondes après une chauffe. La souris est capturée : les systèmes gameplay simulent réellement. Après une déconnexion de DevTools pendant une exécution intermédiaire, le navigateur de test a été relancé ; le script rejette désormais explicitement les commandes déconnectées ou expirées. La dernière exécution de production utilise les options `--disable-extensions` et `--disable-features=BackForwardCache` dans le profil isolé.
 
-Chaque profil reçoit 1,5 seconde de chauffe puis environ six secondes de mesure. Le mode **VIGILANTE est actif avec Pointer Lock**, joueur au point de départ, regard vers l’est (yaw −1,5 rad), météo, trafic, piétons et IA actifs. La vue diffère du benchmark V4 ; les nombres de primitives ne sont donc pas directement comparables à ceux de V4.
+Deux scénarios sont mesurés séparément :
 
-| Profil | FPS production | Draw calls moyens | Triangles/frame, environ | CPU IA ms/tick | IA complexes mesurées |
+1. **À pied, Vigilante** : même point de départ et même orientation vers l’est que le benchmark V5. Les ennemis proches restent actifs (3/8/18 IA complexes selon le profil).
+2. **Au volant, poursuite active** : véhicule à l’arrêt dans le garage initial, caméra CHASE vers le nord, météo et trafic actifs, mission « Semer la poursuite ». Deux/trois/quatre voitures de police simulent réellement. La logique des ennemis à pied est suspendue lorsque le joueur conduit. Ce scénario mesure une vue et une charge différentes de celles du benchmark à pied.
+
+Les résultats exacts sont dans [benchmark-development.json](artifacts/benchmark-development.json) et [benchmark-production.json](artifacts/benchmark-production.json). `benchmark` contient la série à pied ; `drivingBenchmark` contient la série conduite/poursuite.
+
+Résultats finaux en production, **au volant avec poursuite active** :
+
+| Profil | FPS | Draw calls moyens | Triangles/frame | CPU véhicules ms/frame | Police active |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| LOW | 60,0 | 307 | 190 315 | 0,027 | 3 |
-| MEDIUM | 60,0 | 410 | 279 907 | 0,051 | 8 |
-| HIGH | 60,0 | 414 | 285 239 | 0,051 | 18 |
+| LOW | 60,0 | 318 | 271 078 | 0,343 | 2 |
+| MEDIUM | 60,0 | 569 | 489 852 | 0,303 | 3 |
+| HIGH | 60,0 | 571 | 495 184 | 0,295 | 4 |
 
-Le développement est également proche de 60 FPS dans les trois profils. Les résultats précis sont dans les rapports [développement](artifacts/benchmark-development.json) et [production](artifacts/benchmark-production.json).
+Résultats finaux en production, **à pied en Vigilante** :
 
-Le coût CPU IA est la moyenne échantillonnée du temps lissé de `EnemyManager.update`, par **tick de 30 Hz**, et non le coût total du gameplay ou d’une frame. Les compteurs GPU incluent les passes de post-traitement ; les triangles soumis ne sont pas des triangles uniques après occlusion. La limite observée de requestAnimationFrame est de 60 Hz. Ces mesures courtes ne garantissent pas 50/60 FPS dans tous les quartiers, en combat dense, à haute résolution ou sur d’autres appareils.
+| Profil | FPS | Draw calls moyens | Triangles/frame, environ | CPU IA ms/tick | IA complexe |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| LOW | 60,0 | 309 | 190 484 | 0,032 | 3 |
+| MEDIUM | 60,0 | 412 | 280 090 | 0,039 | 8 |
+| HIGH | 60,0 | 416 | 285 442 | 0,036 | 18 |
 
-Captures : [scène et F3 production](artifacts/vertical-city-production-debug.png), [HUD gameplay](artifacts/vigilante-production-gameplay.png), [intérieur](artifacts/vertical-city-interior.png), [toit](artifacts/vertical-city-rooftop.png), [souterrain](artifacts/vertical-city-underground.png). Les noms historiques `vertical-city-*` sont conservés par le script de régression.
+La dernière série développement mesure respectivement **56,3 / 56,1 / 56,3 FPS en conduite**, avec **0,373 / 0,318 / 0,327 ms/frame** pour les véhicules ; à pied environ 56,3 FPS. Des exécutions précédentes atteignaient 60 FPS. Les draw calls et triangles de conduite sont les mêmes qu’en production. La variation observée n’est pas attribuée à une cause matérielle précise sans profilage supplémentaire.
 
-## Tests Node
+Le compteur **CPU véhicules** mesure le temps JavaScript passé par frame dans la physique/gestion du véhicule, les ticks de poursuite et mission automobile, ainsi que la préparation du rendu/HUD V6. Il est lissé puis échantillonné pendant la fenêtre. **CPU IA** reste le temps de `EnemyManager.update` par tick de 30 Hz. Ces mesures n’incluent pas tout le coût du moteur, de l’audio natif ou du GPU. Les draw calls et triangles incluent le post-traitement.
 
-Les **53 tests historiques** sont inchangés : génération indépendante par chunk, seeds, quartiers, monuments, rues et collisions, ZQSD/WASD, sprint, fenêtres, matériaux partagés, pluie/vapeur, circulation/feux, piétons, métro, audio, physique verticale, saut, plafond, accroupissement, franchissement, portes, ascenseurs, intérieurs, échelles, souterrains, découvertes et navigation des deux quais.
+Il s’agit de fenêtres courtes, plafonnées autour de 60 Hz et sensibles à la charge de la machine. Elles ne garantissent pas 50/60 FPS sur tous les appareils ou pendant de longs trajets. Le benchmark conduite est stationnaire avec poursuite simulée ; ce n’est pas un parcours automobile chronométré à travers toute la carte.
 
-Les **24 tests V5** de `tests/gameplay.test.js` couvrent :
+| Profil | Trafic actif attendu | Police max | Véhicule joueur | Cible éventuelle | Total max |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| LOW | 10 | 2 | 1 | 1 | 14 |
+| MEDIUM | 20 | 3 | 1 | 1 | 25 |
+| HIGH | 40 | 4 | 1 | 1 | 46 |
 
-1. Sélection des points de grappin marqués et limite de portée.
-2. Traction et élan après lâcher identiques à 30/60/120 FPS.
-3. Occlusion de cible et obstacle apparu pendant la traction.
-4. Annulation, vitesse bornée et recharge du grappin.
-5. Descente ralentie, avance et sortie du planage.
-6. Planage interdit au sol, en intérieur et sur échelle.
-7. Trajectoire planée indépendante de la fréquence de rendu.
-8. Limites horizontales et verticales du momentum.
-9. Esquive : durée, distance, recharge et mur.
-10. Sites criminels déterministes, chunks et approches alternatives.
-11. Distance de spawn, budgets et recyclage des événements terminés.
-12. Activation exclusive et objectifs rejoindre/toit/inspection/intérieur.
-13. Observation soutenue et neutralisation d’un groupe réel.
-14. Échec des missions après expiration ou retrait de l’événement.
-15. Vision : distance, angle, hauteur, mur et pluie.
-16. États ennemis : suspicion, alerte, recherche, retour, désactivation.
-17. Bruits bornés, expiration, distance et effet limité de la pluie.
-18. Audition provoquant une suspicion sans alerte immédiate.
-19. Neutralisation : distance courte, approche arrière, ennemi non alerté.
-20. Combat : trois impacts, cooldown et portée.
-21. Santé bornée, copie du checkpoint et réapparition unique après délai.
-22. Scanner : durée, portée, recharge et désactivation.
-23. Répartition de la perception, deux rayons maximum par tick et budget IA.
-24. Passage Exploration/Vigilante, nettoyage du gameplay et maintien des chunks.
+La mission de fuite mesurée n’utilise pas de cible : totaux **13/24/45 véhicules**. Les patrouilles ordinaires de catégorie POLICE font déjà partie du trafic ; seules les unités de poursuite s’ajoutent. Les plafonds restent valables si une mission cible est active simultanément avec une poursuite déclenchée par un événement.
 
-## Contrôle Chrome automatisé
+## Tests unitaires
 
-`scripts/browser-check.mjs` utilise le protocole DevTools natif, sans bibliothèque supplémentaire. Il conserve les contrôles précédents et appelle `scripts/gameplay-browser-check.mjs`.
+Les **77 tests historiques ne sont pas modifiés**. Ils couvrent génération seedée, indépendance des chunks, architecture urbaine, collisions, ZQSD/WASD, sprint, météo, circulation et feux, train, piétons, audio, physique verticale, portes, ascenseurs, échelles, souterrains, découvertes, grappin/planage, IA et gameplay V5.
 
-**Dans les deux builds** : chargement, seed/chunks/bâtiments/landmarks, Pointer Lock, W/Z, sprint, rotation souris, saut, accroupissement, pause, mini-carte, qualité, pluie et intensité, volume/audio, train, trafic, F3, changement Exploration/Vigilante, absence d’ennemis/crimes en Exploration, apparition et activation d’une mission, scanner et HUD. Les logs JavaScript/WebGL et avertissements sont collectés.
+Les 25 tests de `tests/vehicles.test.js` couvrent :
 
-**En développement** : quatre quartiers, collision de façade, ouverture/entrée/sortie d’intérieur, ascenseur jusqu’au toit municipal, découverte, échelle, souterrain et masquage des extérieurs. Le script instrumente temporairement le module chargé pour préparer des positions de test ; les actions suivantes utilisent les véritables commandes et systèmes. V5 ajoute un ennemi du pool placé pour vérifier E, la neutralisation, des dégâts réellement infligés par l’IA, puis un dégât de fixture pour déclencher zéro PV/réapparition. Un point de grappin de la ville permet de vérifier G, annulation Espace, impulsion, planage et relâchement. Aucun accès de test n’est livré dans le produit.
+1. Accélération progressive et résultat identique à 30/60/120 FPS.
+2. Freinage avant marche arrière et vitesse de recul bornée.
+3. Friction et frein à main.
+4. Direction liée au mouvement et inversion en marche arrière.
+5. Vitesse maximale, boost et recharge.
+6. Correspondance WASD/ZQSD.
+7. Épuisement du boost sans clignotement permanent tant que Maj reste maintenu.
+8. Collision balayée contre un mur fin, absence de traversée et dégâts limités.
+9. Collision avec un autre véhicule via l’index dynamique.
+10. Gravité et contact stable au sol.
+11. Désactivation à zéro intégrité et réparation progressive.
+12. Garages et spawn principal déterministes, seed et 64 chunks conservés.
+13. Entrée/sortie, restauration des commandes et refus si vitesse/espace incompatibles.
+14. Réparation en garage, interruption et sortie d’un véhicule désactivé.
+15. Refus de sortie à travers une barrière fine, même si la destination est libre.
+16. Modes caméra, obstacle sur le bras de caméra et restauration du FOV.
+17. Détection policière limitée par distance et murs.
+18. États PURSUIT/SEARCHING/LOST/NONE et absence de déclenchement en Exploration.
+19. Budgets par profil et au plus un rayon par échantillon de détection.
+20. Routes de mission déterministes et axes routiers connectés.
+21. Véhicule cible reproductible à 30/60/120 FPS et trajet hors bâtiments.
+22. Recalcul de route policier sans demi-tours répétés entre intersections.
+23. Six types de missions, conditions de réussite et expiration.
+24. Trafic arrêté devant le véhicule pilotable et quatre catégories disponibles.
+25. Audio procédural borné et libération des sources.
 
-**En production** : en plus des contrôles communs, parcours depuis le départ jusqu’à la porte municipale, ouverture, entrée, demi-tour et sortie exclusivement au clavier/souris et par l’interface publique. Les fixtures internes de grappin/ennemi/ascenseur ne sont pas rejouées dans le bundle compilé ; leurs cas sont couverts en développement et par Node. Les tests ne prétendent pas vérifier humainement le confort du vol ou le combat.
+## Contrôles Chrome
 
-Commandes utilisées, dans des terminaux séparés pour les serveurs :
+Le script utilise le protocole Chrome DevTools natif. Aucun framework d’automatisation supplémentaire n’est installé.
+
+**Conservé dans les deux builds** : chargement, seed, quartiers/chunks, bâtiments/landmarks, Pointer Lock, W/Z, sprint, souris, saut, accroupissement, pause, mini-carte, pluie/intensité, son/volume, train, trafic, profils et F3. Passage Exploration/Vigilante, mission V5, scanner et HUD.
+
+**Conservé en développement** : changements de quartier, collision de façade, portes, entrée/sortie d’intérieur, ascenseur vers le toit municipal, découverte, échelle, souterrain, neutralisation, dégâts, réapparition, grappin, impulsion et planage. Des fixtures placent les objets réels avant les commandes ; aucune variable de test n’est livrée dans le produit.
+
+**Conservé en production** : trajet à pied depuis le départ jusqu’à la porte municipale, ouverture, entrée, demi-tour et sortie par clavier/souris et interface publique. Les fixtures internes d’ascenseur/grappin ne sont pas rejouées dans le bundle compilé.
+
+**V6 dans les deux builds** : mode Vigilante, entrée dans NIGHTRIDER, accélération, boost, direction, frein à main, caméras CLOSE/HOOD/CHASE, HUD, sélection de la mission de fuite, état PURSUIT et unités, sortie puis retour Exploration sans police hostile. En production, le script **rejoint réellement le garage à pied depuis le départ**, en utilisant uniquement les commandes et diagnostics publics. Le benchmark répète aussi l’entrée au garage et le déclenchement de poursuite dans les trois profils.
+
+**V6 supplémentaire en développement** : collision contrôlée contre une façade et perte d’intégrité. Le joueur sort réellement avec E ; une fixture le déplace loin des policiers, puis le test attend les délais normaux et vérifie SEARCHING → LOST → NONE. La conduite pour semer la police sur un parcours complet reste un contrôle manuel.
+
+Captures inspectées : [poursuite en développement](artifacts/vehicles-development-pursuit.png), [caméra capot](artifacts/vehicles-development-hood.png). Captures finales : [production CHASE](artifacts/vehicles-production-pursuit.png), [production HOOD](artifacts/vehicles-production-hood.png), [diagnostics production](artifacts/vehicles-production-debug.png). Les captures V4/V5 restent générées par les contrôles historiques.
+
+## Reproduire
+
+Dans des terminaux séparés pour les serveurs :
 
 ```powershell
 npm test
 npm run build
 npm run dev -- --host 127.0.0.1 --port 5177 --strictPort
 npm run preview -- --host 127.0.0.1 --port 4177 --strictPort
+```
+
+Chrome avec un profil isolé, puis un contrôle à la fois :
+
+```powershell
+Start-Process -FilePath 'C:/Program Files/Google/Chrome/Application/chrome.exe' -WindowStyle Hidden -ArgumentList '--headless=new','--remote-debugging-port=9222','--user-data-dir=C:/Users/Maxime/Documents/Town/gotham-3d/node_modules/.cache/vehicles-browser','--no-first-run','about:blank'
 npm run test:browser -- http://127.0.0.1:5177/
 npm run test:browser -- http://127.0.0.1:4177/ --production
 ```
 
-Chrome doit utiliser un profil isolé et `--remote-debugging-port=9222`, selon la commande du README. Ne pas employer le profil Chrome personnel.
-
 ## Procédure manuelle complémentaire
 
-Cette procédure reste à effectuer par un joueur ; les captures inspectées et l’automatisation ne remplacent pas cette session.
+Ces contrôles de confort et de durée ne sont pas déclarés effectués par un joueur humain.
 
-1. Ouvrir la production, choisir EXPLORATION : marcher, sprinter, sauter, se baisser, changer de quartier. Vérifier pluie, train, circulation, mini-carte et F3. Visiter portes, ascenseur, échelle, toits et souterrain.
-2. Échap, choisir VIGILANTE : M accepte l’objectif affiché. Suivre distance et symbole de mini-carte. Les ennemis ne doivent apparaître sur la carte que pendant le scanner V ; attendre son expiration et sa recharge.
-3. Viser une corniche ou un toit proche jusqu’au marqueur vert / `[G] Point d’accroche`. G tire progressivement ; G annule. Refaire puis maintenir Espace : impulsion, chute et planage ; relâcher pour tomber normalement. Essayer contre un mur, hors portée, depuis une échelle et à l’intérieur : aucun passage à travers les volumes solides.
-4. Contourner un garde derrière un obstacle, s’accroupir et approcher par derrière jusqu’à `[E] Neutraliser`. Vérifier que E échoue loin de lui ou lorsqu’il est alerté. S’exposer à son regard, se cacher et observer suspicion/alerte/recherche dans F3.
-5. Attaquer de près au clic gauche : trois impacts espacés, léger recul et réticule. Alt + direction esquive ; Maj reste le sprint. Tester l’esquive contre une façade.
-6. Se laisser toucher : PV diminuent, puis écran assombri et retour au point sûr à 100 PV. Atteindre un checkpoint de toit hors combat, puis vérifier que la prochaine réapparition utilise ce point.
-7. Terminer plusieurs objectifs : neutraliser, inspecter avec E, regarder la cible pendant deux secondes, rejoindre un toit ou entrer dans l’intérieur indiqué. Vérifier la notification, l’expiration et le recyclage. Changer de profil pendant une mission.
-8. Repasser en EXPLORATION : aucun ennemi, marqueur de crime ou mission actif ; la ville et les découvertes restent présentes.
-9. Faire une promenade longue dans chaque profil, notamment toits très hauts, docks et rues denses. Vérifier confort de visée, son au casque et absence d’accumulation mémoire. Les performances sur d’autres GPU restent à mesurer.
+1. En Exploration, rejoindre le garage **G**, près de `(−7, 32)`. Entrer avec E, conduire sans mission et vérifier l’absence de poursuite hostile.
+2. Faire le tour des quatre quartiers. Tester ZQSD et WASD, marche arrière, manœuvres lentes, frein à main, freinage depuis le boost, chaussée mouillée et chaque caméra. Ne pas maintenir la souris pour tourner : la caméra est automatique en conduite.
+3. Vérifier les collisions avec façades, colonnes, feux/poteaux, garages, barrières et voitures. Essayer E en roulant, près d’un mur, entre deux obstacles et après immobilisation : ne jamais apparaître à travers un mur.
+4. Entrer dans un garage endommagé, s’arrêter et appuyer sur E : intégrité progressive. Accélérer pour interrompre, ou E pour sortir. Tester zéro intégrité : arrêt, message VEHICLE DISABLED, aucune explosion, sortie possible.
+5. En Vigilante, choisir « Semer la poursuite » dans Réglages, puis M au volant. Vérifier les gyrophares/sirènes, la carte et les états F3. Tourner dans plusieurs rues, rompre la ligne de vue et s’éloigner jusqu’à SEARCHING, LOST puis NONE. Se montrer pendant SEARCHING pour vérifier la reprise.
+6. Jouer les six missions via le sélecteur : suivre/intercepter/escorter utilisent une cible T ; les autres montrent une destination ou un objectif de fuite. Vérifier la réussite, le délai et l’échec sans mort complexe.
+7. Quitter le véhicule puis tester les commandes V5 : V scanner, G grappin, E interaction/neutralisation, planage, esquive, combat et santé. Visiter les intérieurs, souterrains, quais et ascenseurs pour vérifier la continuité de l’exploration.
+8. Changer LOW/MEDIUM/HIGH en cours de poursuite : budgets bornés, trafic vivant et pluie conservée. Repasser en Exploration : poursuite et missions automobiles nettoyées, véhicule toujours utilisable.
+9. Écouter moteur, frein, pneus, boost, choc et sirène au casque, vérifier volume/pause. Mesurer un parcours de plusieurs minutes sur d’autres GPU, résolutions et DPR ; surveiller mémoire, saccades et confort de caméra.
 
-## Fichiers créés pour V5
+## Fichiers créés pour V6 — 14
 
-- `src/player/GlideSystem.js`
-- `src/player/Momentum.js`
-- `src/player/PlayerTraversal.js`
-- `src/player/PlayerHealth.js`
-- `src/gameplay/CrimeSystem.js`
-- `src/gameplay/MissionManager.js`
-- `src/gameplay/NoiseSystem.js`
-- `src/gameplay/CombatSystem.js`
-- `src/gameplay/ScannerSystem.js`
-- `src/gameplay/WorldMarkers.js`
-- `src/gameplay/GameDirector.js`
-- `src/ai/Enemy.js`
-- `src/ai/EnemyManager.js`
-- `src/ai/EnemyPerception.js`
-- `src/ui/MissionHUD.js`
-- `src/utils/spatialQueries.js`
-- `tests/gameplay.test.js`
-- `scripts/gameplay-browser-check.mjs`
-- Captures `artifacts/vigilante-*.png`.
+- `src/vehicles/Vehicle.js`
+- `src/vehicles/VehicleController.js`
+- `src/vehicles/VehiclePhysics.js`
+- `src/vehicles/VehicleManager.js`
+- `src/vehicles/VehicleCamera.js`
+- `src/vehicles/VehicleRenderer.js`
+- `src/vehicles/RoadVehicleAgent.js`
+- `src/vehicles/Garage.js`
+- `src/vehicles/VehicleAudio.js`
+- `src/gameplay/PursuitSystem.js`
+- `src/gameplay/VehicleMissionManager.js`
+- `src/ui/VehicleHUD.js`
+- `tests/vehicles.test.js`
+- `scripts/vehicle-browser-check.mjs`
 
-## Fichiers modifiés pour V5
+Captures ajoutées séparément : `artifacts/vehicles-development-hood.png`, `vehicles-development-pursuit.png`, `vehicles-development-debug.png` et équivalents `production`.
 
-- `src/player/GrappleSystem.js` : visée, traction à pas fixe, collisions et élan.
-- `src/player/PlayerPhysics.js` : coordination du déplacement spécial et gel à zéro PV.
-- `src/player/PlayerController.js` : commandes supplémentaires.
-- `src/main.js` : assemblage et appel de GameDirector.
-- `src/systems/LivingCity.js` : diagnostics et nettoyage gameplay.
-- `src/ui/Interface.js` : identité et sélection des deux modes.
-- `src/ui/Minimap.js` : événements, objectif, zone, altitude et ennemis scannés.
-- `src/ui/DebugPanel.js` : statistiques V5 en plus des statistiques existantes.
-- `src/style.css` : mode, HUD, dégâts et réticule.
-- `index.html`, `package.json`, `package-lock.json` : identité/version V5.
-- `scripts/browser-check.mjs` : orchestration V5 et mesures IA en Vigilante.
-- `README.md`, `VALIDATION.md` : fonctionnement, architecture, commandes et résultats.
-- `artifacts/benchmark-development.json`, `artifacts/benchmark-production.json`, captures de régression `artifacts/vertical-city-*.png`.
+## Fichiers modifiés pour V6 — 17
 
-## Optimisations et limites
+- `src/main.js` : alternance des contrôleurs, mise à jour automobile.
+- `src/gameplay/GameDirector.js` : coordination, actions, modes, poursuites, missions et métriques.
+- `src/systems/TrafficSystem.js` : catégories, obstacles véhicules et simulation distante.
+- `src/systems/PerformanceManager.js` : budgets policiers, distance et phare.
+- `src/systems/AudioManager.js` : couche automobile paresseuse, sirènes et nettoyage.
+- `src/systems/LivingCity.js` : position de référence en conduite et statistiques trafic.
+- `src/ui/Interface.js` : identité V6 et sélection d’objectif automobile.
+- `src/ui/MissionHUD.js` : masquage au volant.
+- `src/ui/Minimap.js` : voiture, garage, cible, destination et poursuite proche.
+- `src/ui/DebugPanel.js` : statistiques supplémentaires F3.
+- `src/style.css` : HUD automobile et réglages.
+- `index.html`, `package.json`, `package-lock.json` : version et identité V6.
+- `scripts/browser-check.mjs` : contrôles automobiles et deux séries de mesures.
+- `README.md`, `VALIDATION.md` : architecture, commandes et résultats.
 
-Physique à pas fixe, index local d’AABB partagé, collisions balayées du grappin, IA à 30 Hz avec distance/angle de caméra, perception répartie à deux échantillons par tick, au plus une ligne de vue d’attaque IA par tick, pools bornés, rendu des ennemis en deux lots instanciés, marqueurs instanciés sans nouvelles lumières, matériaux/géométries réutilisés. Les optimisations V3/V4 restent actives : météo locale, trafic/piétons recyclés, culling des chunks, intérieurs différés et cache borné à deux pièces.
+Rapports régénérés en plus : `artifacts/benchmark-development.json`, `artifacts/benchmark-production.json` et captures historiques de régression. Aucun fichier de test historique supprimé ou modifié.
 
-L’IA est un prototype local : déplacement au sol avec évitement des solides, sans navmesh ou recherche de chemin globale. Les ennemis éloignés sont suspendus ; ils ne poursuivent pas dans les intérieurs, échelles ou ascenseurs. Certains événements proposent plusieurs accès existants, sans génération de conduits nouveaux. Vols/cambriolages restent des situations abstraites représentées par des silhouettes et objectifs.
+## Optimisations et limites connues
 
-Les intérieurs gardent la transition explicite V4 et le masquage du chunk de façade ; pas de vue continue par les portes. Pas d’embarquement métro, de nage, de dégâts de chute, de collisions solides avec les voitures/piétons, de sauvegarde disque ou de streaming réel : 64 chunks restent en mémoire. Les détails fins du décor ne sont pas tous solides. Les marqueurs respectent le test de profondeur ; le scanner n’est pas une vision à travers toutes les façades. Les collisions locales sont conservatrices et la validation ergonomique prolongée du grappin/planage reste manuelle.
+Physique joueur automobile à 120 Hz, agents routiers et poursuite à 30 Hz, trafic éloigné à 10 Hz. Trois cercles par châssis, balayage de 25 cm, index spatial des solides par cellules de 64 m, grille dynamique de 16 m pour les voitures. Détection policière limitée à quatre échantillons/s au total ; bras de caméra limité à cinq requêtes locales/frame lorsqu’il est obstrué. Pools fixes, deux lots instanciés V6, ressources partagées, un phare sans ombres au maximum, HUD limité à 10 Hz. Toutes les optimisations antérieures de météo, culling, intérieurs et IA restent présentes.
+
+La physique est arcade : contact simple au terrain, pas de suspensions, pneus individuels ou rampes automobiles complexes. Les volumes de collision sont conservateurs ; les accessoires très fins ne sont pas tous solides. Le garage ouvert évite une transition véhicule/intérieur : la voiture ne pénètre pas dans les domaines V4 fermés ou souterrains.
+
+Les policiers suivent les routes et attendent les obstacles ; pas d’encerclement, arrestation, combat automobile ou dommages infligés au conducteur. L’IA ennemie à pied est suspendue pour le conducteur. Le trafic ralentit/s’arrête, sans dépassement ; plusieurs voitures peuvent former une file prolongée. La police ordinaire du trafic garde ses effets d’ambiance, distincts des unités de poursuite.
+
+Une voiture désactivée loin d’un garage reste sur place jusqu’au rechargement : pas d’appel, remorquage ou sauvegarde dans V6. La voiture ne transporte pas le joueur dans le métro. Les 64 chunks restent en mémoire, sans streaming réel. Les mesures de performance stationnaires ne remplacent pas une validation longue de la conduite à travers toute la carte.

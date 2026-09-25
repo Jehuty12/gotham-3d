@@ -3,7 +3,7 @@ export class MissionHUD {
   update(dt,director) {
     this.time+=dt;if(this.time<.1)return;this.time=0;
     const {mode,missions,camera,health,scanner}=director;
-    this.element.hidden=mode!=='VIGILANTE';this.shade.style.opacity=mode==='VIGILANTE'?(health.dead?.9:health.hurt>0?.22:0):0;
+    this.element.hidden=mode!=='VIGILANTE'||Boolean(director.vehicles?.driving);this.shade.style.opacity=mode==='VIGILANTE'?(health.dead?.9:health.hurt>0?.22:0):0;
     document.querySelector('#reticle')?.classList.toggle('attack-hit',mode==='VIGILANTE'&&director.combat.feedback>0);
     if(mode!=='VIGILANTE')return;
     const m=missions.active??missions.offer(camera.position),distance=m?Math.round(camera.position.distanceTo(m.position)):0;

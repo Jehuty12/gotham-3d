@@ -93,7 +93,8 @@ function start() {
     const rawDelta = (now - previous) / 1000; previous = now;
     const delta = Math.min(rawDelta, 0.05);
     city.collisionWorld.raycasts=0;city.collisionWorld.extraTests=0;
-    player.update(delta);
+    living.gameplay.vehicles?.update(delta);
+    if(!living.gameplay.vehicles?.driving)player.update(delta);
     living.update(Math.min(rawDelta, 0.1)); living.vertical.update(delta); living.gameplay.update(delta); mapElapsed += delta;
     if (mapElapsed > 0.1) { minimap.draw(); mapElapsed = 0; }
     renderer.info.reset();

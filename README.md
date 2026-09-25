@@ -1,8 +1,10 @@
-# Vigilante Gameplay — V5
+# Vehicles & Pursuit — V6
 
 Vertical City conserve **quatre quartiers, 64 chunks, CITY_SEED = 1989, 210 bâtiments et trois landmarks**, ainsi que tous les systèmes vivants de V3. V4 ajoute la navigation verticale, des intérieurs et un réseau souterrain limité.
 
 V5 ajoute un mode d’action/infiltration original, **VIGILANTE**, tout en conservant le mode **EXPLORATION** et les fonctionnalités V2/V3/V4. Choisir le mode dans le menu avant de cliquer sur **Explorer la ville** ; Échap permet de revenir au menu et de changer de mode. Exploration désactive crimes, ennemis, combat, scanner et déplacements spéciaux V5. Changer de mode réinitialise les missions et ennemis, sans régénérer la ville.
+
+V6 ajoute **NIGHTRIDER**, une voiture sportive originale en primitives, des garages, une conduite arcade, six missions de conduite et des poursuites limitées. Le véhicule est disponible en Exploration comme en Vigilante. Exploration ne déclenche aucune poursuite hostile ni mission obligatoire. Tous les systèmes V5 restent disponibles à pied en Vigilante.
 
 Vite, JavaScript, Three.js et modules officiels `three/addons`. Audio via Web Audio natif. Aucun modèle externe, bibliothèque de physique ou téléchargement d’assets. Le contrôleur FPS et les collisions sont étendus à la verticale.
 
@@ -47,7 +49,76 @@ La production est dans `dist/`, servie localement par défaut sur http://localho
 
 La ville continue de s’animer derrière le menu, comme une scène d’accueil vivante. Le panneau F3 indique FPS, draw calls, position, quartier, chunk, bâtiments dans le champ, voitures actives, piétons et particules. Les draw calls incluent le post-traitement. Le nombre de bâtiments est une estimation par boîtes englobantes/frustum, sans calcul d’occlusion.
 
-## Gameplay V5
+## Conduite V6
+
+Le garage principal se trouve près du départ, dans Industrial District : **X −7, Z 32**, sous un petit auvent éclairé. La mini-carte le marque **G**, avec la voiture en rectangle clair. Depuis le départ `(0, 1.75, 54)`, marcher vers le nord et légèrement à gauche. Approcher le côté du véhicule jusqu’à **[E] Entrer · NIGHTRIDER**. Deux autres zones de réparation sont placées en **(−71, 96)** et **(−7, 160)**. Les positions et routes initiales sont reproductibles avec la seed 1989.
+
+| En conduite | Action |
+| --- | --- |
+| Z / W / flèche haut | Accélérer |
+| S / flèche bas | Freiner, puis reculer |
+| Q / A / flèche gauche, D / flèche droite | Tourner |
+| Espace | Frein à main, légère dérive |
+| Maj maintenu | Boost |
+| V | Caméra CHASE → CLOSE → HOOD |
+| E | Sortir à faible vitesse, si un côté est dégagé ; réparer dans un garage |
+| M | Accepter une mission de conduite, uniquement en Vigilante |
+| Échap | Pause et réglages ; choisir le type de mission de conduite |
+
+Les commandes sont interprétées par `VehicleController` ; `PlayerController` reste consacré au personnage. En sortant, la caméra et la physique à pied sont restaurées. Une sortie demande moins de 1,2 m/s et un emplacement libre à côté. La caméra de conduite est pilotée automatiquement : la souris reprend son rôle normal à pied. V retrouve alors le scanner.
+
+### Physique, intégrité et garage
+
+Simulation à **120 Hz**, accélération progressive de 10 m/s², freinage de 22 m/s², friction, direction atténuée à grande vitesse, gravité et contact avec le sol. Vitesse maximale normale **27 m/s (97 km/h)** ; boost jusqu’à **32,94 m/s (119 km/h)**. La marche arrière est limitée à 8 m/s. Le boost augmente l’accélération de 45 %, consomme 24 points/s et récupère 12 points/s hors utilisation. Il modifie légèrement le FOV, le son et les surfaces lumineuses arrière. La pluie réduit faiblement l’adhérence.
+
+Les collisions utilisent trois cercles le long du châssis et les volumes AABB du monde, avec des déplacements balayés par intervalles de 25 cm maximum. Les gros poteaux et feux ont un index complémentaire ; les autres voitures utilisent une grille dynamique de 16 m. Pas de collision triangle par triangle, suspension, boîte de vitesses ou moteur physique externe. Une collision freine, provoque un faible rebond et un retour caméra discret. Un impact fort retire une quantité limitée d’intégrité. À zéro, **VEHICLE DISABLED**, aucun feu ou explosion : il reste possible de sortir.
+
+À l’arrêt dans un garage, E lance la réparation à 22 points/s. E de nouveau sort ; accélérer interrompt la réparation. Le garage est un auvent ouvert dans le monde extérieur, accessible directement à pied et en voiture, avec éclairage, signalétique et équipements. Il ne remplace aucun intérieur V4.
+
+### Trafic, poursuites et missions
+
+Les catégories **CIVILIAN, TAXI, POLICE, DELIVERY** partagent les lots du trafic. Les voitures détectent les véhicules pilotables/de mission/poursuite, ralentissent, puis s’arrêtent devant un obstacle. Leur évitement est conservateur : elles attendent un passage libre sans changement de voie ou contournement complexe. Les véhicules lointains passent à une simulation de 10 Hz, contre 30 Hz à proximité.
+
+En Vigilante, une poursuite peut être déclenchée par la mission « Semer la poursuite », l’approche d’un événement de vol surveillé ou une attaque réussie près d’une patrouille du trafic. Les unités suivent les axes existants et la dernière position connue. Détection à portée limitée, avec au plus **un raycast local toutes les 0,25 s**, réparti entre unités. Après trois secondes sans contact : **PURSUIT → SEARCHING**. Après dix secondes de recherche infructueuse : **LOST**, puis **NONE** trois secondes plus tard. Un nouveau contact pendant SEARCHING reprend PURSUIT. Aucun système permanent de criminalité ou d’arrestation.
+
+Six objectifs courts : rejoindre un point en voiture, suivre une cible huit secondes, semer une poursuite, rejoindre une destination en 75 secondes, intercepter en restant deux secondes à moins de neuf mètres, escorter une cible douze secondes. Les autres missions disposent de 150 secondes. Les cibles suivent une boucle déterministe sur les routes, sans combat automobile. Dans **Réglages → Mission de conduite**, choisir un objectif ou la séquence automatique, puis **M au volant**. Les missions à pied V5 restent gérées séparément. Les missions de conduite ne démarrent pas en Exploration.
+
+Le HUD de conduite affiche vitesse, boost, intégrité, poursuite, objectif et temps. Une mission de fuite demande de rompre le contact visuel, sans destination artificielle. La mini-carte ajoute voiture, cible `T`, garages `G`, destination et unités proches `P` ; elle ne révèle pas toute la police de la ville. F3 conserve les mesures antérieures et ajoute vitesse/accélération/direction, intégrité, boost, caméra, identifiant du véhicule, trafic simplifié, collisions, unités et dernière position connue, coûts CPU et nombre de colliders locaux.
+
+### Architecture et budgets V6
+
+```text
+src/vehicles/
+  Vehicle.js                 État et caractéristiques génériques
+  VehicleController.js       Traduction des commandes de conduite
+  VehiclePhysics.js          Physique fixe et collisions locales
+  VehicleManager.js          Entrée/sortie, garage, acteurs et intégration
+  VehicleCamera.js           CHASE / CLOSE / HOOD, obstacles et FOV
+  VehicleRenderer.js         Deux pools instanciés et un phare dynamique
+  RoadVehicleAgent.js        Routes et cibles à pas fixe de 30 Hz
+  Garage.js                  Placement seedé, volumes et décor par chunk
+  VehicleAudio.js            Six canaux procéduraux créés à la première conduite
+src/gameplay/
+  PursuitSystem.js            Détection, unités et états de poursuite
+  VehicleMissionManager.js    Six objectifs automobiles
+src/ui/VehicleHUD.js
+tests/vehicles.test.js
+scripts/vehicle-browser-check.mjs
+```
+
+`GameDirector` coordonne missions et poursuites ; `VehicleManager` possède un véhicule joueur, quatre slots de police et un slot cible. `TrafficSystem` conserve le trafic ordinaire. Les objets partagent géométries et matériaux ; corps et surfaces lumineuses des véhicules V6 tiennent dans deux lots `InstancedMesh`. Un seul `SpotLight` sans ombres équipe le véhicule joueur en MEDIUM/HIGH ; LOW conserve les phares emissive. Le trafic n’ajoute aucune lumière par voiture. Les garages sont rattachés aux chunks.
+
+| Profil | Trafic | Police hostile max | Distance trafic à 30 Hz | Phare dynamique joueur |
+| --- | ---: | ---: | ---: | ---: |
+| LOW | 10 | 2 | 80 m | 0 |
+| MEDIUM | 20 | 3 | 120 m | 1 |
+| HIGH | 40 | 4 | 175 m | 1 |
+
+Le véhicule joueur et une cible éventuelle s’ajoutent à ces budgets. Les poursuites ne créent jamais plus de quatre unités ; elles abandonnent à grande distance. Audio moteur, accélération, frein, pneus, boost et collision est généré localement et raccordé au volume général de `AudioManager`. Le canal sirènes existant sert également aux poursuites. Des buffers peuvent remplacer les sons procéduraux via `VehicleAudio.registerBuffer`.
+
+Limites : les poursuites suivent les rues sans tactique d’encerclement, les véhicules NPC attendent les obstacles, la voiture ne circule pas dans les domaines d’intérieur/souterrain. Pas de remorquage, d’appel à distance ou de sauvegarde : une voiture immobilisée loin d’un garage reste sur place jusqu’au rechargement. Les agents V5 ne combattent pas le conducteur à travers la carrosserie. Les essais ergonomiques et longs trajets sont décrits dans `VALIDATION.md`.
+
+## Gameplay V5 conservé
 
 **Déplacement.** Le grappin vise des points compatibles sur corniches, toits, stations, grues et monuments. Le raycast depuis la caméra sélectionne un point dans une sphère de tolérance, à **55 m maximum** (`GrappleSystem.maxDistance`) ; une croix verte indique une cible valide. La visibilité et le trajet du joueur sont vérifiés contre les volumes solides locaux. La traction accélère de 3 à 24 m/s, à pas fixe de 120 Hz. G/Espace annule et conserve une partie de l’élan ; recharge de 0,18 s. Maintenir Espace après le lâcher permet la transition impulsion → chute → planage. Le planage demande plus de 3 m sous les pieds et une vitesse verticale descendante ; il est interdit dans les intérieurs, souterrains, échelles et ascenseurs. Descente cible 2,8 m/s, vitesse horizontale cible 11 m/s et virage progressif. Les plafonds de momentum sont 24 m/s horizontal et −35/+18 m/s vertical. L’esquive dure 0,18 s à 17 m/s, avec recharge 0,85 s et collisions normales.
 
@@ -200,7 +271,7 @@ Les pièces des voitures partagent six lots dynamiques : carrosserie, vitrage, r
 
 `TrafficLights` commande les ampoules des feux V2 et les décisions des voitures. Cycle de 34 secondes : 12 s de vert, 3 s d’orange, 2 s de rouge commun, puis l’autre axe. Chaque intersection a un décalage stable dérivé de la seed. Les voitures attendent au rouge/orange avant l’intersection ; un véhicule déjà engagé termine son virage. Une réservation simple évite plusieurs virages simultanés au même carrefour.
 
-Quelques véhicules du pool sont de type `police`. À distance, des épisodes intermittents de neuf secondes produisent des gyrophares rouge/bleu. **Une seule lumière ponctuelle mobile** est réutilisée pour ces événements en MEDIUM/HIGH. Aucun gameplay policier. `VEHICLE_TYPES` sépare les caractéristiques des véhicules pour préparer taxis, bus et véhicules spéciaux ; les futurs grands gabarits devront aussi adapter les marges de circulation.
+Quelques véhicules du pool sont de type `police`. À distance, des épisodes intermittents de neuf secondes produisent des gyrophares rouge/bleu. **Une seule lumière ponctuelle mobile** est réutilisée pour ces événements en MEDIUM/HIGH. Ces patrouilles d’ambiance sont distinctes des unités de poursuite V6. `VEHICLE_TYPES` contient voitures civiles, police, taxis et livraisons ; les futurs grands gabarits comme les bus devront aussi adapter les marges de circulation.
 
 ### Métro aérien
 
@@ -302,13 +373,15 @@ artifacts/                     Rapports JSON et captures de validation
 
 Tous les chunks sont encore créés au démarrage. `City.createChunk` génère indépendamment, `attach`/`detach` contrôlent le groupe, `disposeInstances` libère ses buffers et `CityResources` possède les ressources partagées. Le masquage par distance n’est pas du streaming. Un futur chargeur devra coordonner collisions, éclairage, voies et populations lors des chargements/déchargements. Les décorations statiques nouvelles appartiennent aux groupes de chunks ; les pools animés ont leurs propriétaires séparés.
 
-Les collisions des acteurs d’ambiance restent une approximation 2D ; celles du joueur utilisent les volumes 3D locaux de V4. Les lampadaires et très petits accessoires sont décoratifs. Pas de nage, dégâts de chute, commandes tactiles, embarquement dans le métro ou gameplay policier. La pluie est masquée en intérieur et sous terre, mais pas individuellement sous chaque pont. Le grappin exige encore une validation ergonomique en jeu.
+Les collisions des acteurs d’ambiance restent une approximation 2D ; celles du joueur utilisent les volumes 3D locaux de V4. Les lampadaires principaux sont solides pour la conduite V6 ; les très petits accessoires restent décoratifs. Pas de nage, dégâts de chute, commandes tactiles ou embarquement dans le métro. La pluie est masquée en intérieur et sous terre, mais pas individuellement sous chaque pont. Le grappin exige encore une validation ergonomique en jeu.
 
 ## Validation et mesures
 
-`npm test` exécute **77 tests** : les 53 tests historiques V2/V3/V4 conservés, plus 24 tests V5 pour grappin, planage, momentum, esquive, crimes, missions, IA, vision, bruit, neutralisation, combat, santé, réapparition, scanner et modes. La physique, le grappin et le planage sont comparés à 30, 60 et 120 FPS.
+`npm test` exécute **102 tests** : les 77 tests historiques V2/V3/V4/V5 conservés et 25 tests V6 de conduite, collisions, entrée/sortie, réparation, caméras, poursuite, routes, objectifs, trafic et audio. La physique, le grappin, le planage et la conduite sont comparés à 30, 60 et 120 FPS.
 
 Le contrôle Chrome V5 ajoute Exploration/Vigilante, apparition et activation de mission, scanner et HUD dans les deux builds. En développement, des fixtures sur les objets réels vérifient aussi neutralisation, dégâts, réapparition et transition grappin/planage. Elles ne sont pas exposées dans le produit. La procédure manuelle complémentaire et l’inventaire complet des fichiers figurent dans [VALIDATION.md](VALIDATION.md).
+
+V6 étend ce contrôle à l’entrée/sortie du véhicule, conduite, boost, freinage, caméras, mission de fuite et poursuite. La production rejoint le garage par de vraies commandes clavier. Les benchmarks séparent exploration à pied et conduite avec police active. La dernière mesure de production est proche de 60 FPS dans les trois profils, avec 318/569/571 draw calls en conduite ; les limites de cette mesure courte sont détaillées dans `VALIDATION.md`.
 
 Le contrôle Chrome vérifie en développement et en production les commandes FPS, sprint, souris, mini-carte, pluie, réglages, volume, audio, train, trafic, F3 et absence d’erreurs/avertissements du navigateur. En développement, il contrôle aussi les quatre quartiers et une collision par saisie réelle. Les tests de trajet et de collision indépendants du navigateur couvrent les rues complètes.
 

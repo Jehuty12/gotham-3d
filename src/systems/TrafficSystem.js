@@ -6,6 +6,8 @@ import { RoadNetwork, direction, lanePoint, TURN_RADIUS } from '../utils/routes.
 export const VEHICLE_TYPES = new Map([
   ['car', Object.freeze({ width: 1.7, length: 4.1, roofLight: false })],
   ['police', Object.freeze({ width: 1.7, length: 4.3, roofLight: true })],
+  ['taxi', Object.freeze({ width: 1.7, length: 4.1, roofLight: false, taxi: true })],
+  ['delivery', Object.freeze({ width: 1.8, length: 4.3, roofLight: false, delivery: true })],
 ]);
 
 export class TrafficSystem {
@@ -15,7 +17,8 @@ export class TrafficSystem {
     const palette = ['#293f4e', '#473b42', '#2d4943', '#52504b', '#30333f'].map(c => new THREE.Color(c));
     this.cars = Array.from({ length: capacity }, (_, id) => {
       const random = seededRandom(deriveSeed(city.seed, 'vehicle', id));
-      return { id, random, type: id % 17 === 0 ? 'police' : 'car', color: palette[Math.floor(random() * palette.length)],
+      const type=id%17===0?'police':id%9===0?'taxi':id%13===0?'delivery':'car';
+      return { id, random, type, category:({car:'CIVILIAN',police:'POLICE',taxi:'TAXI',delivery:'DELIVERY'})[type],color:type==='taxi'?new THREE.Color('#736137'):palette[Math.floor(random() * palette.length)],
         speed: 6 + random() * 3, phaseOffset: random() * 43, initialized: false, position: new THREE.Vector3(), yaw: 0,
         progress: 0, mode: 'road', stopped: false };
     });
@@ -32,7 +35,7 @@ export class TrafficSystem {
     this.eventLight = new THREE.PointLight('#386dff', 0, 18, 2); scene.add(this.eventLight);
     this.eventLightEnabled = true; this.eventActive = false;
   }
-  configure(profile) { this.count = Math.min(this.capacity, profile.cars); this.radius = profile.activityRadius; this.eventLightEnabled = profile.policeLight; }
+  configure(profile) { this.count = Math.min(this.capacity, profile.cars); this.radius = profile.activityRadius; this.eventLightEnabled = profile.policeLight;this.simulationDistance=profile.vehicleSimulationDistance??this.radius; }
   get activeCount() { return this.cars.reduce((count, car, i) => count + Number(i < this.count && car.initialized), 0); }
   spawn(car, player) {
     const candidates = this.network.edges.filter(e => (e.a.x + e.b.x - 2 * player.x) ** 2 + (e.a.z + e.b.z - 2 * player.z) ** 2 < ((this.radius + 32) * 2) ** 2);
@@ -44,6 +47,7 @@ export class TrafficSystem {
       car.mode = 'road'; this.place(car);
       const distance = Math.hypot(car.position.x - player.x, car.position.z - player.z);
       if (distance < 8 || distance > this.radius) continue;
+      if(this.vehicleObstacles?.some(v=>v.position.distanceToSquared(car.position)<64))continue;
       if (this.cars.every((other, index) => index >= this.count || other === car || !other.initialized || other.position.distanceToSquared(car.position) > 64)) {
         car.initialized = true; car.stopped = false; this.recycles++; return true;
       }
@@ -71,21 +75,33 @@ export class TrafficSystem {
     car.turnLength = car.turn.getLength(); car.mode = 'turn'; car.progress = 0;
   }
   update(delta, player) {
+    this.simplifiedCount=0;
     for (let i = 0; i < this.count; i++) {
       const car = this.cars[i];
       if (!car.initialized || Math.hypot(car.position.x - player.x, car.position.z - player.z) > this.radius) {
         if (!this.spawn(car, player)) continue;
       }
+      let step=delta;
+      if(this.vehicleObstacles&&car.position.distanceTo(player)>(this.simulationDistance??120)){
+        this.simplifiedCount++;car.slowTime=(car.slowTime??0)+delta;if(car.slowTime<.1-1e-9)continue;step=car.slowTime;car.slowTime=0;
+      } else car.slowTime=0;
       const fx = Math.sin(car.yaw), fz = Math.cos(car.yaw);
       const ahead = (x, z, gap) => { const dx = x - car.position.x, dz = z - car.position.z;
         return dx * fx + dz * fz > 0 && dx * fx + dz * fz < gap && Math.abs(dx * fz - dz * fx) < 1.8; };
       car.stopped = ahead(player.x, player.z, 4);
+      let pace=1;
+      for(const obstacle of this.vehicleObstacles??[]){
+        if(Math.abs(obstacle.position.y-car.position.y)>3)continue;
+        if(ahead(obstacle.position.x,obstacle.position.z,18))pace=.4;
+        const dx=obstacle.position.x-car.position.x,dz=obstacle.position.z-car.position.z;
+        if(Math.hypot(dx,dz)<5||(dx*fx+dz*fz>0&&dx*fx+dz*fz<9&&Math.abs(dx*fz-dz*fx)<2.8))car.stopped=true;
+      }
       for (let j = 0; j < this.count && !car.stopped; j++) {
         const other = this.cars[j];
         if (j !== i && other.initialized && ahead(other.position.x, other.position.z, 7)) car.stopped = true;
       }
       if (car.stopped) continue;
-      car.progress += car.speed * delta;
+      car.progress += car.speed * step * pace * (car.type==='police'?1.12:car.type==='delivery'?.85:1);
       if (car.mode === 'road' && car.progress >= 48) {
         car.progress = 48;
         const occupied = this.cars.some((other, index) => index < this.count && other !== car && other.initialized && other.mode === 'turn' && other.to === car.to);
@@ -108,7 +124,8 @@ export class TrafficSystem {
         batch.add(p.x + x * cos + z * sin, y, p.z - x * sin + z * cos, w, h, d, car.yaw, color);
       };
       part(this.batches.body, 0, 0.65, 0, type.width, 0.65, type.length, car.color);
-      part(this.batches.glass, 0, 1.12, -0.2, 1.35, 0.65, 2.1);
+      part(this.batches.glass, 0, type.delivery?1.35:1.12, -0.2, type.delivery?1.65:1.35, type.delivery?1.3:.65, type.delivery?2.4:2.1);
+      if(type.taxi)part(this.batches.police,0,1.6,-.2,.65,.25,.3,car.color);
       for (const side of [-1, 1]) {
         for (const axle of [-1, 1]) part(this.batches.wheels, side * 0.85, 0.38, axle * 1.25, 0.25, 0.6, 0.65);
         part(this.batches.headlights, side * 0.56, 0.68, type.length / 2 + 0.025, 0.38, 0.2, 0.08);

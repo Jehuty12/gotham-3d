@@ -1,9 +1,9 @@
-import * as THREE from 'three';
+﻿import * as THREE from 'three';
 
 export const QUALITY_PROFILES = Object.freeze({
-  LOW: Object.freeze({ rain: 450, steam: 100, cars: 10, pedestrians: 0, activityRadius: 110, viewDistance: 205, pixelRatio: 1, bloom: false, lamps: 2, haloDistance: 55, policeLight: false }),
-  MEDIUM: Object.freeze({ rain: 1800, steam: 320, cars: 20, pedestrians: 10, activityRadius: 150, viewDistance: 335, pixelRatio: 1.25, bloom: true, lamps: 4, haloDistance: 80, policeLight: true }),
-  HIGH: Object.freeze({ rain: 4000, steam: 600, cars: 40, pedestrians: 25, activityRadius: 200, viewDistance: 520, pixelRatio: 1.5, bloom: true, lamps: 6, haloDistance: 100, policeLight: true }),
+  LOW: Object.freeze({ policeVehicles: 2, vehicleSimulationDistance: 80, vehicleHeadlight: false, rain: 450, steam: 100, cars: 10, pedestrians: 0, activityRadius: 110, viewDistance: 205, pixelRatio: 1, bloom: false, lamps: 2, haloDistance: 55, policeLight: false }),
+  MEDIUM: Object.freeze({ policeVehicles: 3, vehicleSimulationDistance: 120, vehicleHeadlight: true, rain: 1800, steam: 320, cars: 20, pedestrians: 10, activityRadius: 150, viewDistance: 335, pixelRatio: 1.25, bloom: true, lamps: 4, haloDistance: 80, policeLight: true }),
+  HIGH: Object.freeze({ policeVehicles: 4, vehicleSimulationDistance: 175, vehicleHeadlight: true, rain: 4000, steam: 600, cars: 40, pedestrians: 25, activityRadius: 200, viewDistance: 520, pixelRatio: 1.5, bloom: true, lamps: 6, haloDistance: 100, policeLight: true }),
 });
 
 export class PerformanceManager {
@@ -44,3 +44,4 @@ export class PerformanceManager {
     }
   }
 }
+
