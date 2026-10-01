@@ -13,7 +13,7 @@ export class DebugPanel {
     this.element.dataset.stats = JSON.stringify(s);
     if (this.element.hidden) return;
     this.element.textContent = [
-      `WORLD POLISH & PERSISTENCE / ${s.quality}`,
+      `ART PASS & ATMOSPHERE V8 / ${s.quality}`,
       `FPS ${s.fps.toFixed(1)} · draw calls ${s.drawCalls.toFixed(0)}`,
       `Position ${s.position.map(v=>v.toFixed(1)).join(' / ')}`,
       `${s.district} · chunk ${s.chunk}`,
@@ -47,6 +47,11 @@ export class DebugPanel {
       `Géométries ${s.geometries??0} · textures ${s.textures??0} · programmes ${s.programs??0}`,
       `Objets ${s.activeObjects??0} · heap JS ${s.heapMB?.toFixed(1)??'n/d'} Mo`,
       `Pools ${(s.pools??[]).map(p=>p.name+':'+p.active+'/'+p.capacity).join(' ')}`,
+      `ART props ${s.visibleProps??0} ? signs ${s.visibleSigns??0} ? neon ${s.visibleNeon??0}`,
+      `Facades ${s.facadeInstances??0} ? rooftop details ${s.rooftopDetails??0}`,
+      `RENDER emissive ${s.emissiveObjects??0} ? dynamic lights ${s.dynamicLights??0}`,
+      `Transparent ${s.transparentObjects??0} ? postprocessing ${s.postprocessingEnabled}`,
+      `STREAMING decorative instances loaded ${s.decorativeInstancesLoaded??0}`,
       'F3 pour masquer',
     ].join('\n');
   }

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { InstanceBatch } from '../utils/procedural.js';
+import { mineralVariation } from '../art/MaterialVariation.js';
 import { MaterialManager } from '../rendering/MaterialManager.js';
 
 // One resource owner per city, never per building. Instance colors provide variety.
@@ -12,7 +13,7 @@ export class CityResources {
     this.roof = new THREE.CylinderGeometry(1, 1, 1, 3).rotateZ(Math.PI / 2);
     this.rosette = new THREE.TorusGeometry(1, 0.12, 6, 24);
     this.materials = {
-      stone: new THREE.MeshStandardMaterial({ color: 'white', roughness: 0.85, metalness: 0.15 }),
+      stone: new THREE.MeshStandardMaterial({ color: 'white', roughness: 0.85, metalness: 0.15, emissive:'#17212b',emissiveIntensity:.28 }),
       trim: new THREE.MeshStandardMaterial({ color: '#48525a', roughness: 0.7, metalness: 0.4 }),
       windows: new THREE.MeshBasicMaterial({ color: new THREE.Color(1.65, 1.65, 1.65) }),
       spires: new THREE.MeshStandardMaterial({ color: '#2e3c46', roughness: 0.65, metalness: 0.45 }),
@@ -22,6 +23,19 @@ export class CityResources {
       paint: new THREE.MeshBasicMaterial({ color: '#909c98' }),
       water: new THREE.MeshStandardMaterial({ color: '#0b3544', roughness: 0.23, metalness: 0.65 }),
     };
+    const windows=this.materials.windows;
+    windows.onBeforeCompile=shader=>{
+      shader.vertexShader='varying vec3 vPane;\n'+shader.vertexShader;
+      shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n vPane=position;');
+      shader.fragmentShader='varying vec3 vPane;\n'+shader.fragmentShader;
+      shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+        float edge=max(abs(vPane.y),min(abs(vPane.x),abs(vPane.z)));
+        float recess=1.0-smoothstep(.36,.5,edge);
+        float curtain=.88+.12*sin((vPane.x+vPane.z)*32.0);
+        diffuseColor.rgb*=mix(.3,1.0,recess)*curtain;`);
+    };
+    windows.customProgramCacheKey=()=> 'v8-window-recess';
+    for(const key of ['stone','asphalt','pavement'])mineralVariation(this.materials[key],key);
     for(const [key,material] of Object.entries(this.materials))this.materialManager.materials.set(key,material);
   }
 
@@ -33,6 +47,7 @@ export class CityResources {
     result.cylinders = new InstanceBatch(this.cylinder, this.materials.metal);
     result.roofs = new InstanceBatch(this.roof, this.materials.stone);
     result.rosette = new InstanceBatch(this.rosette, this.materials.windows);
+    for(const [name,kind,material,band] of [['facade','facade','trim','NEAR'],['props','props','metal','NEAR'],['roofArt','rooftop','metal','MID'],['windowPanes','windows','windows','MID'],['farWindows','windows','windows','FAR']]){result[name]=new InstanceBatch(this.box,this.materials[material]);result[name].art={kind,band};}
     return result;
   }
 

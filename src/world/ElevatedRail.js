@@ -1,3 +1,4 @@
+import { addLabel } from '../art/TechnicalMarks.js';
 import * as THREE from 'three';
 import { deriveSeed, seededRandom } from '../utils/procedural.js';
 import { DynamicInstances } from '../utils/DynamicInstances.js';
@@ -28,6 +29,7 @@ export class ElevatedRail {
       const batches = get(midpoint.x, midpoint.z); if (!batches) continue;
       batches.metal.add(midpoint.x, 10, midpoint.z, 3.8, 0.6, length, yaw, metal);
       for (const side of [-1, 1]) batches.trim.add(midpoint.x + Math.cos(yaw) * side, 10.45, midpoint.z - Math.sin(yaw) * side, 0.13, 0.2, length, yaw);
+      if(i%3===0){for(const side of [-1,1])batches.trim.add(midpoint.x+Math.cos(yaw)*side*1.7,9.55,midpoint.z-Math.sin(yaw)*side*1.7,.16,.6,length,yaw);}
       if (i % 8 !== 0) continue;
       // Supports sit on free sidewalk ground, never in the road or in a building.
       for (let offset = 6; offset <= 15; offset++) {
@@ -42,6 +44,8 @@ export class ElevatedRail {
     }
     for (const station of this.stations) {
       const batches = get(station.x, station.z);
+      addLabel(batches.windows,station.districtId==='downtown'?'CIMES 01':'FORGES 02',station.x,12.7,station.z+4.05,.16,new THREE.Color('#c8ddcf'));
+      batches.metal.add(station.x,12.7,station.z+4,7,.95,.08,0,metal);
       for (const side of [-1, 1]) {
         batches.metal.add(station.x, 10.3, station.z + side * 3.2, 21, 0.4, 2.2, 0, metal);
         batches.metal.add(station.x, 14, station.z + side * 3.2, 22, 0.35, 3, 0, metal);
@@ -52,8 +56,8 @@ export class ElevatedRail {
     for (const { chunk, batches } of chunks.values()) for (const batch of Object.values(batches)) batch.build(chunk.group);
     const box = city.resources.box;
     this.body = new DynamicInstances(scene, box, new THREE.MeshStandardMaterial({ color: '#4d686b', roughness: 0.4, metalness: 0.6 }), 3);
-    this.windows = new DynamicInstances(scene, box, new THREE.MeshBasicMaterial({ color: new THREE.Color(1.7, 1.4, 0.95) }), 36);
-    this.trim = new DynamicInstances(scene, box, city.resources.materials.trim, 12);
+    this.windows = new DynamicInstances(scene, box, new THREE.MeshBasicMaterial({ color: new THREE.Color(1.7, 1.4, 0.95) }), 60);
+    this.trim = new DynamicInstances(scene, box, city.resources.materials.trim, 30);
     this.position = new THREE.Vector3(); this.visibleCars = 3;
   }
   positionAt(time, offset = 0) {
@@ -69,6 +73,8 @@ export class ElevatedRail {
       const part = (batch, x, y, z, w, h, d) => batch.add(p.x + x * Math.cos(yaw) + z * Math.sin(yaw), p.y + y + bob,
         p.z - x * Math.sin(yaw) + z * Math.cos(yaw), w, h, d, yaw);
       part(this.body, 0, 1.25, 0, 2.5, 2.4, 7.5);
+      part(this.trim,0,2.5,car%2?.5:-.5,1.5,.18,3.2);
+      for(const side of [-1,1]){part(this.windows,side*.75,1.1,3.77,.25,.22,.04);part(this.trim,side*1.27,1.35,car%2?1.2:-1.2,.04,1.9,.09);}
       for (const side of [-1, 1]) {
         for (let window = -2; window <= 2; window++) part(this.windows, side * 1.26, 1.6, window * 1.25, 0.05, 0.85, 0.85);
         for (const axle of [-1, 1]) part(this.trim, side * 0.95, 0.05, axle * 2.3, 0.3, 0.4, 0.8);

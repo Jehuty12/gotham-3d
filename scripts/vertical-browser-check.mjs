@@ -3,18 +3,19 @@ import assert from 'node:assert/strict';
 // Development-only module instrumentation positions the player at a route's start.
 // Actions, ray selection, door animations and elevator journeys still use real key input.
 export async function checkVertical({evaluate,stats,press,pause,click,screenshot}) {
+  const waitZone=async zone=>{for(let n=0;n<30;n++){if((await stats()).zone===zone)return;await pause(100);}};
   await evaluate(`(()=>{const v=__testLiving.vertical;const s=v.specs.find(s=>s.building.landmark==='municipal');globalThis.__testEntrance=s;v.player.physics.teleport(__testLiving.camera.position.clone().set(s.entrance.x,1.99,s.entrance.z+2));__testLiving.camera.lookAt(s.entrance.x,1.6,s.entrance.z)})()`);
   await click('#enter');await pause(650);
   assert.match(await evaluate(`document.querySelector('#interaction-prompt').textContent`),/Ouvrir/);
   await press('KeyE','e',69);await pause(650);
   assert.equal(await evaluate(`__testLiving.vertical.interiors.entrances.find(e=>e.spec===__testEntrance).door.collider.enabled`),false);
   await press('KeyE','e',69);await pause(500);
-  assert.equal((await stats()).zone,'interior');
+  await waitZone('interior');assert.equal((await stats()).zone,'interior');
   await screenshot('vertical-city-interior');
   // Turn toward the interior exit door, still within the 2.8 m interaction distance.
   await evaluate(`(()=>{const i=__testLiving.vertical.interiors.active;const d=i.doors[0];__testLiving.camera.lookAt(d.x,1.6,d.z)})()`);
   await pause(100);await press('KeyE','e',69);await pause(600);await press('KeyE','e',69);await pause(650);
-  assert.equal((await stats()).zone,'exterior');
+  await waitZone('exterior');assert.equal((await stats()).zone,'exterior');
   await evaluate(`__testLiving.camera.lookAt(__testEntrance.entrance.x,1.6,__testEntrance.entrance.z)`);
   await press('KeyE','e',69);await pause(650);assert.equal((await stats()).zone,'interior');
   await evaluate(`(()=>{const v=__testLiving.vertical,e=v.interiors.active.elevator;v.player.physics.teleport(__testLiving.camera.position.clone().set(e.x,1.99,e.z+2.25));__testLiving.camera.lookAt(e.x-.95,1.65,e.z+1.25)})()`);
@@ -36,7 +37,7 @@ export async function checkVertical({evaluate,stats,press,pause,click,screenshot
   assert.match(await evaluate(`document.querySelector('#coordinates').textContent`),/▼/);
   await screenshot('vertical-city-underground');
   await evaluate(`__testLiving.camera.lookAt(-80,-6.7,66.7)`);await pause(100);await press('KeyE','e',69);await pause(650);
-  assert.equal((await stats()).zone,'exterior');
+  await waitZone('exterior');assert.equal((await stats()).zone,'exterior');
   await evaluate('document.exitPointerLock()');await pause(200);
   console.log('development: doors, interior entry/exit, elevator rooftop, ladder, discoveries and underground passed');
 }

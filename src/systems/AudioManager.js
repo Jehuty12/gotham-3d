@@ -76,7 +76,19 @@ export class AudioManager {
     if (sirens) sirens.source.frequency.setTargetAtTime(590 + Math.sin(time * 2.5) * 110, this.context.currentTime, 0.12);
     this.applyVolume();this.applyMix();
   }
+  thunder(level=.5) {
+    const ctx=this.context;if(ctx?.state!=='running'||!this.active)return;
+    const buffer=this.sources.find(s=>s.category==='wind')?.source.buffer;if(!buffer)return;
+    // A single bounded transient, disconnected on end (no growing sources list).
+    this.thunderSource?.stop();
+    const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+    source.buffer=buffer;source.playbackRate.value=.48;filter.type='lowpass';filter.frequency.value=105;
+    gain.gain.setValueAtTime(.001,ctx.currentTime);gain.gain.linearRampToValueAtTime(level,ctx.currentTime+.18);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+3.7);
+    source.connect(filter);filter.connect(gain);gain.connect(this.buses.get('AMBIENCE'));this.thunderSource=source;
+    source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();if(this.thunderSource===source)this.thunderSource=null;};source.start();source.stop(ctx.currentTime+3.8);
+  }
   dispose() {
+    this.thunderSource?.stop();
     this.vehicleAudio?.dispose();
     for (const { source, filter } of this.sources) { source.stop(); source.disconnect(); filter?.disconnect(); }
     this.sources.length = 0;

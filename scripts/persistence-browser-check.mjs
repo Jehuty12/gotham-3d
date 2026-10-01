@@ -12,9 +12,10 @@ export async function checkPersistence({evaluate,stats,key,press,pause,click,sen
   const paused=await stats();await pause(700);const still=await stats();
   assert.equal(still.time,paused.time);assert.deepEqual(still.vehiclePosition,paused.vehiclePosition);assert.deepEqual(still.train,paused.train);assert.equal(still.sessionState,'PAUSED');
   await evaluate(`(()=>{const s=document.querySelector('#option-cameraMotion');s.value='0';s.dispatchEvent(new Event('input',{bubbles:true}));const q=document.querySelector('#quality-select');q.value='LOW';q.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+  await evaluate(`(()=>{for(const [id,value] of [['colorGrading','CINEMATIC'],['stormEnabled',true],['vignette',true]]){const e=document.querySelector('#option-'+id);if(e.type==='checkbox')e.checked=value;else e.value=value;e.dispatchEvent(new Event('input',{bubbles:true}));}})()`);
   await click('#save-game');await pause(250);
   const saved=await evaluate(`JSON.parse(localStorage.getItem('world-polish:save'))`);
-  assert.equal(saved.mode,'VIGILANTE');assert.equal(saved.player.driving,true);assert.ok(saved.discoveries.length>0,'Garage discovered');assert.equal(saved.settings.cameraMotion,0);assert.equal(saved.settings.quality,'LOW');
+  assert.equal(saved.mode,'VIGILANTE');assert.equal(saved.player.driving,true);assert.ok(saved.discoveries.length>0,'Garage discovered');assert.equal(saved.settings.cameraMotion,0);assert.equal(saved.settings.quality,'LOW');assert.equal(saved.settings.colorGrading,'CINEMATIC');assert.equal(saved.settings.stormEnabled,true);assert.equal(saved.settings.vignette,true);
   await send('Page.reload');await pause(3000);
   assert.equal(await evaluate(`document.querySelector('#continue-game').hidden`),false);
   await click('#continue-game');await pause(700);
@@ -22,6 +23,7 @@ export async function checkPersistence({evaluate,stats,key,press,pause,click,sen
   assert.ok(Math.hypot(...restored.vehiclePosition.map((v,i)=>v-saved.vehicle.position[i]))<.35,'Vehicle restored');
   assert.ok(Math.abs(restored.vehicleIntegrity-saved.vehicle.integrity)<.1);assert.deepEqual(restored.discoveries,saved.discoveries);
   assert.equal(await evaluate(`document.querySelector('#option-cameraMotion').value`),'0');
+  assert.equal(await evaluate(`document.querySelector('#option-colorGrading').value`),'CINEMATIC');assert.equal(await evaluate(`document.querySelector('#option-stormEnabled').checked`),true);assert.equal(await evaluate(`document.querySelector('#option-vignette').checked`),true);
   await press('KeyE','e',69);await pause(500);assert.equal((await stats()).driving,false);
   if(!production){
     await evaluate(`(async()=>{const url=performance.getEntriesByType('resource').find(e=>e.name.includes('/src/systems/LivingCity.js')).name;const {LivingCity}=await import(url);const update=LivingCity.prototype.update;LivingCity.prototype.update=function(dt){globalThis.__testLiving=this;return update.call(this,dt)}})()`);await pause(100);

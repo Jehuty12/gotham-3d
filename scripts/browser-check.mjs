@@ -1,6 +1,7 @@
 ﻿// Requires a running Vite/preview server and Chrome started with --remote-debugging-port=9222.
 // No browser automation dependency is installed; this uses the native Chrome DevTools protocol.
 import assert from 'node:assert/strict';
+import { checkArt } from './art-browser-check.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { checkVertical } from './vertical-browser-check.mjs';
 import { checkGameplay, selectMode } from './gameplay-browser-check.mjs';
@@ -21,6 +22,7 @@ ws.addEventListener('message', event => {
     const p = pending.get(data.id); if(!p)return;pending.delete(data.id);clearTimeout(p.timer);
     if (data.error) p.reject(data.error); else p.resolve(data.result);
   } else if (data.method === 'Runtime.exceptionThrown') errors.push(data.params);
+  else if(data.method==='Runtime.consoleAPICalled'&&['error','warning','warn'].includes(data.params.type)){const entry={type:data.params.type,args:data.params.args.map(a=>a.value??a.description)};(data.params.type==='error'?errors:warnings).push(entry);}
   else if (data.method === 'Log.entryAdded') {
     if (data.params.entry.level === 'error') errors.push(data.params.entry);
     if (data.params.entry.level === 'warning') warnings.push(data.params.entry);
@@ -160,6 +162,7 @@ try {
     // Restore the exact same initial benchmark view as development.
     await send('Page.navigate',{url:target});await pause(3000);
   }
+  await checkArt({evaluate,stats,pause,production});
   await checkVehicles({evaluate,stats,key,press,pause,click,screenshot,send,production});
   await checkPersistence({evaluate,stats,key,press,pause,click,screenshot,send,production,target,approachGarage});
   await send('Page.navigate',{url:target});await pause(3000);
@@ -177,7 +180,7 @@ try {
     await quality(level); state = await stats();
     assert.ok(state.cars>0&&state.cars<=({LOW:10,MEDIUM:20,HIGH:40,AUTO:40}[level]));
     assert.ok(state.pedestrians<=({LOW:0,MEDIUM:10,HIGH:25,AUTO:25}[level]));
-    const measured = await evaluate(`new Promise(resolve=>{let frames=0,start=null,last=0,calls=0,triangles=0,aiMs=0,activeAI=0;const sample=t=>{if(start===null)start=t;frames++;last=t;calls+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).drawCalls;triangles+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).triangles;aiMs+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).aiUpdateMs;activeAI+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).activeAI;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(last-start),drawCalls:calls/frames,triangles:triangles/frames,aiMs:aiMs/frames,activeAI:activeAI/frames,seconds:(last-start)/1000})};requestAnimationFrame(sample)})`);
+    const measured = await evaluate(`new Promise(resolve=>{let frames=0,start=null,last=0,calls=0,triangles=0,aiMs=0,activeAI=0;const frameTimes=[];let previousTime;const sample=t=>{if(previousTime!==undefined)frameTimes.push(t-previousTime);previousTime=t;if(start===null)start=t;frames++;last=t;calls+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).drawCalls;triangles+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).triangles;aiMs+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).aiUpdateMs;activeAI+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).activeAI;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(last-start),drawCalls:calls/frames,triangles:triangles/frames,aiMs:aiMs/frames,activeAI:activeAI/frames,measuredFrameTimeMean:frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length,measuredFrameTimeMax:Math.max(...frameTimes),measuredLow1FPS:1000/(frameTimes.slice().sort((a,b)=>b-a).slice(0,Math.max(1,Math.ceil(frameTimes.length*.01))).reduce((a,b)=>a+b,0)/Math.max(1,Math.ceil(frameTimes.length*.01))),seconds:(last-start)/1000})};requestAnimationFrame(sample)})`);
     benchmark.push({ level, ...measured, ...(await stats()), measuredFPS: measured.fps, measuredDrawCalls: measured.drawCalls });
     console.log(mode, level, measured);
   }
@@ -190,7 +193,7 @@ try {
     await quality(level);await selectMode(evaluate,pause,'EXPLORATION');await selectMode(evaluate,pause,'VIGILANTE');
     await evaluate(`(()=>{const s=document.querySelector('#vehicle-mission-choice');s.value='evade';s.dispatchEvent(new Event('change'))})()`);
     await press('KeyM','m',77);await pause(1000);
-    const measured=await evaluate(`new Promise(resolve=>{let start=null,frames=0,calls=0,triangles=0,cpu=0,units=0;const sample=t=>{start??=t;frames++;const s=JSON.parse(document.querySelector('#debug-panel').dataset.stats);calls+=s.drawCalls;triangles+=s.triangles;cpu+=s.vehicleUpdateMs;units+=s.policeUnits;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(t-start),drawCalls:calls/frames,triangles:triangles/frames,vehicleMs:cpu/frames,policeUnits:units/frames,seconds:(t-start)/1000})};requestAnimationFrame(sample)})`);
+    const measured=await evaluate(`new Promise(resolve=>{let start=null,frames=0,calls=0,triangles=0,cpu=0,units=0;const frameTimes=[];let previousTime;const sample=t=>{if(previousTime!==undefined)frameTimes.push(t-previousTime);previousTime=t;start??=t;frames++;const s=JSON.parse(document.querySelector('#debug-panel').dataset.stats);calls+=s.drawCalls;triangles+=s.triangles;cpu+=s.vehicleUpdateMs;units+=s.policeUnits;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(t-start),drawCalls:calls/frames,triangles:triangles/frames,vehicleMs:cpu/frames,policeUnits:units/frames,measuredFrameTimeMean:frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length,measuredFrameTimeMax:Math.max(...frameTimes),measuredLow1FPS:1000/(frameTimes.slice().sort((a,b)=>b-a).slice(0,Math.max(1,Math.ceil(frameTimes.length*.01))).reduce((a,b)=>a+b,0)/Math.max(1,Math.ceil(frameTimes.length*.01))),seconds:(t-start)/1000})};requestAnimationFrame(sample)})`);
     drivingBenchmark.push({level,...measured,stats:await stats()});console.log(mode,'DRIVING',level,measured);
   }
   await press('F3', 'F3', 114); await pause(350);

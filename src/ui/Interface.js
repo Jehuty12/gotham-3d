@@ -4,7 +4,7 @@ export function mountInterface() {
 document.querySelector('#app').innerHTML = `
   <div id="viewport" aria-label="Ville 3D à explorer"></div><div class="vignette"></div>
   <header class="topbar">
-    <a class="brand" href="./" aria-label="World Polish & Persistence, accueil"><span class="brand-mark">L<span>·</span></span><span>WORLD POLISH & PERSISTENCE<small>V7 / UNE VILLE À RETROUVER</small></span></a>
+    <a class="brand" href="./" aria-label="Art Pass & Atmosphere, accueil"><span class="brand-mark">L<span>·</span></span><span>ART PASS & ATMOSPHERE<small>V8 / UNE NUIT DE PIERRE ET DE LUMIÈRE</small></span></a>
     <div class="top-right"><span class="live-dot"></span> MONDE PROCÉDURAL <span class="divider"></span> <span>01:27 <span class="moon-icon">◔</span></span></div>
   </header>
   <main id="menu">

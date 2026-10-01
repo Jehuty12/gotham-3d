@@ -1,22 +1,16 @@
 ﻿import * as THREE from 'three';
 import { InstanceBatch, glowTexture, deriveSeed } from '../utils/procedural.js';
 import { SkySystem } from '../rendering/SkySystem.js';
-import { DISTRICTS } from '../world/districts.js';
-
-const SIGN_NAMES = {
-  downtown: ['MERIDIAN', 'ATLAS', 'HOTEL', 'ORPHEUM'],
-  old: ['MINUIT', 'RIVOLI', 'CAFE', 'LIBRAIRIE'],
-  industrial: ['FONDERIE', 'ACIER', 'ATELIER', 'DEPOT'],
-  docks: ['PORT EST', 'DOCK 07', 'TRANSIT', 'CARGO'],
-};
+import { paintSign } from '../art/SignageSystem.js';
+import { ART_DIRECTION } from '../art/ArtDirection.js';
 
 export class CityLights {
   constructor(scene, city) {
     this.positions = []; this.halos = [];
     this.seed = city.seed; this.activeLightCount = 6; this.haloDistance = 100;
     this.lastPosition = new THREE.Vector3(Infinity, 0, Infinity);
-    scene.add(new THREE.HemisphereLight('#a9cde2', '#31303f', 1.15));
-    const moonlight = new THREE.DirectionalLight('#b9d6ed', 1.65);
+    scene.add(new THREE.HemisphereLight('#a9cde2', '#31303f', ART_DIRECTION.lighting.hemisphere));
+    const moonlight = new THREE.DirectionalLight('#b9d6ed', ART_DIRECTION.lighting.moon);
     moonlight.position.set(-80, 140, -90); scene.add(moonlight);
     const box = city.resources.box;
     const postMaterial = city.resources.materials.trim;
@@ -56,6 +50,7 @@ export class CityLights {
         const width = p.label === 'street' ? 4 : p.label === 'municipal' ? 10 : p.label === 'advert' ? 11 : 7;
         signs.get(key).add(p.x, p.y, p.z, width, width / 4, 1, p.side < 0 ? Math.PI : 0);
       }
+      for(const [key,batch] of signs){batch.art={kind:'sign',band:'MID',neon:!!batch.material.userData.animation,rank:(deriveSeed(city.seed,'sign-rank',key)%100)/100};}
       for (const batch of [posts, bulbs, pools, ...signs.values()]) batch.build(chunk.group);
     }
     this.localLights = Array.from({ length: 6 }, () => {
@@ -67,16 +62,7 @@ export class CityLights {
   createSignMaterial(p) {
     const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 128;
     const ctx = canvas.getContext('2d');
-    const district = DISTRICTS[p.districtId];
-    ctx.fillStyle = p.label === 'street' ? '#23383a' : '#101a23'; ctx.fillRect(0, 0, 512, 128);
-    ctx.strokeStyle = p.districtId === 'old' ? '#eaa7b9' : '#a5ddd9';
-    ctx.lineWidth = 3; ctx.strokeRect(8, 8, 496, 112);
-    ctx.fillStyle = ctx.strokeStyle;
-    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = p.label === 'street' ? 0 : 10;
-    ctx.font = '500 43px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    const name = p.label === 'advert' ? ['NUIT FM · 89.1', 'MERIDIAN EXPRESS'][p.variant ?? 0] : p.label === 'municipal' ? 'GARDE MUNICIPALE' : p.label === 'street' ? district.name.toUpperCase()
-      : SIGN_NAMES[p.districtId][p.variant ?? 0];
-    ctx.fillText(name, 256, 68, 476);
+    paintSign(ctx,p);
     const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
     const level = p.label === 'street' ? 0.85 : 1.8;
     return new THREE.MeshBasicMaterial({ map: texture, color: new THREE.Color(level, level, level), side: THREE.DoubleSide });

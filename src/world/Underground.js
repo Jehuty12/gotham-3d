@@ -1,3 +1,4 @@
+import { addLabel } from '../art/TechnicalMarks.js';
 import { Group, Color, Vector3 } from 'three';
 import { box } from './CollisionWorld.js';
 
@@ -34,6 +35,12 @@ export class Underground {
     for(let z=70;z<104;z+=4) {add(-67.5,-4.8,z,.3,.3,3.8,'metal',false);batches.windows.add(-64,-4.1,z,.2,.08,1.3,0,new Color('#8dac78'));}
     for(const zone of this.zones)add(zone.x,-7.97,zone.z,3,.025,2,'water',false);
     add(-83,-7.4,62,3,.8,.7,'trim');add(-64,-7.4,101,2,1,1,'metal');
+    for(let z=70;z<103;z+=4){
+      for(const x of [-67.65,-60.35])batches.metal.add(x,-5.1,z,.17,.17,3.9,0,new Color('#735b48'));
+      batches.trim.add(-67.7,-5.45,z,.18,.05,3.9);
+      batches.paint.add(-64,-7.96,z,.08,.02,1.6);
+    }
+    for(const [text,x,z] of [['LIGNE 01',-73,60.2],['MAINT 04',-64,103.8]])addLabel(batches.windows,text,x,-5.6,z,.14,new Color('#b8c998'));
     for(const batch of Object.values(batches))batch.build(this.group);
     // Low-cost flicker uses an emissive mesh's visibility, no PointLight.
     this.flicker=this.group.children.find(o=>o.material===this.city.resources.materials.windows);

@@ -41,6 +41,7 @@ export class InstanceBatch {
       mesh.setMatrixAt(i, dummy.matrix);
       if (item.color) mesh.setColorAt(i, item.color);
     });
+    mesh.userData.art = this.art ? { ...this.art, fullCount: mesh.count } : null;
     mesh.computeBoundingSphere();
     parent.add(mesh);
     this.items.length = 0;

@@ -1,6 +1,6 @@
 {
-  "name": "world-polish-and-persistence",
-  "version": "7.0.0",
+  "name": "art-pass-and-atmosphere",
+  "version": "8.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "node --test tests/*.test.js",
     "test:browser": "node scripts/browser-check.mjs",
-    "test:soak": "node scripts/soak-test.mjs"
+    "test:soak": "node scripts/soak-test.mjs",
+    "test:visual": "node scripts/visual-check.mjs"
   },
   "devDependencies": {
     "vite": "^8.3.0"

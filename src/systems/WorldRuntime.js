@@ -1,3 +1,6 @@
+import { StormSystem } from './StormSystem.js';
+import { BackgroundSkyline } from '../rendering/BackgroundSkyline.js';
+import { LightAtmosphere } from '../rendering/LightAtmosphere.js';
 import { SaveManager } from '../save/SaveManager.js';
 import { WorldPersistence } from '../save/WorldPersistence.js';
 import { OptionsController } from '../ui/OptionsController.js';
@@ -15,6 +18,7 @@ export class WorldRuntime {
     this.options=new OptionsController(living,player,signal);this.persistence=new WorldPersistence(living,player,this.options);
     this.streaming=new ChunkStreamingManager(living.city);this.weather=new WeatherPolish(living);this.camera=new CameraEffects(living.camera);this.diagnostics=new RuntimeDiagnostics(living);
     this.silhouettes=new LandmarkSilhouettes(living.city);
+    this.storm=new StormSystem(living.city.seed,living.audio);this.background=new BackgroundSkyline(living.city);this.atmosphere=new LightAtmosphere(living);
     living.gameplay.crimes.isLoaded=p=>living.city.isLoadedAt(p.x,p.z);living.gameplay.vehicles.camera.effectsManaged=true;
     living.gameplay.crimes.isCompleted=site=>this.persistence.completedCrimes.has(site.id);
     for(const garage of living.gameplay.vehicles.garages)living.vertical.discoveries.points.push({id:garage.id,name:'Garage NIGHTRIDER',x:garage.position.x,y:garage.position.y+1.75,z:garage.position.z,radius:6});
@@ -78,10 +82,12 @@ export class WorldRuntime {
     l.audio.setActive(this.state.state==='PLAYING'&&!this.transitions.active);
     const garage=v.garage?.id;if(garage&&garage!==this.garage&&this.state.started)this.save.request('garage');this.garage=garage;
     if(this.state.started)this.save.update(Math.min(raw,.1),delta>0);
-    if(delta>0)this.weather.update(delta);
+    if(delta>0){this.weather.update(delta);this.atmosphere.update(delta);}
+    this.storm.enabled=this.options.settings.stormEnabled;this.storm.update(delta,l.rain.enabled?l.rain.intensity:0,!!l.city.collisionWorld.domain);
+    this.background.update(l.performance.profile.art,!!l.city.collisionWorld.domain);
     return delta;
   }
   afterFrame(raw){this.diagnostics.update(raw);if(this.living.performance.adjustAuto(raw))this.living.applyBudgets();}
   snapshot(){return {...this.streaming.snapshot(),...this.diagnostics.snapshot(),sessionState:this.state.state,saveBytes:this.save.bytes,saveWrites:this.save.writes,wetness:this.weather.wet};}
-  dispose(){for(const cleanup of this.cleanups.reverse())cleanup();this.player.onAction=this.previousAction;this.silhouettes.dispose();this.streaming.dispose();this.transitions.dispose();this.diagnostics.dispose();this.status.remove();this.actions.remove();}
+  dispose(){for(const cleanup of this.cleanups.reverse())cleanup();this.player.onAction=this.previousAction;this.silhouettes.dispose();this.background.dispose();this.atmosphere.dispose();this.weather.dispose();this.streaming.dispose();this.transitions.dispose();this.diagnostics.dispose();this.status.remove();this.actions.remove();}
 }

@@ -1,6 +1,6 @@
 export const SAVE_VERSION = 1;
 export const SAVE_KEY = 'world-polish:save';
-export const DEFAULT_SETTINGS = Object.freeze({quality:'MEDIUM',volume:.22,ambienceVolume:1,effectsVolume:1,cameraMotion:.3,screenShake:.25,fov:72,sensitivity:.65,minimapSize:1,uiScale:1,highContrast:false,mapRotation:false,rainEnabled:true,rainIntensity:1});
+export const DEFAULT_SETTINGS = Object.freeze({quality:'MEDIUM',colorGrading:'DEFAULT',stormEnabled:false,vignette:false,volume:.22,ambienceVolume:1,effectsVolume:1,cameraMotion:.3,screenShake:.25,fov:72,sensitivity:.65,minimapSize:1,uiScale:1,highContrast:false,mapRotation:false,rainEnabled:true,rainIntensity:1});
 const object=value=>value&&typeof value==='object'&&!Array.isArray(value)?value:{};
 const number=(value,min,max,fallback)=>typeof value==='number'&&Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;
 const bool=(value,fallback)=>typeof value==='boolean'?value:fallback;
@@ -12,7 +12,7 @@ export function vector(value,fallback=[0,1.75,54]) {
 const ids=value=>Array.isArray(value)?[...new Set(value.filter(v=>typeof v==='string'&&v.length<=100))].slice(-512):[];
 export function normalizeSettings(raw) {
   const s=object(raw),d=DEFAULT_SETTINGS;
-  return {quality:choice(s.quality,['LOW','MEDIUM','HIGH','AUTO'],d.quality),volume:number(s.volume,0,1,d.volume),ambienceVolume:number(s.ambienceVolume,0,1,1),effectsVolume:number(s.effectsVolume,0,1,1),
+  return {colorGrading:choice(s.colorGrading,['DEFAULT','CINEMATIC','HIGH_CONTRAST'],'DEFAULT'),stormEnabled:bool(s.stormEnabled,false),vignette:bool(s.vignette,false),quality:choice(s.quality,['LOW','MEDIUM','HIGH','AUTO'],d.quality),volume:number(s.volume,0,1,d.volume),ambienceVolume:number(s.ambienceVolume,0,1,1),effectsVolume:number(s.effectsVolume,0,1,1),
     cameraMotion:number(s.cameraMotion,0,1,d.cameraMotion),screenShake:number(s.screenShake,0,1,d.screenShake),fov:number(s.fov,55,100,d.fov),sensitivity:number(s.sensitivity,.15,2,d.sensitivity),
     minimapSize:number(s.minimapSize,.75,1.5,1),uiScale:number(s.uiScale,.8,1.3,1),highContrast:bool(s.highContrast,false),mapRotation:bool(s.mapRotation,false),rainEnabled:bool(s.rainEnabled,true),rainIntensity:number(s.rainIntensity,0,1,1)};
 }

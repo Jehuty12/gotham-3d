@@ -3,6 +3,9 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { ColorGrading } from './rendering/ColorGrading.js';
+import { ART_DIRECTION } from './art/ArtDirection.js';
+import { warmArtShaders } from './rendering/ShaderWarmup.js';
 import { City } from './world/City.js';
 import { CityLights } from './lighting/CityLights.js';
 import { PlayerController } from './player/PlayerController.js';
@@ -42,8 +45,9 @@ async function start() {
   const player = new PlayerController(camera, renderer.domElement, city);
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.22, 0.45, 1.25));
-  composer.addPass(new OutputPass());
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), ART_DIRECTION.lighting.bloom, 0.4, ART_DIRECTION.lighting.bloomThreshold));
+  const output=new OutputPass();composer.addPass(output);
+  const grading=new ColorGrading(renderer,output);
   renderer.info.autoReset = false;
   const living = new LivingCity({ scene, city, camera, renderer, composer, lights });
   const events = new AbortController();
@@ -62,6 +66,7 @@ async function start() {
   // frame pacing starts. Later residency changes mainly upload instance buffers.
   loading.phase('Préparation graphique',.96);await new Promise(requestAnimationFrame);
   await renderer.compileAsync(scene,camera);
+  await warmArtShaders(living,player);
   const initialTextures=new Set();for(const material of city.resources.materialManager.materials.values())for(const value of Object.values(material))if(value?.isTexture)initialTextures.add(value);
   for(const texture of initialTextures)renderer.initTexture(texture);
   composer.render(0);await new Promise(requestAnimationFrame);
@@ -88,6 +93,7 @@ async function start() {
     if (mapElapsed > 0.1) { minimap.draw(); mapElapsed = 0; }
     renderer.info.reset();
     runtime.camera.apply(delta,living,player,runtime.options.settings);
+    grading.update(delta,living,runtime.options.settings,runtime.storm.flash);
     if (living.performance.profile.bloom) composer.render(delta); else renderer.render(scene, camera);
     runtime.camera.restore();runtime.afterFrame(rawDelta);
     living.performance.recordFrame(rawDelta, renderer.info.render.calls, renderer.info.render.triangles);

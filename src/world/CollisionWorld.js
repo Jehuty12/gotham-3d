@@ -9,7 +9,7 @@ export class CollisionWorld {
     this.city = city; this.cells = new Map(); this.local = []; this.tests = 0; this.domain = null;
     for (const b of city.buildings) {
       const sections = b.landmark==='municipal' ? [{y:0,h:22,w:36,d:29},{y:22,h:7,w:10,d:19,dx:-12,dz:-3},{y:22,h:7,w:10,d:19,dx:12,dz:-3},{y:22,h:69,w:10,d:10,dz:-4}] : b.sections ?? [{ y:0, h:b.height, w:b.width, d:b.depth }];
-      for (const s of sections) this.add(box(b.x+(s.dx??0),s.y+s.h/2,b.z+(s.dz??0),s.w+1.1,s.h+0.2,s.d+1.1,'building'));
+      for (const s of sections) this.add(box(b.x+(s.dx??s.x??0),s.y+s.h/2,b.z+(s.dz??s.z??0),s.w+1.1,s.h+0.2,s.d+1.1,'building'));
       if(b.landmark==='tower')this.add(box(b.x,162,b.z,8,12,8,'crown'));
       for (const equipment of b.roofColliders ?? []) this.add(equipment);
     }

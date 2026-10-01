@@ -8,7 +8,7 @@ export class ChunkStreamingManager {
     for(const chunk of city.chunks.values()){
       const recipes=[],retained=[];
       for(const node of [...chunk.group.children]) {
-        if(node.isInstancedMesh)recipes.push({geometry:node.geometry,material:node.material,count:node.count,matrix:node.instanceMatrix.array,colors:node.instanceColor?.array,matrixWorld:node.matrix.clone(),name:node.name,detail:node.userData.streamDetail});
+        if(node.isInstancedMesh)recipes.push({geometry:node.geometry,material:node.material,count:node.userData.art?.fullCount??node.count,matrix:node.instanceMatrix.array,colors:node.instanceColor?.array,matrixWorld:node.matrix.clone(),name:node.name,detail:node.userData.streamDetail,art:node.userData.art});
         else retained.push(node); // Interactive door groups and pooled lamp sprites keep their state.
       }
       this.recipes.set(chunk.id,{recipes,retained});chunk.loaded=true;chunk.collisionsLoaded=true;this.loaded.add(chunk.id);this.volumes.set(chunk.id,[]);
@@ -41,7 +41,7 @@ export class ChunkStreamingManager {
   }
   buildOne(job) {
     const chunk=this.city.chunks.get(job.id),data=this.recipes.get(job.id),r=data.recipes[job.index++];
-    if(r){const mesh=new InstancedMesh(r.geometry,r.material,r.count);mesh.instanceMatrix=new InstancedBufferAttribute(r.matrix,16);if(r.colors)mesh.instanceColor=new InstancedBufferAttribute(r.colors,3);mesh.matrix.copy(r.matrixWorld);mesh.matrix.decompose(mesh.position,mesh.quaternion,mesh.scale);mesh.name=r.name;mesh.userData.streamDetail=r.detail;mesh.computeBoundingSphere();chunk.group.add(mesh);}
+    if(r){const mesh=new InstancedMesh(r.geometry,r.material,r.count);mesh.instanceMatrix=new InstancedBufferAttribute(r.matrix,16);if(r.colors)mesh.instanceColor=new InstancedBufferAttribute(r.colors,3);mesh.matrix.copy(r.matrixWorld);mesh.matrix.decompose(mesh.position,mesh.quaternion,mesh.scale);mesh.name=r.name;mesh.userData.streamDetail=r.detail;mesh.userData.art=r.art?{...r.art}:null;mesh.computeBoundingSphere();chunk.group.add(mesh);}
     if(job.index>=data.recipes.length){chunk.loaded=true;this.loaded.add(job.id);this.pending.delete(job.id);this.city.group.add(chunk.group);this.loads++;return true;}return false;
   }
   ensureAt(position) {

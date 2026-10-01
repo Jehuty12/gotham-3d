@@ -1,6 +1,29 @@
-# World Polish & Persistence — V7
+# Art Pass & Atmosphere — V8
 
-V7 conserve les systèmes V2 à V6 et ajoute une sauvegarde locale versionnée, une reprise sécurisée, le streaming effectif des instances et collisions, une vraie pause et des réglages d’accessibilité. Le monde reste déterministe : **CITY_SEED = 1989, quatre quartiers, 64 chunks logiques, 210 bâtiments et trois landmarks**.
+V8 enrichit l'architecture, les façades, les monuments et l'atmosphère nocturne de World Polish & Persistence V7. **CITY_SEED = 1989, quatre quartiers, 64 chunks, 210 bâtiments, trois landmarks et huit intérieurs** sont conservés. Aucun nouveau système de combat, véhicule majeur, mission ou IA n'est ajouté. Sauvegarde/reprise V7, Exploration/Vigilante, grappin/planage, conduite/poursuites, métro, mini-carte, pause/options et diagnostics restent disponibles.
+
+## Art pass V8
+
+Le [guide artistique](ART_DIRECTION.md) et [ArtDirection.js](src/art/ArtDirection.js) définissent palettes, matériaux, éclairage et profils des quartiers. Le générateur ajoute dix variantes de silhouette aux styles existants : socles, tours fines, retraits, ailes en L/U, cours sur socle et entrepôts multi-volumes. Les collisions 3D suivent les volumes décalés ; les coordonnées et rôles des monuments restent identiques.
+
+Façades, cadres, corniches, pilastres, entrées et unités techniques sont instanciés par chunk. Les fenêtres ont plusieurs formats, quatre familles de teinte et une profondeur simulée par ombrage et rideaux. Les toits, rues, huit intérieurs, souterrains et métro reçoivent des compositions supplémentaires. Les enseignes partagent un catalogue de seize noms fictifs, avec cadres, monogrammes originaux et néons irréguliers. Les matériaux utilisent un grain procédural et des variations de rugosité sans textures externes ni matériau unique par immeuble.
+
+| Profil | NEAR | MID | Props fixes | Horizon simplifié | Cônes max | Éclaboussures max |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| LOW | 45 m | 100 m | 25 % | désactivé | 4 | 8 |
+| MEDIUM | 72 m | 160 m | 60 % | 32 masses | 10 | 20 |
+| HIGH | 100 m | 230 m | 100 % | 64 masses | 16 | 32 |
+| AUTO | progressif | progressif | 55–100 % | 64 masses | 16 | 32 |
+
+NEAR affiche les façades détaillées et props ; MID garde les fenêtres détaillées et accessoires de toit ; FAR utilise des groupes de fenêtres simplifiés. Les recettes et couleurs restent identiques quand la qualité change. Les props sont libérés par le streaming ; les effets proches réutilisent des pools fixes. Les petites pièces décoratives ne créent pas de nouvelles collisions de gameplay.
+
+Le brouillard mélange les quartiers sur deux blocs, avec modulation par pluie et altitude. La pluie gagne profondeur, vent et éclaboussures, avec une densité visuelle réduite en conduite. Flaques irrégulières, reflets approximatifs et cônes transparents n'utilisent aucune capture de réflexion. Les orages rares sont optionnels et désactivés par défaut ; ils utilisent une horloge de simulation et un grondement synthétique.
+
+OPTIONS ajoute **DEFAULT / CINEMATIC / HIGH_CONTRAST**, une vignette légère et les orages. Ces réglages sont sauvegardés, avec des valeurs par défaut compatibles avec les anciennes sauvegardes. L'étalonnage est intégré à la passe de sortie existante ; LOW conserve seulement l'exposition. Bloom discret à seuil élevé, anti-aliasing historique conservé, aucun TAA/SSR ajouté. L'exposition s'adapte progressivement aux intérieurs et à la pluie.
+
+F3 ajoute **ART**, **RENDER** et **STREAMING** : props, enseignes, néons, instances de façade/toit, objets lumineux/transparents, lumières dynamiques et décor chargé. Les compteurs visibles sont estimés au niveau des lots dans le frustum, sans occlusion individuelle.
+
+`npm run test:visual -- http://127.0.0.1:5177/` produit dix vues fixes dans [artifacts/visual](artifacts/visual), avec leurs métriques. Il ne réalise pas de comparaison perceptuelle. Le soak V2 ajoute les huit intérieurs, souterrains, métro et cycles météo. Les résultats mesurés et limites figurent dans [VALIDATION.md](VALIDATION.md).
 
 ## Sauvegarde, menu et pause
 
@@ -27,7 +50,7 @@ Le budget indicatif est **2 ms/frame**, avec une construction par lot instancié
 | HIGH | 288 m | 4 000 | 40 | 25 | 20 | 4 |
 | AUTO | 160–288 m | 2 200–4 000 | 22–40 | 14–25 | 11–20 | 4 |
 
-AUTO part du budget HIGH et évalue les FPS toutes les quatre secondes. Il réduit les budgets de 5 % ou les remonte de 2,5 % par étape, entre 55 % et 100 %. Seuls populations, pluie, distances et détails sont ajustés ; aucune régénération de la ville. Les rayons et distances de détail sont internes aux profils. Le paramètre de distance des détails de toit est réservé : les lots historiques mélangent certains accessoires à l’architecture et ne sont pas supprimés arbitrairement.
+AUTO part du budget HIGH et évalue les FPS toutes les quatre secondes. Il réduit les budgets de 5 % ou les remonte de 2,5 % par étape, entre 55 % et 100 %. Seuls populations, pluie, distances et détails sont ajustés ; aucune régénération de la ville. V8 utilise ses distances NEAR/MID pour les lots décoratifs séparés ; les équipements historiques et leurs accès physiques restent conservés.
 
 ## Présentation et accessibilité V7
 
@@ -60,7 +83,7 @@ tests/persistence.test.js          Schéma, streaming, budget, caméra et ressou
 tests/resume.test.js               Reprise réelle des objets runtime et pause
 scripts/persistence-browser-check.mjs Scénario reload / continuer
 scripts/cdp.mjs                    Client DevTools léger
-scripts/soak-test.mjs              Circuits, pause, véhicule et reload (~80 s)
+scripts/soak-test.mjs              Circuits V8, météo, intérieurs et reload (~95 s)
 ```
 
 F3 conserve les compteurs historiques et ajoute chunks chargés/en attente, file, coût de streaming, FPS moyen, 1 % low approximatif, temps de frame, géométries, textures, programmes, objets et occupation des pools. Le heap JavaScript est affiché si Chrome le fournit ; aucune estimation précise de mémoire GPU n’est inventée. Le compteur de listeners couvre les abonnements possédés par la session, pas les internes de Three.js.
@@ -78,7 +101,7 @@ Vite, JavaScript, Three.js et modules officiels `three/addons`. Audio via Web Au
 Node.js 22.12+ ou 24 ; navigateur de bureau avec WebGL 2, clavier et souris.
 
 ```powershell
-cd C:\Users\Maxime\Documents\Town\gotham-3d
+cd G:\DevProjects\town\gotham-3d
 npm install
 npm run dev
 ```
@@ -374,9 +397,9 @@ Les limites sont des budgets, pas une garantie de remplissage dans chaque zone. 
 
 - Géométries et neuf matériaux de base partagés, couleurs par instance ; cache borné des enseignes.
 - InstancedMesh par chunk pour la ville ; pools dynamiques fixes pour véhicules, piétons et train.
-- Deux objets de particules pour toute la pluie et la vapeur, sans milliers de Mesh.
+- Buffers fixes pour pluie/vapeur et un pool borné d'éclaboussures, sans milliers de Mesh.
 - Au maximum six lumières de lampadaire plus une lumière événementielle ; aucune ombre dynamique.
-- Frustum culling et masquage des chunks éloignés ; aucune suppression des données ou collisions.
+- Frustum culling, niveaux de détail et déchargement des instances/collisions éloignées ; recettes CPU conservées.
 - Simulation du trafic/piétons à pas fixe de 1/30 s ; pluie et train calculés au temps de rendu.
 - Mise à jour des diagnostics/visibilité à fréquence réduite ; mini-carte plafonnée à environ 10 Hz.
 - Compteurs Three.js agrégés sur toutes les passes pour mesurer les draw calls ; aucune bibliothèque de FPS.
@@ -442,7 +465,7 @@ Les collisions des acteurs d’ambiance restent une approximation 2D ; celles du
 
 ## Validation et mesures
 
-`npm test` exécute **131 tests** : les 102 tests historiques V2 à V6 conservés et 29 nouveaux tests V7. La physique, le grappin, le planage et la conduite sont comparés à 30, 60 et 120 FPS. Les nouveaux tests couvrent schéma, migrations, stockage indisponible, autosave, reprise, sécurité des positions, missions, streaming déterministe, ressources partagées, pause, caméra et AUTO.
+`npm test` exécute **157 tests** : les **131 tests historiques V2–V7 inchangés** et 26 tests V8. Ils couvrent déterminisme artistique, palettes/matériaux, silhouettes et collisions, signalétique, transitions, LOD, reconstruction des décors, pools, météo, orages et budgets. La physique, le grappin, le planage et la conduite restent comparés à 30, 60 et 120 FPS ; les tests de persistance et reprise sont conservés.
 
 Le contrôle Chrome V5 ajoute Exploration/Vigilante, apparition et activation de mission, scanner et HUD dans les deux builds. En développement, des fixtures sur les objets réels vérifient aussi neutralisation, dégâts, réapparition et transition grappin/planage. Elles ne sont pas exposées dans le produit. La procédure manuelle complémentaire et l’inventaire complet des fichiers figurent dans [VALIDATION.md](VALIDATION.md).
 
@@ -453,10 +476,12 @@ Le contrôle Chrome vérifie en développement et en production les commandes FP
 Pour reproduire, lancer Vite ou preview, puis Chrome avec un **profil de test dédié** et `--remote-debugging-port=9222`. Sous Windows :
 
 ```powershell
-Start-Process -FilePath 'C:/Program Files/Google/Chrome/Application/chrome.exe' -WindowStyle Hidden -ArgumentList '--headless=new','--remote-debugging-port=9222','--user-data-dir=C:/Users/Maxime/Documents/Town/gotham-3d/node_modules/.cache/living-city-browser','--no-first-run','about:blank'
-npm run test:browser
-npm run test:browser -- http://127.0.0.1:4173/ --production
-npm run test:soak -- http://127.0.0.1:5173/
+Start-Process -FilePath 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' -WindowStyle Hidden -ArgumentList '--headless=new','--remote-debugging-port=9222','--user-data-dir=G:/DevProjects/town/gotham-3d/node_modules/.cache/v8-browser','--disable-extensions','--disable-features=BackForwardCache','--no-first-run','about:blank'
+# Avec Vite sur 5177 et preview sur 4177, lancer les scripts successivement :
+npm.cmd run test:browser -- http://127.0.0.1:5177/
+npm.cmd run test:browser -- http://127.0.0.1:4177/ --production
+npm.cmd run test:visual -- http://127.0.0.1:5177/
+npm.cmd run test:soak -- http://127.0.0.1:5177/
 ```
 
 Le script utilise uniquement les API intégrées à Node et le protocole DevTools de Chrome. Il génère les rapports dans `artifacts/benchmark-development.json` et `artifacts/benchmark-production.json`, ainsi que des captures. Les résultats chiffrés et le matériel de mesure sont détaillés dans `VALIDATION.md`. Ce sont des mesures courtes sur une vue fixe, pas une garantie pour tous les appareils ou tous les quartiers.

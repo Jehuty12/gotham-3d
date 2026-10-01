@@ -1,4 +1,5 @@
-﻿import * as THREE from 'three';
+﻿import { addLabel } from '../art/TechnicalMarks.js';
+import * as THREE from 'three';
 
 import { districtForChunk } from './districts.js';
 
@@ -42,6 +43,15 @@ export class Road {
     }
     for (let stripe = -northWidth / 2 + 1; stripe <= district.roadWidth / 2 - 1; stripe += 1.8) {
       for (const end of [-1, 1]) batches.paint.add(x + end * (half - 3), 0.02, z - 32 + stripe, 2.5, 0.02, 0.85);
+    }
+    // Delivery/parking bays and arrows are offset from asphalt to avoid z-fighting.
+    if(!chunk.waterfront){
+      const lane=x-half-1.8;
+      for(const dz of [-10,-4,2,8])batches.paint.add(lane,.028,z+dz,2,.016,.08);
+      batches.paint.add(lane-1,.028,z-1,.08,.016,18);
+      batches.paint.add(x-31,.033,z, .12,.012,2);
+      for(const side of [-1,1])batches.paint.add(x-31+side*.28,.033,z-.75,.08,.012,.8,side*Math.PI/4);
+      if(chunk.district.id==='industrial'||chunk.district.id==='docks')addLabel(batches.paint,String(chunk.ix*8+chunk.iz).padStart(2,'0'),lane,.034,z+14,.19,new THREE.Color('#a09a7b'),true);
     }
     const pole = new THREE.Color('#3e4b52');
     // One pair per block, sharing instanced housing and signal materials.

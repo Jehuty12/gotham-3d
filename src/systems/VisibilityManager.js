@@ -8,6 +8,7 @@ export class VisibilityManager {
       l.city.chunkAt(interior.spec.building.x,interior.spec.building.z).group.visible=false;
     }
     l.rain.mesh.visible=outside && l.rain.count>0;
+    l.rain.splashes.mesh.visible=outside&&l.rain.count>0;
     l.trafficLights.bulbs.mesh.visible=outside;
     for(const system of [l.traffic,l.pedestrians,l.rail]) for(const value of Object.values(system)) {
       if(value?.mesh?.isObject3D)value.mesh.visible=outside;

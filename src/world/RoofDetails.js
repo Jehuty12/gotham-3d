@@ -43,5 +43,14 @@ export function addRoofDetails(building, random, batches, signs) {
     batches.trim.add(x + 2.4, y + 1.3, z + depth / 2, 0.15, 2.6, 0.15);
     add('sign');
   }
+  // Visual equipment shares one MID batch. Existing solid HVAC and traversal stay.
+  const art=batches.roofArt;
+  art.add(x,y+1.9,z,Math.min(width*.8,6),.22,.32,0,metal);add('ducts');
+  if(width>7){
+    for(const dx of [-1,1])art.add(x+dx*width*.32,y+.6,z,.08,1.2,Math.min(depth*.6,5),0,metal);
+    art.add(x,y+.15,z-depth*.3,Math.min(width*.6,5),.12,.7,0,rust);add('walkway');
+    if(random()<.5){art.add(x-width*.25,y+1.3,z-depth*.25,.12,2.6,.12,0,metal);art.add(x-width*.25,y+2.4,z-depth*.25,1.1,.65,.18,0,metal);add('dish');}
+    else {art.add(x+width*.22,y+.7,z+depth*.25,1.2,1.4,1.4,0,rust);add('service-cage');}
+  }
   return details;
 }

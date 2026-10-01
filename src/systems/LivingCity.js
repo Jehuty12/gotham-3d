@@ -47,9 +47,17 @@ export class LivingCity {
       this.traffic.update(step, p); this.pedestrians.update(step, p);
     }
     const renderTime = this.time + Math.max(0, this.accumulator);
-    this.rain.update(renderTime, p); this.steam.update(renderTime, p);
+    this.rain.update(renderTime, p,!!this.gameplay?.vehicles?.driving,(x,z)=>this.city.groundHeight(x,z)); this.steam.update(renderTime, p);
+    if(this.city.collisionWorld?.domain){this.rain.mesh.visible=false;this.rain.splashes.mesh.visible=false;}
     this.rail.update(renderTime); this.traffic.render(renderTime, p); this.pedestrians.render(renderTime);
     this.lights.update(p, renderTime);
+    // Transitions and pause still render with delta=0. Apply domain visibility
+    // then too, so an interior never briefly combines its light with street
+    // lights (which also creates an unnecessary shader variant on first entry).
+    if(this.vertical){
+      const interior=this.vertical.interiors.active;
+      this.vertical.visibility.update(this.vertical.underground.active?'underground':interior?'interior':'exterior',interior);
+    }
     this.visibilityTime += delta;
     if (this.visibilityTime > 0.2) {
       this.visibilityTime = 0; this.performance.updateVisibility(this.camera);
@@ -76,5 +84,5 @@ export class LivingCity {
       volume: this.audio.volume,
       stoppedCars: this.traffic.cars.slice(0, this.traffic.count).filter(car => car.stopped).length };
   }
-  dispose() { this.gameplay?.dispose(); this.vertical?.dispose(); this.audio.dispose(); }
+  dispose() { this.rain.dispose();this.gameplay?.dispose(); this.vertical?.dispose(); this.audio.dispose(); }
 }

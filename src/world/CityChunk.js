@@ -1,4 +1,7 @@
 ﻿import * as THREE from 'three';
+import { skylineHeight } from '../art/ArtDirection.js';
+import { signageIdentity } from '../art/SignageSystem.js';
+import { addStreetProps } from './StreetProps.js';
 import { Building } from './Building.js';
 import { Road } from './Road.js';
 import { addDock } from './Dock.js';
@@ -54,17 +57,18 @@ export class CityChunk {
       this.signs.push({ x: this.x, y: 8, z, side: 1, label: 'advert', variant: ix % 2, districtId: this.district.id });
       for (const dx of [-4, 4]) batches.trim.add(this.x + dx, 4, z, 0.18, 8, 0.18);
     }
+    addStreetProps(this,batches.props);
     for (const batch of Object.values(batches)) batch.build(this.group);
   }
 
   addBuilding(x, z, width, depth, style, slot, batches) {
     const seed = deriveSeed(this.seed, 'building', slot);
     const random = seededRandom(seed);
-    const height = this.district.averageHeight + (random() * 2 - 1) * this.district.heightVariation;
+    const height = skylineHeight(x,z,this.district,random()*2-1);
     const building = new Building({ x, z, width, depth, height, style, district: this.district, seed }, batches, this.signs);
     this.buildings.push(building.record); this.colliders.push(building.bounds);
     if (random() < this.district.neonFrequency) this.signs.push({
-      x, y: 5.2, z: z + depth / 2 + 0.18, side: 1, label: 'neon', variant: Math.floor(random() * 4), districtId: this.district.id,
+      x, y: 5.2, z: z + depth / 2 + 0.18, side: 1, label: 'neon', variant: signageIdentity(seed,building.record.art.district).variant, districtId: building.record.art.district,
     });
   }
 

@@ -63,6 +63,41 @@ export function createLandmark(chunk, site, batches) {
     }
     chunk.signs.push({ x, y: 12, z: z + 14.7, side: 1, label: 'municipal', districtId: district.id });
   }
+  // V8 landmark dress: every piece stays within the historic footprint.
+  const brass=new THREE.Color('#b99a68'),dark=new THREE.Color('#374650');
+  const detail=batches.facade;
+  if(site.type==='cathedral'){
+    for(const side of [-1,1]){
+      for(const y of [12,32,46,65])batches.stone.add(x+side*11,y,z+12,9.5,.6,12.4,0,new THREE.Color('#8b8d87'));
+      for(const dx of [-3.7,3.7])batches.stone.add(x+side*11+dx,34,z+18.15,.45,67,.5,0,new THREE.Color('#9a9c92'));
+      for(const y of [20,37,56])for(const dx of [-2,0,2]){
+        batches.metal.add(x+side*11+dx,y,z+18.12,.85,5,.12,0,dark);
+        batches.windows.add(x+side*11+dx,y,z+18.21,.22,3.4,.06,0,new THREE.Color('#9b7d65'));
+      }
+    }
+    for(let n=0;n<12;n++){const a=n/12*Math.PI*2;batches.windows.add(x+Math.cos(a)*2.7,26+Math.sin(a)*2.7,z+19.2,.35,1.4,.04,a,new THREE.Color('#c19a82'));}
+    for(const side of [-1,1])for(const dz of [-14,-7,0,7]){
+      for(let n=0;n<4;n++)detail.add(x+side*(10+n*.75),20-n*2,z+dz,1,1.5,1.1,0,stone);
+      batches.windows.add(x+side*9.12,21,z+dz,.06,6,.6,0,new THREE.Color(dz%2?'#d19eae':'#8fbed5'));
+    }
+    for(let n=0;n<7;n++){const a=Math.PI*n/6;detail.add(x+Math.cos(a)*3.2,9+Math.sin(a)*4,z+19.2,.7,.9,.5,0,stone);}
+    for(const side of [-1,1]){detail.add(x+side*5.5,2,z+18,1.4,4,1.4,0,dark);batches.spires.add(x+side*5.5,4.7,z+18,.65,1.5,.65);}
+    for(let n=0;n<4;n++)detail.add(x,.15+n*.2,z+19.7-n*.25,8,.15,1.3-n*.2,0,stone);
+  }else if(site.type==='tower'){
+    for(const side of [-1,1])for(const dx of [-10,-5,5,10])detail.add(x+dx,28,z+side*14.55,.35,50,.3,0,brass);
+    for(const y of [150,155,163])for(const side of [-1,1]){
+      batches.windows.add(x,y,z+side*4.2,8,.22,.1,0,brass);
+      batches.windows.add(x+side*4.2,y,z,.1,.22,8,0,brass);
+    }
+    batches.trim.add(x,193,z,.17,14,.17);
+    for(const side of [-1,1])detail.add(x+side*11,4,z+14,4,8,1,0,stone);
+  }else{
+    for(let n=0;n<4;n++)detail.add(x,.15+n*.16,z+14.6-n*.2,16,.15,1.1-n*.15,0,stone);
+    batches.rosette.add(x,68,z+1.17,2.3,2.3,.3,0,brass);
+    for(const side of [-1,1]){detail.add(x+side*3,67,z+1.24,.15,6,.12,0,dark);detail.add(x,68+side*3,z+1.24,6,.15,.12,0,dark);}
+    detail.add(x,68.7,z+1.3,.15,1.7,.15,0,dark);detail.add(x+.6,68,z+1.3,1.35,.15,.15,0,dark);
+    for(const side of [-1,1])batches.windows.add(x+side*15,10,z+14.61,.15,15,.08,0,brass);
+  }
   const bounds = { minX: x - width / 2 - 0.6, maxX: x + width / 2 + 0.6,
     minZ: z - depth / 2 - 0.6, maxZ: z + depth / 2 + 0.6, districtId: district.id, kind: 'landmark' };
   chunk.colliders.push(bounds);

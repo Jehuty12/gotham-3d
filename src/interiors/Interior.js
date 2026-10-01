@@ -1,4 +1,5 @@
-import { Group, Color, Vector3 } from 'three';
+import { addInteriorArt } from '../art/InteriorArt.js';
+import { Group, Color, Vector3, PointLight } from 'three';
 import { box } from '../world/CollisionWorld.js';
 import { Door } from '../world/Door.js';
 import { Elevator } from '../world/Elevator.js';
@@ -23,6 +24,8 @@ export class Interior {
       batches.windows.add(px,2.1,pz,.6,.1,.05,0,new Color('#9bd9c7'));
     }
     for(const floor of [0,3.6]) batches.windows.add(x,3.4+floor,z,Math.max(2,w-3),.05,.3,0,new Color('#b0d4bd'));
+    addInteriorArt(spec,batches);
+    const roomLight=new PointLight(['warehouse','industrial'].includes(spec.type)?'#bedee0':'#ffe0ba',28,Math.max(w,d)*1.5,1.5);roomLight.position.set(x,2.8,z);this.group.add(roomLight);
     for(const batch of Object.values(batches)) batch.build(this.group);
     const door=new Door({x,y,z:z+d/2-.3,resources,parent:this.group,onEnter:onExit});
     this.doors.push(door);this.colliders.push(door.collider);interaction.register(door.target(this,spec.id));

@@ -5,6 +5,9 @@ export class DynamicInstances {
   constructor(parent, geometry, material, capacity) {
     this.mesh = new THREE.InstancedMesh(geometry, material, capacity);
     this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    // Allocate the color attribute up front. The first colored actor/effect
+    // otherwise introduces a new shader variant during play.
+    this.mesh.setColorAt(0,new THREE.Color(1,1,1));
     this.mesh.frustumCulled = false;
     this.mesh.count = 0;
     this.capacity = capacity;

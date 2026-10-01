@@ -1,9 +1,11 @@
 ﻿import * as THREE from 'three';
+import { ART_BUDGETS } from '../art/ArtDirection.js';
+import { applyArtBudget } from '../art/ArtVisibility.js';
 
 export const QUALITY_PROFILES = Object.freeze({
-  LOW: Object.freeze({ chunkPreloadRadius:160, rooftopDetailDistance:95, neonDistance:110, fakeDetail:false, aiBudget:6, policeVehicles: 2, vehicleSimulationDistance: 80, vehicleHeadlight: false, rain: 450, steam: 100, cars: 10, pedestrians: 0, activityRadius: 110, viewDistance: 205, pixelRatio: 1, bloom: false, lamps: 2, haloDistance: 55, policeLight: false }),
-  MEDIUM: Object.freeze({ chunkPreloadRadius:224, rooftopDetailDistance:150, neonDistance:175, fakeDetail:true, aiBudget:12, policeVehicles: 3, vehicleSimulationDistance: 120, vehicleHeadlight: true, rain: 1800, steam: 320, cars: 20, pedestrians: 10, activityRadius: 150, viewDistance: 335, pixelRatio: 1.25, bloom: true, lamps: 4, haloDistance: 80, policeLight: true }),
-  HIGH: Object.freeze({ chunkPreloadRadius:288, rooftopDetailDistance:210, neonDistance:250, fakeDetail:true, aiBudget:20, policeVehicles: 4, vehicleSimulationDistance: 175, vehicleHeadlight: true, rain: 4000, steam: 600, cars: 40, pedestrians: 25, activityRadius: 200, viewDistance: 520, pixelRatio: 1.5, bloom: true, lamps: 6, haloDistance: 100, policeLight: true }),
+  LOW: Object.freeze({ art:ART_BUDGETS.LOW, chunkPreloadRadius:160, rooftopDetailDistance:95, neonDistance:110, fakeDetail:false, aiBudget:6, policeVehicles: 2, vehicleSimulationDistance: 80, vehicleHeadlight: false, rain: 450, steam: 100, cars: 10, pedestrians: 0, activityRadius: 110, viewDistance: 205, pixelRatio: 1, bloom: false, lamps: 2, haloDistance: 55, policeLight: false }),
+  MEDIUM: Object.freeze({ art:ART_BUDGETS.MEDIUM, chunkPreloadRadius:224, rooftopDetailDistance:150, neonDistance:175, fakeDetail:true, aiBudget:12, policeVehicles: 3, vehicleSimulationDistance: 120, vehicleHeadlight: true, rain: 1800, steam: 320, cars: 20, pedestrians: 10, activityRadius: 150, viewDistance: 335, pixelRatio: 1.25, bloom: true, lamps: 4, haloDistance: 80, policeLight: true }),
+  HIGH: Object.freeze({ art:ART_BUDGETS.HIGH, chunkPreloadRadius:288, rooftopDetailDistance:210, neonDistance:250, fakeDetail:true, aiBudget:20, policeVehicles: 4, vehicleSimulationDistance: 175, vehicleHeadlight: true, rain: 4000, steam: 600, cars: 40, pedestrians: 25, activityRadius: 200, viewDistance: 520, pixelRatio: 1.5, bloom: true, lamps: 6, haloDistance: 100, policeLight: true }),
 });
 
 export class PerformanceManager {
@@ -26,7 +28,7 @@ export class PerformanceManager {
     const fps=this.autoFrames/this.autoElapsed,previous=this.autoFactor;this.autoElapsed=0;this.autoFrames=0;
     this.autoFactor=Math.max(.55,Math.min(1,previous+(fps<53?-.05:fps>59?.025:0)));
     if(previous===this.autoFactor)return false;const base=QUALITY_PROFILES.HIGH,f=this.autoFactor;
-    this.profile={...base,aiBudget:Math.floor(20*f),rain:Math.round(base.rain*f),cars:Math.round(base.cars*f),pedestrians:Math.round(base.pedestrians*f),viewDistance:base.viewDistance*f,activityRadius:base.activityRadius*f,haloDistance:base.haloDistance*f,chunkPreloadRadius:Math.max(160,288*f)};return true;
+    this.profile={...base,art:{...base.art,near:base.art.near*f,mid:base.art.mid*f,props:base.art.props*f,signs:base.art.signs*f},aiBudget:Math.floor(20*f),rain:Math.round(base.rain*f),cars:Math.round(base.cars*f),pedestrians:Math.round(base.pedestrians*f),viewDistance:base.viewDistance*f,activityRadius:base.activityRadius*f,haloDistance:base.haloDistance*f,chunkPreloadRadius:Math.max(160,288*f)};return true;
   }
   updateVisibility(camera) {
     camera.updateMatrixWorld();
@@ -36,7 +38,7 @@ export class PerformanceManager {
     for (const chunk of this.city.chunks.values()) {
       const distance = Math.hypot(chunk.x - camera.position.x, chunk.z - camera.position.z);
       chunk.group.visible = distance < this.profile.viewDistance + 46 || chunk.landmarks.length > 0;
-      for(const mesh of chunk.group.children)if(mesh.material?.userData.animation)mesh.visible=distance<this.profile.neonDistance;
+      for(const mesh of chunk.group.children){if(mesh.material?.userData.animation)mesh.visible=distance<this.profile.neonDistance;applyArtBudget(mesh,distance,this.profile.art);}
       if (!chunk.group.visible || chunk.loaded===false) continue;
       for (const building of chunk.buildings) {
         this.box.min.set(building.minX, 0, building.minZ);
