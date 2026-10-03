@@ -21,6 +21,19 @@ export class VehicleManager {
     this.lastMessage='';this.pointerSpeed=player.controls.pointerSpeed;
   }
   get activeVehicles(){return [this.vehicle,...this.police.filter(v=>v.active),...(this.target.active?[this.target]:[])];}
+  recoveryReason(){const g=this.living.gameplay;if(g.health.dead)return 'Attendez la fin du repli.';if(!['NONE','LOST'].includes(g.pursuit?.state??'NONE'))return 'Semez la poursuite avant de récupérer le véhicule.';if(g.vehicleMissions?.active||this.living.content?.objective?.critical)return 'Reprenez le checkpoint de la mission véhicule.';return '';}
+  recoveryPosition(near=false){
+    const candidates=near?[]:this.garages.map(g=>({position:g.position.clone(),rotation:g.rotation}));
+    if(near){const p=this.vehicle.position;for(let x=-192;x<=192;x+=64)for(let z=-224;z<=224;z+=8){candidates.push({position:new Vector3(x,0,z),rotation:0},{position:new Vector3(z,0,x),rotation:Math.PI/2});}candidates.sort((a,b)=>a.position.distanceToSquared(p)-b.position.distanceToSquared(p));}
+    for(const candidate of candidates){this.city.streaming?.ensureCollisionAt(candidate.position);candidate.position.y=this.city.groundHeight(candidate.position.x,candidate.position.z);this.physics.prepare(candidate.position);if(this.physics.blocked(this.vehicle,candidate.position,candidate.rotation))continue;
+      for(const side of [-1,1]){const exit=candidate.position.clone().add(new Vector3(Math.cos(candidate.rotation)*side*2.4,0,-Math.sin(candidate.rotation)*side*2.4));if(capsuleClear(this.world,exit,1.9,.42,null)){exit.y+=1.75;return {...candidate,exit};}}
+    }return null;
+  }
+  recover(near=false){const reason=this.recoveryReason();if(reason){this.lastMessage=reason;this.messageTime=4;return false;}if(near&&!this.stuck)return false;const target=this.recoveryPosition(near);if(!target)return false;
+    const wasDriving=this.driving;this.exit(target.exit);this.vehicle.position.copy(target.position);this.vehicle.rotation=target.rotation;this.vehicle.velocity.set(0,0,0);this.vehicle.speed=this.vehicle.vy=0;this.vehicle.integrity=100;this.vehicle.boost=100;this.vehicle.grounded=true;this.vehicle.state='PARKED';this.vehicle.active=true;this.stuck=false;this.stuckTime=0;
+    this.city.streaming?.ensureAt(target.position);if(wasDriving){this.player.physics.teleport(target.exit);this.player.physics.grounded=true;this.enter();}this.living.runtime?.save.request('vehicle-recovery');this.lastMessage=near?'NIGHTRIDER repositionné sur la route.':'NIGHTRIDER récupéré au garage.';this.messageTime=4;return true;
+  }
+  detectStuck(dt,input){this.stuckTime=this.driving&&Math.abs(input.throttle)>.1&&Math.abs(this.vehicle.speed)<.25?(this.stuckTime??0)+dt:0;this.stuck=this.stuckTime>=5;}
   get garage(){return this.garages.find(g=>g.position.distanceTo(this.vehicle.position)<g.radius)??null;}
   canEnter() {
     const p=this.player.physics;
@@ -75,6 +88,7 @@ export class VehicleManager {
       if(this.repairing){this.vehicle.repair(dt);if(this.vehicle.integrity===100){this.repairing=false;this.vehicle.state='DRIVING';}}
     }
     if(this.driving)this.camera.update(dt,this.vehicle);
+    this.detectStuck(dt,input);
     this.living.traffic.vehicleObstacles=this.activeVehicles;
     this.living.audio.setVehicle?.({driving:this.driving,speed:Math.abs(this.vehicle.speed),throttle:input.throttle,brake:this.vehicle.brakingInput,tires:input.handbrake&&Math.abs(this.vehicle.speed)>3,boost:this.vehicle.boosting,impact:this.vehicle.impact,siren:this.police.some(v=>v.active&&v.position.distanceTo(this.vehicle.position)<95)});
     this.frameMs=performance.now()-start;this.updateMs=this.updateMs*.9+this.frameMs*.1;
@@ -86,7 +100,7 @@ export class VehicleManager {
     }
     this.renderer.render(this.activeVehicles,this.vehicle,this.living.camera,this.time,!this.world.domain,this.living.performance.profile.vehicleHeadlight??true);
     if(this.player.controls.isLocked) {
-      if(this.driving)this.living.vertical.prompt.textContent=this.messageTime>0?this.lastMessage:this.repairing?'RÉPARATION… [E] Sortir':this.garage&&this.vehicle.integrity<100?'[E] Réparer':'[E] Sortir · [V] Caméra · [M] Mission';
+      if(this.driving)this.living.vertical.prompt.textContent=this.messageTime>0?this.lastMessage:this.stuck?'[R] Repositionner · [ÉCHAP] Récupérer au garage':this.repairing?'RÉPARATION… [E] Sortir':this.garage&&this.vehicle.integrity<100?'[E] Réparer':'[E] Sortir · [V] Caméra · [M] Mission';
       else if(this.canEnter())this.living.vertical.prompt.textContent='[E] Entrer · NIGHTRIDER';
     }
     this.hud?.update(game,this);

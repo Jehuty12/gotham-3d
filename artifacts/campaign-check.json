@@ -1,0 +1,1146 @@
+{
+  "date": "2026-10-03T08:35:18.706Z",
+  "checks": "passed",
+  "missions": 7,
+  "routes": 3,
+  "results": [
+    {
+      "mission": "story-1",
+      "route": "STREET",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Rejoindre l’accès de rue",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "reach",
+          "text": "Rejoindre le toit municipal · échelle ou ascenseur",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Lire le signal au bord du toit",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "observe",
+          "text": "Observer les manutentionnaires depuis la rue, sans les approcher",
+          "simulatedSeconds": 8.04999999999998
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Examiner le compteur dans l’atelier",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "defeat",
+          "text": "Neutraliser les trois gardiens du chargement",
+          "simulatedSeconds": 3.74
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Transmettre le premier relevé à la radio du garage",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-2",
+      "route": "STREET",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Rejoindre l’accès de rue",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Lire le programme abandonné dans le théâtre",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Relever la fréquence derrière les clefs de l’hôtel",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "reach",
+          "text": "Rejoindre la cour haute près de la cathédrale",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 4,
+          "kind": "observe",
+          "text": "Écouter la répétition du signal depuis le toit",
+          "simulatedSeconds": 10.000000000000007
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Récupérer la bobine dans la cour haute",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Déposer la bobine au théâtre par la rue ou le toit",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-3",
+      "route": "STREET",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Rejoindre l’accès de rue",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Examiner les caisses derrière la porte du hangar",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Mesurer la machine dans l’entrepôt",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "reach",
+          "text": "Rejoindre la passerelle de maintenance sur le toit",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 4,
+          "kind": "reach",
+          "text": "Descendre par la trappe industrielle : X −78, Z 71",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Relever le numéro de la soupape",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Comparer les ordres dans le bureau souterrain",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "defeat",
+          "text": "Remonter et sécuriser les compteurs de l’atelier",
+          "simulatedSeconds": 3.74
+        }
+      ]
+    },
+    {
+      "mission": "story-4",
+      "route": "STREET",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Rejoindre l’accès de rue",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Photographier le manifeste à l’intérieur du hangar",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Monter sur la grue par son échelle de maintenance",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "scan",
+          "text": "[V] Repérer le convoi entre les conteneurs",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 4,
+          "kind": "reach",
+          "text": "Rejoindre NIGHTRIDER au garage",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "drive",
+          "text": "Conduire NIGHTRIDER jusqu’à la route des quais",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "vehicle",
+          "text": "Suivre le convoi dans NIGHTRIDER pendant huit secondes",
+          "simulatedSeconds": 8.04999999999998
+        },
+        {
+          "index": 7,
+          "kind": "inspect",
+          "text": "[E] Déposer les plaques du convoi dans le hangar",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-5",
+      "route": "STREET",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Rejoindre l’accès de rue",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Lire le plan des relais dans le hall",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Monter au Relais des Sept Nuits par l’échelle ou le grappin",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "scan",
+          "text": "[V] Calibrer le relais inférieur",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 4,
+          "kind": "traverse",
+          "text": "[G] Rejoindre le toit voisin ; utiliser un ancrage ou planer",
+          "simulatedSeconds": 1.1249999999999987
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Récupérer le shunt sur le chantier suspendu",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "reach",
+          "text": "Atteindre la couronne par le hall / ascenseur ou les ancrages",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "scan",
+          "text": "[V] Retracer la ligne maîtresse depuis la couronne",
+          "simulatedSeconds": 2.000000000000001
+        }
+      ]
+    },
+    {
+      "mission": "story-6",
+      "route": "STREET",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Rejoindre l’accès de rue",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Consulter le tableau des départs dans l’observatoire",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Rejoindre le quai aérien du dépôt des Lignes Basses",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "observe",
+          "text": "Surveiller la ligne sans monter sur les voies",
+          "simulatedSeconds": 12.000000000000036
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Retrouver le journal du dernier train sous terre",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Ouvrir la boîte étanche du collecteur",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Comparer les signatures aux archives municipales",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-7",
+      "route": "STREET",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Rejoindre l’accès de rue",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "reach",
+          "text": "Récupérer NIGHTRIDER et le dossier au garage",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "drive",
+          "text": "Livrer le dossier à l’atelier en NIGHTRIDER",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "vehicle",
+          "text": "Semer la patrouille qui a repéré le dossier",
+          "simulatedSeconds": 13.05000000000005
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Assembler les preuves à l’intérieur de l’atelier",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Isoler la ligne clandestine au sous-sol",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Préparer la transmission dans le bâtiment municipal",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "reach",
+          "text": "Prendre l’ascenseur ou l’échelle jusqu’au toit municipal",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 8,
+          "kind": "defeat",
+          "text": "Neutraliser les gardiens de l’émetteur",
+          "simulatedSeconds": 3.74
+        },
+        {
+          "index": 9,
+          "kind": "inspect",
+          "text": "[E] Diffuser les registres depuis le toit",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-1",
+      "route": "ROOFTOP",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Atteindre le toit par les accès existants",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "reach",
+          "text": "Rejoindre le toit municipal · échelle ou ascenseur",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Lire le signal au bord du toit",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "observe",
+          "text": "Observer les manutentionnaires depuis la rue, sans les approcher",
+          "simulatedSeconds": 8.04999999999998
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Examiner le compteur dans l’atelier",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "defeat",
+          "text": "Neutraliser les trois gardiens du chargement",
+          "simulatedSeconds": 3.74
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Transmettre le premier relevé à la radio du garage",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-2",
+      "route": "ROOFTOP",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Atteindre le toit par les accès existants",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Lire le programme abandonné dans le théâtre",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Relever la fréquence derrière les clefs de l’hôtel",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "reach",
+          "text": "Rejoindre la cour haute près de la cathédrale",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 4,
+          "kind": "observe",
+          "text": "Écouter la répétition du signal depuis le toit",
+          "simulatedSeconds": 10.000000000000007
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Récupérer la bobine dans la cour haute",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Déposer la bobine au théâtre par la rue ou le toit",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-3",
+      "route": "ROOFTOP",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Atteindre le toit par les accès existants",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Examiner les caisses derrière la porte du hangar",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Mesurer la machine dans l’entrepôt",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "reach",
+          "text": "Rejoindre la passerelle de maintenance sur le toit",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 4,
+          "kind": "reach",
+          "text": "Descendre par la trappe industrielle : X −78, Z 71",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Relever le numéro de la soupape",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Comparer les ordres dans le bureau souterrain",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "defeat",
+          "text": "Remonter et sécuriser les compteurs de l’atelier",
+          "simulatedSeconds": 3.74
+        }
+      ]
+    },
+    {
+      "mission": "story-4",
+      "route": "ROOFTOP",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Atteindre le toit par les accès existants",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Photographier le manifeste à l’intérieur du hangar",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Monter sur la grue par son échelle de maintenance",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "scan",
+          "text": "[V] Repérer le convoi entre les conteneurs",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 4,
+          "kind": "reach",
+          "text": "Rejoindre NIGHTRIDER au garage",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "drive",
+          "text": "Conduire NIGHTRIDER jusqu’à la route des quais",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "vehicle",
+          "text": "Suivre le convoi dans NIGHTRIDER pendant huit secondes",
+          "simulatedSeconds": 8.04999999999998
+        },
+        {
+          "index": 7,
+          "kind": "inspect",
+          "text": "[E] Déposer les plaques du convoi dans le hangar",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-5",
+      "route": "ROOFTOP",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Atteindre le toit par les accès existants",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Lire le plan des relais dans le hall",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Monter au Relais des Sept Nuits par l’échelle ou le grappin",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "scan",
+          "text": "[V] Calibrer le relais inférieur",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 4,
+          "kind": "traverse",
+          "text": "[G] Rejoindre le toit voisin ; utiliser un ancrage ou planer",
+          "simulatedSeconds": 1.1249999999999987
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Récupérer le shunt sur le chantier suspendu",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "reach",
+          "text": "Atteindre la couronne par le hall / ascenseur ou les ancrages",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "scan",
+          "text": "[V] Retracer la ligne maîtresse depuis la couronne",
+          "simulatedSeconds": 2.000000000000001
+        }
+      ]
+    },
+    {
+      "mission": "story-6",
+      "route": "ROOFTOP",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Atteindre le toit par les accès existants",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Consulter le tableau des départs dans l’observatoire",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Rejoindre le quai aérien du dépôt des Lignes Basses",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "observe",
+          "text": "Surveiller la ligne sans monter sur les voies",
+          "simulatedSeconds": 12.000000000000036
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Retrouver le journal du dernier train sous terre",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Ouvrir la boîte étanche du collecteur",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Comparer les signatures aux archives municipales",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-7",
+      "route": "ROOFTOP",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Atteindre le toit par les accès existants",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "reach",
+          "text": "Récupérer NIGHTRIDER et le dossier au garage",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "drive",
+          "text": "Livrer le dossier à l’atelier en NIGHTRIDER",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "vehicle",
+          "text": "Semer la patrouille qui a repéré le dossier",
+          "simulatedSeconds": 13.05000000000005
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Assembler les preuves à l’intérieur de l’atelier",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Isoler la ligne clandestine au sous-sol",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Préparer la transmission dans le bâtiment municipal",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "reach",
+          "text": "Prendre l’ascenseur ou l’échelle jusqu’au toit municipal",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 8,
+          "kind": "defeat",
+          "text": "Neutraliser les gardiens de l’émetteur",
+          "simulatedSeconds": 3.74
+        },
+        {
+          "index": 9,
+          "kind": "inspect",
+          "text": "[E] Diffuser les registres depuis le toit",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-1",
+      "route": "INTERIOR",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Entrer par le hall ; l’ascenseur offre une sortie en toiture",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "reach",
+          "text": "Rejoindre le toit municipal · échelle ou ascenseur",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Lire le signal au bord du toit",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "observe",
+          "text": "Observer les manutentionnaires depuis la rue, sans les approcher",
+          "simulatedSeconds": 8.04999999999998
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Examiner le compteur dans l’atelier",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "defeat",
+          "text": "Neutraliser les trois gardiens du chargement",
+          "simulatedSeconds": 3.74
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Transmettre le premier relevé à la radio du garage",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-2",
+      "route": "INTERIOR",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Entrer par le hall ; l’ascenseur offre une sortie en toiture",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Lire le programme abandonné dans le théâtre",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Relever la fréquence derrière les clefs de l’hôtel",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "reach",
+          "text": "Rejoindre la cour haute près de la cathédrale",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 4,
+          "kind": "observe",
+          "text": "Écouter la répétition du signal depuis le toit",
+          "simulatedSeconds": 10.000000000000007
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Récupérer la bobine dans la cour haute",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Déposer la bobine au théâtre par la rue ou le toit",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-3",
+      "route": "INTERIOR",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Entrer par le hall ; l’ascenseur offre une sortie en toiture",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Examiner les caisses derrière la porte du hangar",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "scan",
+          "text": "[V] Mesurer la machine dans l’entrepôt",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 3,
+          "kind": "reach",
+          "text": "Rejoindre la passerelle de maintenance sur le toit",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 4,
+          "kind": "reach",
+          "text": "Descendre par la trappe industrielle : X −78, Z 71",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Relever le numéro de la soupape",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Comparer les ordres dans le bureau souterrain",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "defeat",
+          "text": "Remonter et sécuriser les compteurs de l’atelier",
+          "simulatedSeconds": 3.74
+        }
+      ]
+    },
+    {
+      "mission": "story-4",
+      "route": "INTERIOR",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Entrer par le hall ; l’ascenseur offre une sortie en toiture",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Photographier le manifeste à l’intérieur du hangar",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Monter sur la grue par son échelle de maintenance",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "scan",
+          "text": "[V] Repérer le convoi entre les conteneurs",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 4,
+          "kind": "reach",
+          "text": "Rejoindre NIGHTRIDER au garage",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "drive",
+          "text": "Conduire NIGHTRIDER jusqu’à la route des quais",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "vehicle",
+          "text": "Suivre le convoi dans NIGHTRIDER pendant huit secondes",
+          "simulatedSeconds": 8.04999999999998
+        },
+        {
+          "index": 7,
+          "kind": "inspect",
+          "text": "[E] Déposer les plaques du convoi dans le hangar",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-5",
+      "route": "INTERIOR",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Entrer par le hall ; l’ascenseur offre une sortie en toiture",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Lire le plan des relais dans le hall",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Monter au Relais des Sept Nuits par l’échelle ou le grappin",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "scan",
+          "text": "[V] Calibrer le relais inférieur",
+          "simulatedSeconds": 2.000000000000001
+        },
+        {
+          "index": 4,
+          "kind": "traverse",
+          "text": "[G] Rejoindre le toit voisin ; utiliser un ancrage ou planer",
+          "simulatedSeconds": 1.1249999999999987
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Récupérer le shunt sur le chantier suspendu",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "reach",
+          "text": "Atteindre la couronne par le hall / ascenseur ou les ancrages",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "scan",
+          "text": "[V] Retracer la ligne maîtresse depuis la couronne",
+          "simulatedSeconds": 2.000000000000001
+        }
+      ]
+    },
+    {
+      "mission": "story-6",
+      "route": "INTERIOR",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Entrer par le hall ; l’ascenseur offre une sortie en toiture",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "inspect",
+          "text": "[E] Consulter le tableau des départs dans l’observatoire",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "reach",
+          "text": "Rejoindre le quai aérien du dépôt des Lignes Basses",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "observe",
+          "text": "Surveiller la ligne sans monter sur les voies",
+          "simulatedSeconds": 12.000000000000036
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Retrouver le journal du dernier train sous terre",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Ouvrir la boîte étanche du collecteur",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Comparer les signatures aux archives municipales",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    },
+    {
+      "mission": "story-7",
+      "route": "INTERIOR",
+      "result": "PASS",
+      "steps": [
+        {
+          "index": 0,
+          "kind": "reach",
+          "text": "Entrer par le hall ; l’ascenseur offre une sortie en toiture",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 1,
+          "kind": "reach",
+          "text": "Récupérer NIGHTRIDER et le dossier au garage",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 2,
+          "kind": "drive",
+          "text": "Livrer le dossier à l’atelier en NIGHTRIDER",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 3,
+          "kind": "vehicle",
+          "text": "Semer la patrouille qui a repéré le dossier",
+          "simulatedSeconds": 13.05000000000005
+        },
+        {
+          "index": 4,
+          "kind": "inspect",
+          "text": "[E] Assembler les preuves à l’intérieur de l’atelier",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 5,
+          "kind": "inspect",
+          "text": "[E] Isoler la ligne clandestine au sous-sol",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 6,
+          "kind": "inspect",
+          "text": "[E] Préparer la transmission dans le bâtiment municipal",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 7,
+          "kind": "reach",
+          "text": "Prendre l’ascenseur ou l’échelle jusqu’au toit municipal",
+          "simulatedSeconds": 0.05
+        },
+        {
+          "index": 8,
+          "kind": "defeat",
+          "text": "Neutraliser les gardiens de l’émetteur",
+          "simulatedSeconds": 3.74
+        },
+        {
+          "index": 9,
+          "kind": "inspect",
+          "text": "[E] Diffuser les registres depuis le toit",
+          "simulatedSeconds": 0.05
+        }
+      ]
+    }
+  ],
+  "method": "Actual runtime objective actions; travel, follow distance and concealed pursuit are fixtures, not human playtime. Save/reload at every checkpoint and between missions."
+}

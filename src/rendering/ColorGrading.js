@@ -20,7 +20,7 @@ export class ColorGrading {
     const indoor=!!living.city.collisionWorld.domain,weather=living.rain.enabled?living.rain.intensity:0;
     const target=profile.exposure+(indoor?.09:0)-weather*.025;
     this.exposure+=(target-this.exposure)*(1-Math.exp(-dt*1.2));
-    this.renderer.toneMappingExposure=this.exposure+flash*.42;
+    this.renderer.toneMappingExposure=this.exposure+(settings.reduceFlashes?0:flash*.42);
     const u=this.output.material.uniforms;u.artContrast.value=profile.contrast;u.artSaturation.value=profile.saturation;u.artTint.value=profile.tint;u.artVignette.value=settings.vignette?.1:0;
   }
 }

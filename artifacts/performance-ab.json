@@ -1,0 +1,1964 @@
+{
+  "date": "2026-10-03T15:23:55.498Z",
+  "method": "Interleaved production bundles, same Chrome, HIGH, spawn camera, exploration, 6s windows; sampling profiler enabled equally. V9 bundle retained before V10 build.",
+  "runs": [
+    {
+      "version": "V9",
+      "repeat": 0,
+      "fps": 56.775611461680626,
+      "low1": 54.79452054794384,
+      "meanMs": 17.613196480938416,
+      "maxMs": 18.300000000000182,
+      "over20": 0,
+      "over33": 0,
+      "stats": {
+        "chunksLoaded": 56,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0.09999990463256836,
+        "chunkBuildPeakMs": 2,
+        "chunkLoads": 20,
+        "chunkUnloads": 28,
+        "averageFPS": 55.53186617642006,
+        "low1FPS": 16.652789024852545,
+        "frameTimeMean": 18.007678633076804,
+        "frameTimeMax": 269.1000061035156,
+        "visibleProps": 48,
+        "visibleSigns": 27,
+        "visibleNeon": 17,
+        "facadeInstances": 1958,
+        "rooftopDetails": 205,
+        "decorativeInstancesLoaded": 40962,
+        "emissiveObjects": 116,
+        "dynamicLights": 8,
+        "transparentObjects": 46,
+        "postprocessingEnabled": true,
+        "geometries": 23,
+        "textures": 47,
+        "programs": 159,
+        "activeObjects": 1588,
+        "pools": [
+          {
+            "name": "content-props",
+            "capacity": 128,
+            "active": 9
+          },
+          {
+            "name": "content-labels",
+            "capacity": 640,
+            "active": 3
+          },
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 40
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 0
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 0
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 25
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 4000
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 180
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 0
+          },
+          {
+            "name": "splashes",
+            "capacity": 32,
+            "active": 32
+          },
+          {
+            "name": "headlight-cones",
+            "capacity": 8,
+            "active": 4
+          },
+          {
+            "name": "light-cones",
+            "capacity": 16,
+            "active": 4
+          },
+          {
+            "name": "wet-reflections",
+            "capacity": 24,
+            "active": 8
+          }
+        ],
+        "heapMB": 110.31246948242188,
+        "managedTimers": 0,
+        "managedListeners": 13,
+        "activeStoryMission": null,
+        "storyProgress": 0,
+        "sideMissionsCompleted": 0,
+        "collectibles": 0,
+        "secrets": 0,
+        "activeWorldEvents": null,
+        "contentObjective": null,
+        "contentCheckpoint": 0,
+        "routeVariant": null,
+        "contentMission": null,
+        "contentProps": 9,
+        "upgradePoints": 0,
+        "sessionState": "PLAYING",
+        "saveBytes": 2560,
+        "saveWrites": 2,
+        "wetness": 0.9992501819643472,
+        "playerState": "grounded",
+        "grounded": true,
+        "crouching": false,
+        "zone": "exterior",
+        "nearbyColliders": 0,
+        "collisionTests": 0,
+        "activeInterior": null,
+        "floor": 0,
+        "accessibleRoofs": 53,
+        "interiors": 8,
+        "discoveries": [],
+        "stairs": 27,
+        "gameMode": "EXPLORATION",
+        "activeMission": null,
+        "missionState": null,
+        "availableMissions": 0,
+        "activeCrimes": 0,
+        "health": 100,
+        "movementMode": "grounded",
+        "grappleState": "idle",
+        "glideState": false,
+        "velocity": [
+          0,
+          0,
+          0
+        ],
+        "speed": 0,
+        "totalEnemies": 0,
+        "activeAI": 0,
+        "suspicious": 0,
+        "alerted": 0,
+        "disabled": 0,
+        "aiUpdateMs": 0,
+        "raycasts": 0,
+        "scanner": 0,
+        "completedMissions": 0,
+        "driving": false,
+        "vehicleSpeed": 0,
+        "vehicleAcceleration": 0,
+        "vehicleSteering": 0,
+        "vehicleIntegrity": 100,
+        "vehicleBoost": 100,
+        "currentVehicleId": null,
+        "vehicleCamera": "CHASE",
+        "vehicleRotation": 3.141592653589793,
+        "vehiclePosition": [
+          -7,
+          0,
+          32
+        ],
+        "garagePosition": [
+          -7,
+          0,
+          32
+        ],
+        "vehicleCollisionTests": 48,
+        "activeVehicleColliders": 7,
+        "vehicleUpdateMs": 0.08260036339429126,
+        "activeVehicles": 1,
+        "pursuitState": "NONE",
+        "policeUnits": 0,
+        "lastKnownPosition": [
+          0,
+          0,
+          0
+        ],
+        "pursuitTimer": 0,
+        "vehicleMission": null,
+        "vehicleMissionState": null,
+        "triangles": 365694.6046511628,
+        "fps": 56.893358031225276,
+        "drawCalls": 490,
+        "quality": "HIGH",
+        "seed": 1989,
+        "chunks": 64,
+        "totalBuildings": 210,
+        "landmarks": 3,
+        "heading": -0.0918369107550304,
+        "position": [
+          0,
+          1.75,
+          54
+        ],
+        "district": "Docks",
+        "chunk": "4,4",
+        "buildings": 94,
+        "cars": 40,
+        "pedestrians": 25,
+        "particles": 4180,
+        "simplifiedTraffic": 9,
+        "rain": 4000,
+        "steam": 180,
+        "train": [
+          17.008062986609715,
+          10.6,
+          64
+        ],
+        "time": 8.999999999999979,
+        "turns": 12,
+        "redStops": 2971,
+        "audio": "running",
+        "volume": 0.22,
+        "stoppedCars": 23
+      },
+      "cpuSamples": 3351,
+      "topCpu": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "line": -1,
+          "hits": 2658
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "line": -1,
+          "hits": 64
+        },
+        {
+          "function": "o",
+          "url": "http://127.0.0.1:4199/assets/index-DUbQ4Ckv.js",
+          "line": 235,
+          "hits": 43
+        },
+        {
+          "function": "bindVertexArray",
+          "url": "",
+          "line": -1,
+          "hits": 28
+        },
+        {
+          "function": "h",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 25
+        },
+        {
+          "function": "$",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 24
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:4199/assets/index-DUbQ4Ckv.js",
+          "line": 235,
+          "hits": 24
+        },
+        {
+          "function": "Kr.renderBufferDirect",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 22
+        },
+        {
+          "function": "intersectsFrustum",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 21
+        },
+        {
+          "function": "u",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 20
+        },
+        {
+          "function": "Rt",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 19
+        },
+        {
+          "function": "setFromEuler",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 18
+        },
+        {
+          "function": "updateMatrixWorld",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 16
+        },
+        {
+          "function": "Pt",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 15
+        },
+        {
+          "function": "s",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 3818,
+          "hits": 13
+        }
+      ]
+    },
+    {
+      "version": "V10",
+      "repeat": 0,
+      "fps": 56.904211244405246,
+      "low1": 55.020632737276614,
+      "meanMs": 17.5733918128655,
+      "maxMs": 18.199999999999818,
+      "over20": 0,
+      "over33": 0,
+      "stats": {
+        "chunksLoaded": 56,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0,
+        "chunkBuildPeakMs": 2.0999999046325684,
+        "chunkLoads": 20,
+        "chunkUnloads": 28,
+        "averageFPS": 56.78557982698184,
+        "low1FPS": 36.76470571048257,
+        "frameTimeMean": 17.610104590758215,
+        "frameTimeMax": 72.19999694824219,
+        "framesOver20": 1,
+        "framesOver33": 1,
+        "framesOver50": 1,
+        "visibleProps": 48,
+        "visibleSigns": 27,
+        "visibleNeon": 17,
+        "facadeInstances": 1958,
+        "rooftopDetails": 205,
+        "decorativeInstancesLoaded": 40962,
+        "emissiveObjects": 116,
+        "dynamicLights": 8,
+        "transparentObjects": 46,
+        "postprocessingEnabled": true,
+        "geometries": 23,
+        "textures": 47,
+        "programs": 159,
+        "activeObjects": 1588,
+        "pools": [
+          {
+            "name": "content-props",
+            "capacity": 128,
+            "active": 9
+          },
+          {
+            "name": "content-labels",
+            "capacity": 640,
+            "active": 3
+          },
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 40
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 0
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 0
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 25
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 4000
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 180
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 0
+          },
+          {
+            "name": "splashes",
+            "capacity": 32,
+            "active": 32
+          },
+          {
+            "name": "headlight-cones",
+            "capacity": 8,
+            "active": 5
+          },
+          {
+            "name": "light-cones",
+            "capacity": 16,
+            "active": 4
+          },
+          {
+            "name": "wet-reflections",
+            "capacity": 24,
+            "active": 9
+          }
+        ],
+        "heapMB": 75.95610237121582,
+        "managedTimers": 0,
+        "managedListeners": 16,
+        "activeStoryMission": null,
+        "storyProgress": 0,
+        "sideMissionsCompleted": 0,
+        "collectibles": 0,
+        "secrets": 0,
+        "activeWorldEvents": null,
+        "contentObjective": null,
+        "contentCheckpoint": 0,
+        "routeVariant": null,
+        "contentMission": null,
+        "contentProps": 9,
+        "upgradePoints": 0,
+        "streamingMs": 0.023966925545869776,
+        "runtimeUpdateMs": 0.053742671594380016,
+        "mapUpdateMs": 0,
+        "markersUpdateMs": 0.0007976636700566454,
+        "hudUpdateMs": 0.0008612949799292818,
+        "missionUpdateMs": 0.000986069879718361,
+        "contentUpdateMs": 0.002716239694649996,
+        "minimapUpdateMs": 0.2908381905671205,
+        "updateMs": 1.1663577446055169,
+        "renderMs": 2.6804194748303503,
+        "gameVersion": "0.10.0",
+        "sessionState": "PLAYING",
+        "saveBytes": 2644,
+        "saveWrites": 2,
+        "wetness": 0.9993103732163711,
+        "playerState": "grounded",
+        "grounded": true,
+        "crouching": false,
+        "zone": "exterior",
+        "nearbyColliders": 0,
+        "collisionTests": 0,
+        "activeInterior": null,
+        "floor": 0,
+        "accessibleRoofs": 53,
+        "interiors": 8,
+        "discoveries": [],
+        "stairs": 27,
+        "gameMode": "EXPLORATION",
+        "activeMission": null,
+        "missionState": null,
+        "availableMissions": 0,
+        "activeCrimes": 0,
+        "health": 100,
+        "movementMode": "grounded",
+        "grappleState": "idle",
+        "glideState": false,
+        "velocity": [
+          0,
+          0,
+          0
+        ],
+        "speed": 0,
+        "totalEnemies": 0,
+        "activeAI": 0,
+        "suspicious": 0,
+        "alerted": 0,
+        "disabled": 0,
+        "aiUpdateMs": 0,
+        "raycasts": 0,
+        "scanner": 0,
+        "completedMissions": 0,
+        "driving": false,
+        "vehicleSpeed": 0,
+        "vehicleAcceleration": 0,
+        "vehicleSteering": 0,
+        "vehicleIntegrity": 100,
+        "vehicleBoost": 100,
+        "currentVehicleId": null,
+        "vehicleCamera": "CHASE",
+        "vehicleRotation": 3.141592653589793,
+        "vehiclePosition": [
+          -7,
+          0,
+          32
+        ],
+        "garagePosition": [
+          -7,
+          0,
+          32
+        ],
+        "vehicleCollisionTests": 48,
+        "activeVehicleColliders": 7,
+        "vehicleUpdateMs": 0.08476695079496122,
+        "activeVehicles": 1,
+        "pursuitState": "NONE",
+        "policeUnits": 0,
+        "lastKnownPosition": [
+          0,
+          0,
+          0
+        ],
+        "pursuitTimer": 0,
+        "vehicleMission": null,
+        "vehicleMissionState": null,
+        "triangles": 365696,
+        "fps": 56.89335803122511,
+        "drawCalls": 490,
+        "quality": "HIGH",
+        "seed": 1989,
+        "chunks": 64,
+        "totalBuildings": 210,
+        "landmarks": 3,
+        "heading": -0.0918369107550304,
+        "position": [
+          0,
+          1.75,
+          54
+        ],
+        "district": "Docks",
+        "chunk": "4,4",
+        "buildings": 94,
+        "cars": 40,
+        "pedestrians": 25,
+        "particles": 4180,
+        "simplifiedTraffic": 9,
+        "rain": 4000,
+        "steam": 180,
+        "train": [
+          15.963836369353373,
+          10.6,
+          64
+        ],
+        "time": 9.099999999999978,
+        "turns": 12,
+        "redStops": 3025,
+        "audio": "running",
+        "volume": 0.22,
+        "stoppedCars": 24
+      },
+      "cpuSamples": 3346,
+      "topCpu": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "line": -1,
+          "hits": 2657
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "line": -1,
+          "hits": 43
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:4177/assets/index-Cw0fxN7M.js",
+          "line": 235,
+          "hits": 41
+        },
+        {
+          "function": "a",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 37
+        },
+        {
+          "function": "Kr.renderBufferDirect",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 30
+        },
+        {
+          "function": "$",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 26
+        },
+        {
+          "function": "setFromEuler",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 24
+        },
+        {
+          "function": "bindVertexArray",
+          "url": "",
+          "line": -1,
+          "hits": 20
+        },
+        {
+          "function": "intersectsObject",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 20
+        },
+        {
+          "function": "h",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 19
+        },
+        {
+          "function": "Rt",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 16
+        },
+        {
+          "function": "updateMatrixWorld",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 15
+        },
+        {
+          "function": "Nt",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 14
+        },
+        {
+          "function": "pr",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 14
+        },
+        {
+          "function": "drawElementsInstanced",
+          "url": "",
+          "line": -1,
+          "hits": 13
+        }
+      ]
+    },
+    {
+      "version": "V9",
+      "repeat": 1,
+      "fps": 56.892851795784615,
+      "low1": 54.86968449931167,
+      "meanMs": 17.576900584795318,
+      "maxMs": 18.30000000000109,
+      "over20": 0,
+      "over33": 0,
+      "stats": {
+        "chunksLoaded": 56,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0.09999990463256836,
+        "chunkBuildPeakMs": 2.1000001430511475,
+        "chunkLoads": 20,
+        "chunkUnloads": 28,
+        "averageFPS": 56.70420462897725,
+        "low1FPS": 36.78724657143271,
+        "frameTimeMean": 17.635376539414068,
+        "frameTimeMax": 72,
+        "visibleProps": 48,
+        "visibleSigns": 27,
+        "visibleNeon": 17,
+        "facadeInstances": 1958,
+        "rooftopDetails": 205,
+        "decorativeInstancesLoaded": 40962,
+        "emissiveObjects": 116,
+        "dynamicLights": 8,
+        "transparentObjects": 46,
+        "postprocessingEnabled": true,
+        "geometries": 23,
+        "textures": 47,
+        "programs": 159,
+        "activeObjects": 1588,
+        "pools": [
+          {
+            "name": "content-props",
+            "capacity": 128,
+            "active": 9
+          },
+          {
+            "name": "content-labels",
+            "capacity": 640,
+            "active": 3
+          },
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 40
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 0
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 0
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 25
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 4000
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 180
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 0
+          },
+          {
+            "name": "splashes",
+            "capacity": 32,
+            "active": 32
+          },
+          {
+            "name": "headlight-cones",
+            "capacity": 8,
+            "active": 5
+          },
+          {
+            "name": "light-cones",
+            "capacity": 16,
+            "active": 4
+          },
+          {
+            "name": "wet-reflections",
+            "capacity": 24,
+            "active": 9
+          }
+        ],
+        "heapMB": 71.64105033874512,
+        "managedTimers": 0,
+        "managedListeners": 13,
+        "activeStoryMission": null,
+        "storyProgress": 0,
+        "sideMissionsCompleted": 0,
+        "collectibles": 0,
+        "secrets": 0,
+        "activeWorldEvents": null,
+        "contentObjective": null,
+        "contentCheckpoint": 0,
+        "routeVariant": null,
+        "contentMission": null,
+        "contentProps": 9,
+        "upgradePoints": 0,
+        "sessionState": "PLAYING",
+        "saveBytes": 2560,
+        "saveWrites": 2,
+        "wetness": 0.9992245600404932,
+        "playerState": "grounded",
+        "grounded": true,
+        "crouching": false,
+        "zone": "exterior",
+        "nearbyColliders": 0,
+        "collisionTests": 0,
+        "activeInterior": null,
+        "floor": 0,
+        "accessibleRoofs": 53,
+        "interiors": 8,
+        "discoveries": [],
+        "stairs": 27,
+        "gameMode": "EXPLORATION",
+        "activeMission": null,
+        "missionState": null,
+        "availableMissions": 0,
+        "activeCrimes": 0,
+        "health": 100,
+        "movementMode": "grounded",
+        "grappleState": "idle",
+        "glideState": false,
+        "velocity": [
+          0,
+          0,
+          0
+        ],
+        "speed": 0,
+        "totalEnemies": 0,
+        "activeAI": 0,
+        "suspicious": 0,
+        "alerted": 0,
+        "disabled": 0,
+        "aiUpdateMs": 0,
+        "raycasts": 0,
+        "scanner": 0,
+        "completedMissions": 0,
+        "driving": false,
+        "vehicleSpeed": 0,
+        "vehicleAcceleration": 0,
+        "vehicleSteering": 0,
+        "vehicleIntegrity": 100,
+        "vehicleBoost": 100,
+        "currentVehicleId": null,
+        "vehicleCamera": "CHASE",
+        "vehicleRotation": 3.141592653589793,
+        "vehiclePosition": [
+          -7,
+          0,
+          32
+        ],
+        "garagePosition": [
+          -7,
+          0,
+          32
+        ],
+        "vehicleCollisionTests": 48,
+        "activeVehicleColliders": 7,
+        "vehicleUpdateMs": 0.08461557605102811,
+        "activeVehicles": 1,
+        "pursuitState": "NONE",
+        "policeUnits": 0,
+        "lastKnownPosition": [
+          0,
+          0,
+          0
+        ],
+        "pursuitTimer": 0,
+        "vehicleMission": null,
+        "vehicleMissionState": null,
+        "triangles": 365696,
+        "fps": 56.9460998543239,
+        "drawCalls": 490,
+        "quality": "HIGH",
+        "seed": 1989,
+        "chunks": 64,
+        "totalBuildings": 210,
+        "landmarks": 3,
+        "heading": -0.0918369107550304,
+        "position": [
+          0,
+          1.75,
+          54
+        ],
+        "district": "Docks",
+        "chunk": "4,4",
+        "buildings": 94,
+        "cars": 40,
+        "pedestrians": 25,
+        "particles": 4180,
+        "simplifiedTraffic": 9,
+        "rain": 4000,
+        "steam": 180,
+        "train": [
+          17.42735092088111,
+          10.6,
+          64
+        ],
+        "time": 8.966666666666645,
+        "turns": 12,
+        "redStops": 2956,
+        "audio": "running",
+        "volume": 0.22,
+        "stoppedCars": 23
+      },
+      "cpuSamples": 3309,
+      "topCpu": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "line": -1,
+          "hits": 2563
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "line": -1,
+          "hits": 78
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:4199/assets/index-DUbQ4Ckv.js",
+          "line": 235,
+          "hits": 43
+        },
+        {
+          "function": "Kr.renderBufferDirect",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 38
+        },
+        {
+          "function": "$",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 28
+        },
+        {
+          "function": "bindVertexArray",
+          "url": "",
+          "line": -1,
+          "hits": 26
+        },
+        {
+          "function": "setFromEuler",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 24
+        },
+        {
+          "function": "intersectsObject",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 21
+        },
+        {
+          "function": "h",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 21
+        },
+        {
+          "function": "u",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 19
+        },
+        {
+          "function": "updateMatrixWorld",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 19
+        },
+        {
+          "function": "o",
+          "url": "http://127.0.0.1:4199/assets/index-DUbQ4Ckv.js",
+          "line": 235,
+          "hits": 18
+        },
+        {
+          "function": "Rt",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 17
+        },
+        {
+          "function": "p",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 3818,
+          "hits": 15
+        },
+        {
+          "function": "d",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 3818,
+          "hits": 12
+        }
+      ]
+    },
+    {
+      "version": "V10",
+      "repeat": 1,
+      "fps": 56.80303837953092,
+      "low1": 54.644808743167495,
+      "meanMs": 17.604692082111438,
+      "maxMs": 18.5,
+      "over20": 0,
+      "over33": 0,
+      "stats": {
+        "chunksLoaded": 56,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0,
+        "chunkBuildPeakMs": 2,
+        "chunkLoads": 20,
+        "chunkUnloads": 28,
+        "averageFPS": 56.78992678097315,
+        "low1FPS": 36.719705899450275,
+        "frameTimeMean": 17.60875663490095,
+        "frameTimeMax": 72,
+        "framesOver20": 1,
+        "framesOver33": 1,
+        "framesOver50": 1,
+        "visibleProps": 48,
+        "visibleSigns": 27,
+        "visibleNeon": 17,
+        "facadeInstances": 1958,
+        "rooftopDetails": 205,
+        "decorativeInstancesLoaded": 40962,
+        "emissiveObjects": 116,
+        "dynamicLights": 8,
+        "transparentObjects": 46,
+        "postprocessingEnabled": true,
+        "geometries": 23,
+        "textures": 47,
+        "programs": 159,
+        "activeObjects": 1588,
+        "pools": [
+          {
+            "name": "content-props",
+            "capacity": 128,
+            "active": 9
+          },
+          {
+            "name": "content-labels",
+            "capacity": 640,
+            "active": 3
+          },
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 40
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 0
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 0
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 25
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 4000
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 180
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 0
+          },
+          {
+            "name": "splashes",
+            "capacity": 32,
+            "active": 32
+          },
+          {
+            "name": "headlight-cones",
+            "capacity": 8,
+            "active": 5
+          },
+          {
+            "name": "light-cones",
+            "capacity": 16,
+            "active": 4
+          },
+          {
+            "name": "wet-reflections",
+            "capacity": 24,
+            "active": 9
+          }
+        ],
+        "heapMB": 67.2244348526001,
+        "managedTimers": 0,
+        "managedListeners": 16,
+        "activeStoryMission": null,
+        "storyProgress": 0,
+        "sideMissionsCompleted": 0,
+        "collectibles": 0,
+        "secrets": 0,
+        "activeWorldEvents": null,
+        "contentObjective": null,
+        "contentCheckpoint": 0,
+        "routeVariant": null,
+        "contentMission": null,
+        "contentProps": 9,
+        "upgradePoints": 0,
+        "streamingMs": 0.015019321308709005,
+        "runtimeUpdateMs": 0.08160631546499848,
+        "mapUpdateMs": 0,
+        "markersUpdateMs": 0.000005639203357240718,
+        "hudUpdateMs": 0.006043561830317729,
+        "missionUpdateMs": 0.0005593624692927396,
+        "contentUpdateMs": 0.00864884448076926,
+        "minimapUpdateMs": 0.18832691614722288,
+        "updateMs": 1.0200776551390986,
+        "renderMs": 2.3516639712523397,
+        "gameVersion": "0.10.0",
+        "sessionState": "PLAYING",
+        "saveBytes": 2644,
+        "saveWrites": 2,
+        "wetness": 0.9992393064689951,
+        "playerState": "grounded",
+        "grounded": true,
+        "crouching": false,
+        "zone": "exterior",
+        "nearbyColliders": 0,
+        "collisionTests": 0,
+        "activeInterior": null,
+        "floor": 0,
+        "accessibleRoofs": 53,
+        "interiors": 8,
+        "discoveries": [],
+        "stairs": 27,
+        "gameMode": "EXPLORATION",
+        "activeMission": null,
+        "missionState": null,
+        "availableMissions": 0,
+        "activeCrimes": 0,
+        "health": 100,
+        "movementMode": "grounded",
+        "grappleState": "idle",
+        "glideState": false,
+        "velocity": [
+          0,
+          0,
+          0
+        ],
+        "speed": 0,
+        "totalEnemies": 0,
+        "activeAI": 0,
+        "suspicious": 0,
+        "alerted": 0,
+        "disabled": 0,
+        "aiUpdateMs": 0,
+        "raycasts": 0,
+        "scanner": 0,
+        "completedMissions": 0,
+        "driving": false,
+        "vehicleSpeed": 0,
+        "vehicleAcceleration": 0,
+        "vehicleSteering": 0,
+        "vehicleIntegrity": 100,
+        "vehicleBoost": 100,
+        "currentVehicleId": null,
+        "vehicleCamera": "CHASE",
+        "vehicleRotation": 3.141592653589793,
+        "vehiclePosition": [
+          -7,
+          0,
+          32
+        ],
+        "garagePosition": [
+          -7,
+          0,
+          32
+        ],
+        "vehicleCollisionTests": 48,
+        "activeVehicleColliders": 7,
+        "vehicleUpdateMs": 0.07694667028777452,
+        "activeVehicles": 1,
+        "pursuitState": "NONE",
+        "policeUnits": 0,
+        "lastKnownPosition": [
+          0,
+          0,
+          0
+        ],
+        "pursuitTimer": 0,
+        "vehicleMission": null,
+        "vehicleMissionState": null,
+        "triangles": 365696,
+        "fps": 56.57894736842104,
+        "drawCalls": 490,
+        "quality": "HIGH",
+        "seed": 1989,
+        "chunks": 64,
+        "totalBuildings": 210,
+        "landmarks": 3,
+        "heading": -0.0918369107550304,
+        "position": [
+          0,
+          1.75,
+          54
+        ],
+        "district": "Docks",
+        "chunk": "4,4",
+        "buildings": 94,
+        "cars": 40,
+        "pedestrians": 25,
+        "particles": 4180,
+        "simplifiedTraffic": 9,
+        "rain": 4000,
+        "steam": 180,
+        "train": [
+          17.18775781558321,
+          10.6,
+          64
+        ],
+        "time": 8.999999999999979,
+        "turns": 12,
+        "redStops": 2971,
+        "audio": "running",
+        "volume": 0.22,
+        "stoppedCars": 23
+      },
+      "cpuSamples": 3468,
+      "topCpu": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "line": -1,
+          "hits": 2747
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "line": -1,
+          "hits": 44
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:4177/assets/index-Cw0fxN7M.js",
+          "line": 235,
+          "hits": 41
+        },
+        {
+          "function": "Kr.renderBufferDirect",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 33
+        },
+        {
+          "function": "updateMatrixWorld",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 27
+        },
+        {
+          "function": "$",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 25
+        },
+        {
+          "function": "o",
+          "url": "http://127.0.0.1:4177/assets/index-Cw0fxN7M.js",
+          "line": 235,
+          "hits": 25
+        },
+        {
+          "function": "bindVertexArray",
+          "url": "",
+          "line": -1,
+          "hits": 24
+        },
+        {
+          "function": "Rt",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 21
+        },
+        {
+          "function": "intersectsObject",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 19
+        },
+        {
+          "function": "setFromEuler",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 17
+        },
+        {
+          "function": "Pt",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 16
+        },
+        {
+          "function": "d",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 3818,
+          "hits": 16
+        },
+        {
+          "function": "u",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 15
+        },
+        {
+          "function": "h",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 13
+        }
+      ]
+    },
+    {
+      "version": "V9",
+      "repeat": 2,
+      "fps": 56.905158069883534,
+      "low1": 54.644808743167495,
+      "meanMs": 17.573099415204677,
+      "maxMs": 18.5,
+      "over20": 0,
+      "over33": 0,
+      "stats": {
+        "chunksLoaded": 56,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0,
+        "chunkBuildPeakMs": 2,
+        "chunkLoads": 20,
+        "chunkUnloads": 28,
+        "averageFPS": 56.78726518338006,
+        "low1FPS": 36.855035300593094,
+        "frameTimeMean": 17.609581950649567,
+        "frameTimeMax": 71.80000305175781,
+        "visibleProps": 48,
+        "visibleSigns": 27,
+        "visibleNeon": 17,
+        "facadeInstances": 1958,
+        "rooftopDetails": 205,
+        "decorativeInstancesLoaded": 40962,
+        "emissiveObjects": 116,
+        "dynamicLights": 8,
+        "transparentObjects": 46,
+        "postprocessingEnabled": true,
+        "geometries": 23,
+        "textures": 47,
+        "programs": 159,
+        "activeObjects": 1588,
+        "pools": [
+          {
+            "name": "content-props",
+            "capacity": 128,
+            "active": 9
+          },
+          {
+            "name": "content-labels",
+            "capacity": 640,
+            "active": 3
+          },
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 40
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 0
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 0
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 25
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 4000
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 180
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 0
+          },
+          {
+            "name": "splashes",
+            "capacity": 32,
+            "active": 32
+          },
+          {
+            "name": "headlight-cones",
+            "capacity": 8,
+            "active": 5
+          },
+          {
+            "name": "light-cones",
+            "capacity": 16,
+            "active": 4
+          },
+          {
+            "name": "wet-reflections",
+            "capacity": 24,
+            "active": 9
+          }
+        ],
+        "heapMB": 74.10177230834961,
+        "managedTimers": 0,
+        "managedListeners": 13,
+        "activeStoryMission": null,
+        "storyProgress": 0,
+        "sideMissionsCompleted": 0,
+        "collectibles": 0,
+        "secrets": 0,
+        "activeWorldEvents": null,
+        "contentObjective": null,
+        "contentCheckpoint": 0,
+        "routeVariant": null,
+        "contentMission": null,
+        "contentProps": 9,
+        "upgradePoints": 0,
+        "sessionState": "PLAYING",
+        "saveBytes": 2560,
+        "saveWrites": 2,
+        "wetness": 0.9992949205031358,
+        "playerState": "grounded",
+        "grounded": true,
+        "crouching": false,
+        "zone": "exterior",
+        "nearbyColliders": 0,
+        "collisionTests": 0,
+        "activeInterior": null,
+        "floor": 0,
+        "accessibleRoofs": 53,
+        "interiors": 8,
+        "discoveries": [],
+        "stairs": 27,
+        "gameMode": "EXPLORATION",
+        "activeMission": null,
+        "missionState": null,
+        "availableMissions": 0,
+        "activeCrimes": 0,
+        "health": 100,
+        "movementMode": "grounded",
+        "grappleState": "idle",
+        "glideState": false,
+        "velocity": [
+          0,
+          0,
+          0
+        ],
+        "speed": 0,
+        "totalEnemies": 0,
+        "activeAI": 0,
+        "suspicious": 0,
+        "alerted": 0,
+        "disabled": 0,
+        "aiUpdateMs": 0,
+        "raycasts": 0,
+        "scanner": 0,
+        "completedMissions": 0,
+        "driving": false,
+        "vehicleSpeed": 0,
+        "vehicleAcceleration": 0,
+        "vehicleSteering": 0,
+        "vehicleIntegrity": 100,
+        "vehicleBoost": 100,
+        "currentVehicleId": null,
+        "vehicleCamera": "CHASE",
+        "vehicleRotation": 3.141592653589793,
+        "vehiclePosition": [
+          -7,
+          0,
+          32
+        ],
+        "garagePosition": [
+          -7,
+          0,
+          32
+        ],
+        "vehicleCollisionTests": 48,
+        "activeVehicleColliders": 7,
+        "vehicleUpdateMs": 0.06720963767400226,
+        "activeVehicles": 1,
+        "pursuitState": "NONE",
+        "policeUnits": 0,
+        "lastKnownPosition": [
+          0,
+          0,
+          0
+        ],
+        "pursuitTimer": 0,
+        "vehicleMission": null,
+        "vehicleMissionState": null,
+        "triangles": 365696,
+        "fps": 56.728232189973596,
+        "drawCalls": 490,
+        "quality": "HIGH",
+        "seed": 1989,
+        "chunks": 64,
+        "totalBuildings": 210,
+        "landmarks": 3,
+        "heading": -0.0918369107550304,
+        "position": [
+          0,
+          1.75,
+          54
+        ],
+        "district": "Docks",
+        "chunk": "4,4",
+        "buildings": 94,
+        "cars": 40,
+        "pedestrians": 25,
+        "particles": 4180,
+        "simplifiedTraffic": 9,
+        "rain": 4000,
+        "steam": 180,
+        "train": [
+          16.240366745051304,
+          10.6,
+          64
+        ],
+        "time": 9.099999999999978,
+        "turns": 12,
+        "redStops": 3025,
+        "audio": "running",
+        "volume": 0.22,
+        "stoppedCars": 24
+      },
+      "cpuSamples": 3349,
+      "topCpu": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "line": -1,
+          "hits": 2635
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "line": -1,
+          "hits": 74
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:4199/assets/index-DUbQ4Ckv.js",
+          "line": 235,
+          "hits": 40
+        },
+        {
+          "function": "o",
+          "url": "http://127.0.0.1:4199/assets/index-DUbQ4Ckv.js",
+          "line": 235,
+          "hits": 35
+        },
+        {
+          "function": "Kr.renderBufferDirect",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 34
+        },
+        {
+          "function": "$",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 28
+        },
+        {
+          "function": "bindVertexArray",
+          "url": "",
+          "line": -1,
+          "hits": 25
+        },
+        {
+          "function": "u",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 23
+        },
+        {
+          "function": "intersectsObject",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 22
+        },
+        {
+          "function": "setFromEuler",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 20
+        },
+        {
+          "function": "Rt",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 19
+        },
+        {
+          "function": "updateMatrixWorld",
+          "url": "http://127.0.0.1:4199/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 16
+        },
+        {
+          "function": "h",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 15
+        },
+        {
+          "function": "pr",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 14
+        },
+        {
+          "function": "Mt",
+          "url": "http://127.0.0.1:4199/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 13
+        }
+      ]
+    },
+    {
+      "version": "V10",
+      "repeat": 2,
+      "fps": 56.68029653269506,
+      "low1": 54.79452054794384,
+      "meanMs": 17.64281524926686,
+      "maxMs": 18.30000000000109,
+      "over20": 0,
+      "over33": 0,
+      "stats": {
+        "chunksLoaded": 56,
+        "chunksPending": 0,
+        "streamingQueue": 0,
+        "chunkBuildMs": 0,
+        "chunkBuildPeakMs": 2.200000047683716,
+        "chunkLoads": 20,
+        "chunkUnloads": 28,
+        "averageFPS": 56.47030826398537,
+        "low1FPS": 30.24193583275352,
+        "frameTimeMean": 17.708421128590903,
+        "frameTimeMax": 107.19999694824219,
+        "framesOver20": 1,
+        "framesOver33": 1,
+        "framesOver50": 1,
+        "visibleProps": 48,
+        "visibleSigns": 27,
+        "visibleNeon": 17,
+        "facadeInstances": 1958,
+        "rooftopDetails": 205,
+        "decorativeInstancesLoaded": 40962,
+        "emissiveObjects": 116,
+        "dynamicLights": 8,
+        "transparentObjects": 46,
+        "postprocessingEnabled": true,
+        "geometries": 23,
+        "textures": 47,
+        "programs": 159,
+        "activeObjects": 1588,
+        "pools": [
+          {
+            "name": "content-props",
+            "capacity": 128,
+            "active": 9
+          },
+          {
+            "name": "content-labels",
+            "capacity": 640,
+            "active": 3
+          },
+          {
+            "name": "traffic",
+            "capacity": 40,
+            "active": 40
+          },
+          {
+            "name": "police",
+            "capacity": 4,
+            "active": 0
+          },
+          {
+            "name": "enemies",
+            "capacity": 20,
+            "active": 0
+          },
+          {
+            "name": "pedestrians",
+            "capacity": 25,
+            "active": 25
+          },
+          {
+            "name": "rain",
+            "capacity": 4000,
+            "active": 4000
+          },
+          {
+            "name": "steam",
+            "capacity": 600,
+            "active": 180
+          },
+          {
+            "name": "markers",
+            "capacity": 128,
+            "active": 0
+          },
+          {
+            "name": "splashes",
+            "capacity": 32,
+            "active": 32
+          },
+          {
+            "name": "headlight-cones",
+            "capacity": 8,
+            "active": 5
+          },
+          {
+            "name": "light-cones",
+            "capacity": 16,
+            "active": 4
+          },
+          {
+            "name": "wet-reflections",
+            "capacity": 24,
+            "active": 9
+          }
+        ],
+        "heapMB": 56.010114669799805,
+        "managedTimers": 0,
+        "managedListeners": 16,
+        "activeStoryMission": null,
+        "storyProgress": 0,
+        "sideMissionsCompleted": 0,
+        "collectibles": 0,
+        "secrets": 0,
+        "activeWorldEvents": null,
+        "contentObjective": null,
+        "contentCheckpoint": 0,
+        "routeVariant": null,
+        "contentMission": null,
+        "contentProps": 9,
+        "upgradePoints": 0,
+        "streamingMs": 0.019738555168053958,
+        "runtimeUpdateMs": 0.0557082459997069,
+        "mapUpdateMs": 0,
+        "markersUpdateMs": 0.00013387455094199908,
+        "hudUpdateMs": 0.0001338964828615223,
+        "missionUpdateMs": 0.002570549380820975,
+        "contentUpdateMs": 0.01190678362492632,
+        "minimapUpdateMs": 0.34609514332253527,
+        "updateMs": 1.174344737036336,
+        "renderMs": 2.6208628285892104,
+        "gameVersion": "0.10.0",
+        "sessionState": "PLAYING",
+        "saveBytes": 2644,
+        "saveWrites": 2,
+        "wetness": 0.9992974542258872,
+        "playerState": "grounded",
+        "grounded": true,
+        "crouching": false,
+        "zone": "exterior",
+        "nearbyColliders": 0,
+        "collisionTests": 0,
+        "activeInterior": null,
+        "floor": 0,
+        "accessibleRoofs": 53,
+        "interiors": 8,
+        "discoveries": [],
+        "stairs": 27,
+        "gameMode": "EXPLORATION",
+        "activeMission": null,
+        "missionState": null,
+        "availableMissions": 0,
+        "activeCrimes": 0,
+        "health": 100,
+        "movementMode": "grounded",
+        "grappleState": "idle",
+        "glideState": false,
+        "velocity": [
+          0,
+          0,
+          0
+        ],
+        "speed": 0,
+        "totalEnemies": 0,
+        "activeAI": 0,
+        "suspicious": 0,
+        "alerted": 0,
+        "disabled": 0,
+        "aiUpdateMs": 0,
+        "raycasts": 0,
+        "scanner": 0,
+        "completedMissions": 0,
+        "driving": false,
+        "vehicleSpeed": 0,
+        "vehicleAcceleration": 0,
+        "vehicleSteering": 0,
+        "vehicleIntegrity": 100,
+        "vehicleBoost": 100,
+        "currentVehicleId": null,
+        "vehicleCamera": "CHASE",
+        "vehicleRotation": 3.141592653589793,
+        "vehiclePosition": [
+          -7,
+          0,
+          32
+        ],
+        "garagePosition": [
+          -7,
+          0,
+          32
+        ],
+        "vehicleCollisionTests": 72,
+        "activeVehicleColliders": 7,
+        "vehicleUpdateMs": 0.085899677242786,
+        "activeVehicles": 1,
+        "pursuitState": "NONE",
+        "policeUnits": 0,
+        "lastKnownPosition": [
+          0,
+          0,
+          0
+        ],
+        "pursuitTimer": 0,
+        "vehicleMission": null,
+        "vehicleMissionState": null,
+        "triangles": 365696,
+        "fps": 56.60128998288793,
+        "drawCalls": 490,
+        "quality": "HIGH",
+        "seed": 1989,
+        "chunks": 64,
+        "totalBuildings": 210,
+        "landmarks": 3,
+        "heading": -0.0918369107550304,
+        "position": [
+          0,
+          1.75,
+          54
+        ],
+        "district": "Docks",
+        "chunk": "4,4",
+        "buildings": 94,
+        "cars": 40,
+        "pedestrians": 25,
+        "particles": 4180,
+        "simplifiedTraffic": 9,
+        "rain": 4000,
+        "steam": 180,
+        "train": [
+          16.195443037808047,
+          10.6,
+          64
+        ],
+        "time": 9.099999999999978,
+        "turns": 12,
+        "redStops": 3025,
+        "audio": "running",
+        "volume": 0.22,
+        "stoppedCars": 24
+      },
+      "cpuSamples": 3398,
+      "topCpu": [
+        {
+          "function": "(idle)",
+          "url": "",
+          "line": -1,
+          "hits": 2683
+        },
+        {
+          "function": "(program)",
+          "url": "",
+          "line": -1,
+          "hits": 46
+        },
+        {
+          "function": "$",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 38
+        },
+        {
+          "function": "Kr.renderBufferDirect",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 36
+        },
+        {
+          "function": "update",
+          "url": "http://127.0.0.1:4177/assets/index-Cw0fxN7M.js",
+          "line": 235,
+          "hits": 31
+        },
+        {
+          "function": "updateMatrixWorld",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 23
+        },
+        {
+          "function": "h",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 22
+        },
+        {
+          "function": "Rt",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 19
+        },
+        {
+          "function": "bindVertexArray",
+          "url": "",
+          "line": -1,
+          "hits": 19
+        },
+        {
+          "function": "intersectsObject",
+          "url": "http://127.0.0.1:4177/assets/three-core-Cdl9PlYY.js",
+          "line": 0,
+          "hits": 16
+        },
+        {
+          "function": "pr",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4164,
+          "hits": 15
+        },
+        {
+          "function": "d",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 3818,
+          "hits": 14
+        },
+        {
+          "function": "o",
+          "url": "http://127.0.0.1:4177/assets/index-Cw0fxN7M.js",
+          "line": 235,
+          "hits": 14
+        },
+        {
+          "function": "Mt",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 13
+        },
+        {
+          "function": "Pt",
+          "url": "http://127.0.0.1:4177/assets/three-renderer-Oa-0JKly.js",
+          "line": 4215,
+          "hits": 13
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

@@ -28,7 +28,7 @@ export class VehicleRenderer {
         part(this.glow,side*.63,.57,2.26,.5,.13,.04,colors.white);
         part(this.glow,side*.65,.57,-2.26,.5,v.brakingInput?.22:.12,.04,colors.red);
         if(v.boosting)part(this.glow,side*.38,.3,-2.28,.22,.12,.04,colors.boost);
-        if(v.type==='POLICE')part(this.glow,side*.35,1.23,-.3,.6,.15,.3,Math.floor(time*8)%2===(side<0?0:1)?(side<0?colors.red:colors.blue):colors.black);
+        if(v.type==='POLICE')part(this.glow,side*.35,1.23,-.3,.6,.15,.3,this.reduceFlashes?colors.police:Math.floor(time*8)%2===(side<0?0:1)?(side<0?colors.red:colors.blue):colors.black);
       }
     }
     this.body.end(); this.glow.end();

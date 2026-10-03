@@ -1,3 +1,4 @@
+import { matches } from '../input/InputBindings.js';
 import { Vector3 } from 'three';
 import { PlayerTraversal } from '../player/PlayerTraversal.js';
 import { PlayerHealth } from '../player/PlayerHealth.js';
@@ -9,7 +10,7 @@ import { ScannerSystem } from './ScannerSystem.js';
 import { EnemyManager } from '../ai/EnemyManager.js';
 import { WorldMarkers } from './WorldMarkers.js';
 import { MissionHUD } from '../ui/MissionHUD.js';
-import { segmentBlocked } from '../utils/spatialQueries.js';
+import { segmentBlocked, capsuleClear } from '../utils/spatialQueries.js';
 import { VehicleManager } from '../vehicles/VehicleManager.js';
 import { PursuitSystem } from './PursuitSystem.js';
 import { VehicleMissionManager } from './VehicleMissionManager.js';
@@ -21,6 +22,9 @@ export class GameDirector {
     for(const station of living.rail.stations)this.vertical.grapple.points.push({compatible:true,position:new Vector3(station.x-9,12.5,station.z+3.2)});
     if(this.vertical.routes.crane){const c=this.vertical.routes.crane;this.vertical.grapple.points.push({compatible:true,position:new Vector3(c.x,c.y,c.z)});}
     for(const b of this.vertical.roofs)for(const s of (b.sections??[]).slice(0,-1))this.vertical.grapple.points.push({compatible:true,position:new Vector3(b.x,s.y+s.h+2,b.z+s.d/2+1.2)});
+    // Section anchors hidden inside stairs or a taller volume are misleading.
+    // Keep the geometry; advertise only anchors with room for the arrival capsule.
+    for(const point of this.vertical.grapple.points){const feet=point.position.clone();feet.y-=.9;point.compatible&&=capsuleClear(this.city.collisionWorld,feet,1.9,.42,null);}
     this.traversal=new PlayerTraversal(player.physics,this.vertical.grapple);
     this.vehicles=living.traffic?new VehicleManager(living,player,{ui}):null;
     this.pursuit=this.vehicles?new PursuitSystem(this.vehicles):null;
@@ -43,7 +47,7 @@ export class GameDirector {
     if(!['EXPLORATION','VIGILANTE'].includes(mode))throw new RangeError('Unknown game mode');
     this.mode=mode;const enabled=mode==='VIGILANTE';this.traversal.configure(enabled);this.scanner.enabled=enabled;this.scanner.clear();
     this.crimes.setEnabled(enabled);this.missions.clear();this.enemies.clear();this.noise.clear();
-    this.health.hp=100;this.health.dead=false;this.player.physics.frozen=Boolean(this.vehicles?.driving);this.target=null;this.syncTime=1;
+    this.living.content?.upgrades.apply(this.living);this.health.hp=this.health.max;this.health.dead=false;this.player.physics.frozen=Boolean(this.vehicles?.driving);this.target=null;this.syncTime=1;
     this.pursuit?.setEnabled(enabled);
     if(this.vehicleMissions){this.vehicleMissions.enabled=enabled;this.vehicleMissions.clear();}
     if(this.vehicles?.driving)this.vertical.grapple.enabled=false;
@@ -52,23 +56,27 @@ export class GameDirector {
   sync(dt) {
     const budget=GAMEPLAY_BUDGETS[this.living.performance.level];
     this.crimes.update(dt,this.camera.position,budget.crimes,this.missions.active?.eventId);
-    this.missions.sync(this.crimes.events);this.enemies.sync(this.crimes.events,budget);
+    this.missions.sync(this.crimes.events);
+    const encounter=this.living.content?.enabled?this.living.content.encounter:null;
+    this.enemies.sync(encounter?[encounter,...this.crimes.events.slice(0,Math.max(0,budget.crimes-1))]:this.crimes.events,encounter?{...budget,perCrime:3}:budget);
   }
   action(code) {
     if(this.health.dead)return true;
+    if(matches(code,'LEGACY_MISSION')&&this.living.content?.active)return true;
     if(this.vehicles?.driving){
-      if(code==='KeyE')this.vehicles.interact();
-      if(code==='KeyV')this.vehicles.camera.cycle();
-      if(code==='KeyM')this.vehicleMissions.startNext();
+      if(matches(code,'RECOVER'))this.vehicles.recover(true);
+      if(matches(code,'INTERACT'))this.vehicles.interact();
+      if(matches(code,'VEHICLE_CAMERA'))this.vehicles.camera.cycle();
+      if(matches(code,'LEGACY_MISSION'))this.vehicleMissions.startNext();
       return true;
     }
-    if(code==='KeyE'&&this.vehicles?.canEnter())return this.vehicles.interact();
-    if(code==='Space'&&this.vertical.grapple.active){this.vertical.grapple.cancel();return true;}
+    if(matches(code,'INTERACT')&&this.vehicles?.canEnter())return this.vehicles.interact();
+    if(matches(code,'JUMP')&&this.vertical.grapple.active){this.vertical.grapple.cancel();return true;}
     if(this.mode!=='VIGILANTE')return false;
-    if(code==='KeyV'){this.scanner.activate();return true;}
-    if(code==='KeyM'){const m=this.missions.offer(this.camera.position);if(m)this.missions.activate(m.id);return true;}
+    if(matches(code,'SCANNER')){this.scanner.activate();return true;}
+    if(matches(code,'LEGACY_MISSION')){const m=this.missions.offer(this.camera.position);if(m)this.missions.activate(m.id);return true;}
     if(code==='AltLeft'||code==='AltRight'){this.traversal.dodge(this.player.wish);return true;}
-    if(code==='KeyE') {
+    if(matches(code,'INTERACT')) {
       if(this.target&&this.combat.takedown(this.target,this.camera.position))return true;
       if(this.canInspect()){this.inspected=true;return true;}
     }

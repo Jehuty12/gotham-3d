@@ -34,15 +34,18 @@ export class ChunkStreamingManager {
     chunk.collisionsLoaded=false;this.world.local=[];
   }
   request(id,priority=1) {
+    if(this.failed?.has(id))return;
     const chunk=this.city.chunks.get(id);if(!chunk||chunk.loaded)return;
     this.ensureCollisions(id);
     if(this.pending.has(id)){this.pending.get(id).priority=Math.min(priority,this.pending.get(id).priority);return;}
     const job={id,index:0,priority};this.pending.set(id,job);this.queue.push(job);
   }
   buildOne(job) {
+    try{
     const chunk=this.city.chunks.get(job.id),data=this.recipes.get(job.id),r=data.recipes[job.index++];
     if(r){const mesh=new InstancedMesh(r.geometry,r.material,r.count);mesh.instanceMatrix=new InstancedBufferAttribute(r.matrix,16);if(r.colors)mesh.instanceColor=new InstancedBufferAttribute(r.colors,3);mesh.matrix.copy(r.matrixWorld);mesh.matrix.decompose(mesh.position,mesh.quaternion,mesh.scale);mesh.name=r.name;mesh.userData.streamDetail=r.detail;mesh.userData.art=r.art?{...r.art}:null;mesh.computeBoundingSphere();chunk.group.add(mesh);}
     if(job.index>=data.recipes.length){chunk.loaded=true;this.loaded.add(job.id);this.pending.delete(job.id);this.city.group.add(chunk.group);this.loads++;return true;}return false;
+    }catch(error){this.failed??=new Set();this.failed.add(job.id);this.pending.delete(job.id);const chunk=this.city.chunks.get(job.id);for(const node of [...chunk.group.children])if(node.isInstancedMesh){node.dispose();node.removeFromParent();}console.error('Chunk unavailable:',job.id,error);this.onFailure?.(job.id);return true;}
   }
   ensureAt(position) {
     this.ensureCollisionAt(position);const chunk=this.city.chunkAt(position.x,position.z);if(!chunk||chunk.loaded)return;

@@ -87,7 +87,16 @@ export class AudioManager {
     source.connect(filter);filter.connect(gain);gain.connect(this.buses.get('AMBIENCE'));this.thunderSource=source;
     source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();if(this.thunderSource===source)this.thunderSource=null;};source.start();source.stop(ctx.currentTime+3.8);
   }
+  radio(siren=false) {
+    const ctx=this.context;if(ctx?.state!=='running'||!this.active)return;
+    this.radioSource?.stop();const source=ctx.createOscillator(),gain=ctx.createGain(),duration=siren?1.2:.12;
+    source.frequency.setValueAtTime(siren?420:740,ctx.currentTime);source.frequency.linearRampToValueAtTime(siren?720:590,ctx.currentTime+duration);
+    gain.gain.setValueAtTime(.025,ctx.currentTime);gain.gain.linearRampToValueAtTime(0,ctx.currentTime+duration);
+    source.connect(gain);gain.connect(this.buses.get('UI'));this.radioSource=source;
+    source.onended=()=>{source.disconnect();gain.disconnect();if(this.radioSource===source)this.radioSource=null;};source.start();source.stop(ctx.currentTime+duration);
+  }
   dispose() {
+    this.radioSource?.stop();
     this.thunderSource?.stop();
     this.vehicleAudio?.dispose();
     for (const { source, filter } of this.sources) { source.stop(); source.disconnect(); filter?.disconnect(); }

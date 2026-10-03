@@ -1,3 +1,4 @@
+import { matches } from '../input/InputBindings.js';
 import { Vector3 } from 'three';
 import { CollisionWorld, box, overlaps } from '../world/CollisionWorld.js';
 import { PlayerPhysics } from '../player/PlayerPhysics.js';
@@ -40,8 +41,8 @@ export class VerticalCity {
     this.toast=document.createElement('div');this.toast.id='discovery-toast';this.toast.setAttribute('role','status');document.body.appendChild(this.toast);
     this.toastTime=0;
     player.onAction=code=>{
-      if(code==='KeyE')this.interaction.use();
-      if(code==='KeyG')this.grapple.use();
+      if(matches(code,'INTERACT'))this.interaction.use();
+      if(matches(code,'GRAPPLE'))this.grapple.use();
       if(/^Digit[123]$/.test(code) && this.interiors.active?.panel)this.interiors.active.elevator.select(Number(code.at(-1))-1);
     };
     window.addEventListener('mousedown',e=>{if(e.button===2 && player.controls.isLocked)this.grapple.use();},{signal});

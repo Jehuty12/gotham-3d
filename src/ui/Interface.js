@@ -1,20 +1,21 @@
 ﻿import { CITY_SEED } from '../world/districts.js';
 
+import { GAME_VERSION, RELEASE_NAME } from '../config/version.js';
 export function mountInterface() {
 document.querySelector('#app').innerHTML = `
   <div id="viewport" aria-label="Ville 3D à explorer"></div><div class="vignette"></div>
   <header class="topbar">
-    <a class="brand" href="./" aria-label="Art Pass & Atmosphere, accueil"><span class="brand-mark">L<span>·</span></span><span>ART PASS & ATMOSPHERE<small>V8 / UNE NUIT DE PIERRE ET DE LUMIÈRE</small></span></a>
+    <a class="brand" href="./" aria-label="Les heures effacées, accueil"><span class="brand-mark">L<span>·</span></span><span>LES HEURES EFFACÉES<small>V10 · ${GAME_VERSION} · CITY SEED ${CITY_SEED}</small></span></a>
     <div class="top-right"><span class="live-dot"></span> MONDE PROCÉDURAL <span class="divider"></span> <span>01:27 <span class="moon-icon">◔</span></span></div>
   </header>
   <main id="menu">
     <div class="intro">
       <div class="eyebrow"><span></span> LA VILLE NE DORT JAMAIS.</div>
       <h1>La nuit vous<br><em>appartient.</em></h1>
-      <p>Des souterrains aux toits, puis au volant de NIGHTRIDER.<br>Garage G sur la carte · Approchez la voiture et appuyez sur E.</p>
+      <p>Une ville, des coupures inexpliquées, sept dossiers à relier.<br>Vigilante : campagne et rencontres. Exploration : découverte libre.</p>
       <label class="mode-picker">MODE <select id="game-mode"><option value="EXPLORATION">EXPLORATION</option><option value="VIGILANTE">VIGILANTE</option></select></label>
       <button id="enter" class="enter-button">Explorer la ville <span>↗</span></button>
-      <div class="entry-note">Clavier & souris · Échap pour les réglages · F3 diagnostics</div>
+      <div class="entry-note">Clavier & souris · Échap pour les options · ${RELEASE_NAME}</div>
       <p id="error" role="alert" hidden></p>
     </div>
     <aside class="chapter"><span class="chapter-number">04 /</span><span>DOWNTOWN<br>OLD GOTHAM<br>INDUSTRIAL DISTRICT<br>DOCKS</span><i></i><small>48° N &nbsp; / &nbsp; 02° E<br>UNE NUIT SANS FIN</small></aside>

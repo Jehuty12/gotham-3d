@@ -135,7 +135,7 @@ export class TrafficSystem {
         part(this.batches.tail, side * 0.56, 0.65, -type.length / 2 - 0.025, 0.35, car.stopped ? 0.25 : 0.15, 0.08);
       }
       const distance = Math.hypot(p.x - player.x, p.z - player.z);
-      const flashing = type.roofLight && (time + car.phaseOffset) % 43 < 9 && distance > 35;
+      const flashing = !this.reduceFlashes && type.roofLight && (time + car.phaseOffset) % 43 < 9 && distance > 35;
       if (type.roofLight) for (let side = 0; side < 2; side++) {
         const on = flashing && Math.floor(time * 8) % 2 === side;
         part(this.batches.police, side ? 0.3 : -0.3, 1.55, -0.2, 0.5, 0.15, 0.3, on ? this.flashColors[side] : car.color);

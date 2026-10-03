@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PlayerPhysics } from './PlayerPhysics.js';
+import { INPUT_CODES, pressed as actionPressed } from '../input/InputBindings.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
 export class PlayerController {
@@ -17,7 +18,7 @@ export class PlayerController {
     this.wish = new THREE.Vector3();
     this.events = new AbortController();
     const options = { signal: this.events.signal };
-    const codes = ['KeyW', 'KeyZ', 'KeyA', 'KeyQ', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ShiftLeft', 'ShiftRight', 'Space', 'ControlLeft', 'ControlRight', 'KeyE', 'KeyG', 'KeyV', 'KeyM', 'AltLeft', 'AltRight', 'Digit1', 'Digit2', 'Digit3'];
+    const codes = INPUT_CODES;
     window.addEventListener('keydown', event => {
       if (!this.controls.isLocked || !codes.includes(event.code)) return;
       event.preventDefault();
@@ -38,8 +39,8 @@ export class PlayerController {
   update(delta) {
     if (!this.controls.isLocked) return;
     const pressed = (...codes) => codes.some(code => this.keys.has(code));
-    const ahead = Number(pressed('KeyW', 'KeyZ', 'ArrowUp')) - Number(pressed('KeyS', 'ArrowDown'));
-    const sideways = Number(pressed('KeyD', 'ArrowRight')) - Number(pressed('KeyA', 'KeyQ', 'ArrowLeft'));
+    const ahead = Number(actionPressed(this.keys,'MOVE_FORWARD')) - Number(actionPressed(this.keys,'MOVE_BACK'));
+    const sideways = Number(actionPressed(this.keys,'MOVE_RIGHT')) - Number(actionPressed(this.keys,'MOVE_LEFT'));
     this.camera.getWorldDirection(this.forward);
     this.forward.y = 0;
     this.forward.normalize();

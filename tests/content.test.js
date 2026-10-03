@@ -1,0 +1,63 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { Vector3 } from 'three';
+import { contentFixture } from '../scripts/content-fixture.mjs';
+import { validateContent } from '../src/content/ContentValidation.js';
+import { MissionRegistry } from '../src/content/MissionRegistry.js';
+import { StoryMission } from '../src/content/StoryMission.js';
+import { objectiveSatisfied } from '../src/content/ContentManager.js';
+import { normalizeContent } from '../src/content/ContentState.js';
+import { DialogueSystem } from '../src/content/DialogueSystem.js';
+import { UpgradeManager, UPGRADES } from '../src/gameplay/UpgradeManager.js';
+import { migrateSave } from '../src/save/SaveMigrations.js';
+import { normalizeSave, SAVE_VERSION } from '../src/save/SaveSchema.js';
+import { ContentDecor } from '../src/content/ContentDecor.js';
+
+const fixture=contentFixture(),{content:c,living:l}=fixture;
+test.after(()=>fixture.dispose());
+test.beforeEach(()=>{c.reset();l.gameplay.setMode('VIGILANTE');if(l.vertical.interiors.active)l.vertical.interiors.exit();if(l.vertical.underground.active)l.vertical.underground.exit();});
+
+test('authored locations, objectives, road widths and rooftop chain are physically valid',()=>{const r=validateContent(c);assert.deepEqual(r.errors,[]);assert.equal(r.story,7);assert.equal(r.side,8);assert.equal(r.locations,18);assert.equal(r.lore,20);assert.equal(r.secrets,10);assert.ok(r.objectives>=100);});
+test('main mission identities and positions stay fixed across secondary seeds',()=>{const a=new MissionRegistry(c.locations,l.traffic.network,1989),b=new MissionRegistry(c.locations,l.traffic.network,1990);assert.deepEqual(a.missions.filter(m=>m.kind==='story'),b.missions.filter(m=>m.kind==='story'));assert.notDeepEqual(a.missions.filter(m=>m.kind==='side').map(m=>m.variant),b.missions.filter(m=>m.kind==='side').map(m=>m.variant));});
+test('campaign prerequisites cannot be bypassed by starting a locked mission',()=>{assert.equal(c.start('story-2'),false);assert.equal(c.start('story-1','INTERIOR'),true);assert.equal(c.start('side-1'),false);assert.equal(c.active.route,'INTERIOR');});
+test('all main routes have distinct playable access objectives',()=>{for(const d of c.registry.missions.filter(m=>m.kind==='story')){assert.equal(Object.keys(d.routes).length,3);assert.notDeepEqual(d.routes.STREET.objectives[0].position,d.routes.ROOFTOP.objectives[0].position);assert.notEqual(d.routes.STREET.objectives[0].domain,d.routes.INTERIOR.objectives[0].domain);}});
+test('each mission walkthrough resumes every checkpoint and completes once',()=>{
+  for(const definition of c.registry.missions){const mission=new StoryMission(definition);mission.unlock(new Set(definition.prerequisites));assert.ok(mission.start('STREET'));let steps=0;
+    while(mission.state==='ACTIVE'){const saved=mission.capture(),restored=new StoryMission(definition);restored.restore(saved);assert.equal(restored.index,mission.index);assert.equal(restored.objective.text,mission.objective.text);assert.ok(mission.advance());assert.equal(mission.checkpoint,mission.index);assert.ok(++steps<32);}
+    assert.equal(mission.state,'COMPLETED');assert.equal(mission.advance(),false);
+  }
+});
+test('all seven campaign missions complete, reward and unlock their successor',()=>{for(let i=1;i<=7;i++){assert.ok(c.start(`story-${i}`));while(c.active)c.advance();}assert.equal(c.snapshot().storyProgress,7);assert.equal(c.upgrades.earned,7);assert.equal(c.foundLore.size,7);});
+test('side replay never grants duplicate points or lore',()=>{assert.ok(c.start('side-1'));while(c.active)c.advance();const points=c.upgrades.earned;assert.ok(c.start('side-1','ROOFTOP',true));while(c.active)c.advance();assert.equal(c.upgrades.earned,points);});
+test('objective evidence requires the right domain, action and traversal',()=>{
+  const o={kind:'inspect',domain:'interior-0',radius:3};assert.equal(objectiveSatisfied(o,{domain:'exterior',distance:0,inspected:true}),false);assert.equal(objectiveSatisfied(o,{domain:o.domain,distance:0}),false);assert.equal(objectiveSatisfied(o,{domain:o.domain,distance:2,inspected:true}),true);
+  assert.equal(objectiveSatisfied({...o,kind:'traverse'},{domain:o.domain,distance:0,traversed:false}),false);
+  assert.equal(objectiveSatisfied({...o,kind:'scan',duration:2},{domain:o.domain,distance:1,scanning:true,progress:1}),false);
+  assert.equal(objectiveSatisfied({...o,kind:'defeat',count:3},{domain:o.domain,spawned:0,defeated:0}),false);
+});
+test('real inspect interaction advances the active objective only in its interior',()=>{
+  c.start('story-2');assert.equal(c.active,null);c.completed.add('story-1');c.unlock();c.start('story-2');c.advance();
+  const o=c.objective;c.teleport(o);assert.ok(c.interact());const index=c.active.index;c.update(.05);assert.equal(c.active.index,index+1);
+});
+test('checkpoint restart retains progress; mission restart returns to the beginning',()=>{c.start('story-1');c.advance();c.advance();assert.equal(c.active.index,2);assert.ok(c.restart(false));assert.equal(c.active.index,2);assert.equal(c.active.progress,0);assert.ok(c.restart(true));assert.equal(c.active.index,0);});
+test('KO returns to the last authored checkpoint without losing discoveries',()=>{c.start('story-1');c.advance();c.discover('archive');l.gameplay.health.dead=true;c.update(.1);assert.equal(c.pendingFailure,true);l.gameplay.health.dead=false;c.update(.1);assert.equal(c.active.index,1);assert.ok(c.locations.get('archive').discovered);assert.equal(l.gameplay.health.hp,100);});
+test('content pause freezes objective and radio timers',()=>{c.start('story-1');const state=c.capture(),queue=[...c.dialogue.queue];for(let i=0;i<60;i++)c.update(0);assert.deepEqual(c.capture(),state);assert.deepEqual(c.dialogue.queue,queue);});
+test('Exploration suspends story and requires opt-in for discoveries',()=>{c.start('story-1');l.gameplay.setMode('EXPLORATION');fixture.options.settings.explorationContent='OFF';c.teleport(c.locations.point('garage'));c.update(.1);assert.equal(c.active.index,0);assert.equal(c.locations.get('garage').discovered,false);assert.equal(c.start('side-1'),false);fixture.options.settings.explorationContent='DISCOVERIES_ONLY';c.update(.1);assert.ok(c.locations.get('garage').discovered);});
+test('undiscovered secrets and lore never appear as direct map markers',()=>{assert.equal(c.mapEntries().some(e=>e.id.startsWith('secret-')||e.id.startsWith('lore-')),false);c.foundLore.add('lore-1');assert.equal(c.mapEntries().some(e=>e.id.startsWith('secret-')),false);});
+test('nearby secret is collected through real interaction and saved',()=>{const s=c.catalogue.secrets[6];c.teleport(s);for(let i=0;i<3&&!c.secrets.has(s.id);i++)c.interact();assert.ok(c.secrets.has(s.id));assert.ok(c.capture().secrets.includes(s.id));});
+test('fast travel requires discovery and rejects pursuit, combat and active missions',()=>{assert.ok(c.fastTravelReason('theatre'));c.discover('theatre');assert.equal(c.fastTravelReason('theatre'),'');l.gameplay.pursuit.state='PURSUIT';assert.ok(c.fastTravelReason('theatre'));l.gameplay.pursuit.clear();c.start('story-1');assert.ok(c.fastTravelReason('theatre'));});
+test('safe point travel prepares its chunk and places a grounded destination',()=>{c.discover('theatre');l.gameplay.enemies.clear();assert.ok(c.fastTravel('theatre'));assert.ok(l.city.isLoadedAt(l.camera.position.x,l.camera.position.z));assert.deepEqual(l.camera.position.toArray(),c.locations.get('theatre').outside);});
+test('fast travel from a moving vehicle exits cleanly and parks it',()=>{c.discover('theatre');l.gameplay.enemies.clear();const v=l.gameplay.vehicles;v.driving=true;v.vehicle.speed=12;v.vehicle.velocity.set(0,0,12);assert.ok(c.fastTravel('theatre'));assert.equal(v.driving,false);assert.equal(v.vehicle.speed,0);assert.equal(fixture.player.physics.frozen,false);assert.deepEqual(l.camera.position.toArray(),c.locations.get('theatre').outside);});
+test('six upgrades enforce point costs, bounds and no duplicate purchase',()=>{const u=new UpgradeManager();assert.equal(UPGRADES.length,6);assert.equal(u.buy('health'),false);u.earned=15;for(const upgrade of UPGRADES)assert.ok(u.buy(upgrade.id));assert.equal(u.buy('health'),false);assert.equal(u.points,6);u.apply(l);assert.equal(l.gameplay.health.max,110);assert.equal(l.gameplay.scanner.range,65);assert.equal(l.gameplay.vehicles.vehicle.boostDrain,20);});
+test('upgrade restore cannot spend more than earned or stack repeated bonuses',()=>{const u=new UpgradeManager();u.restore(['health','health','boost','bad'],2);assert.deepEqual([...u.owned],['health']);assert.equal(u.points,0);u.apply(l);u.apply(l);assert.equal(l.gameplay.health.max,110);});
+test('V1 migration preserves player, vehicle, settings and historical progress',()=>{const old={version:1,seed:1989,player:{position:[0,1.75,54],health:77},vehicle:{integrity:83},settings:{quality:'LOW'},discoveries:['tower'],completedMissions:['legacy']},copy=JSON.stringify(old),v2=migrateSave(old);assert.equal(SAVE_VERSION,2);assert.equal(v2.version,2);assert.equal(v2.player.health,77);assert.equal(v2.vehicle.integrity,83);assert.equal(v2.settings.quality,'LOW');assert.deepEqual(v2.completedMissions,['legacy']);assert.deepEqual(v2.content.completed,[]);assert.equal(JSON.stringify(old),copy);assert.equal(migrateSave({...old,version:3}),null);});
+test('runtime save round trip retains checkpoint, lore, safe points and upgrades',()=>{
+  c.start('side-1');while(c.active)c.advance();c.start('side-2');while(c.active)c.advance();c.buyUpgrade('health');c.start('story-1');c.advance();c.foundLore.add('lore-08');c.secrets.add('secret-2');c.discover('theatre');l.gameplay.health.hp=109;
+  const saved=fixture.persistence.capture();assert.equal(saved.version,2);assert.equal(saved.player.health,109);c.reset();assert.ok(fixture.persistence.restore(saved));assert.equal(c.active.index,1);assert.ok(c.foundLore.has('lore-08'));assert.ok(c.secrets.has('secret-2'));assert.ok(c.safePoints.has('theatre'));assert.ok(c.upgrades.owned.has('health'));assert.equal(l.gameplay.health.hp,109);
+});
+test('new game removes authored progression but retains user options',()=>{c.completed.add('story-1');c.foundLore.add('lore-01');c.discover('theatre');fixture.options.settings.missionGuidance='MINIMAL';fixture.persistence.reset();assert.equal(c.completed.size,0);assert.equal(c.foundLore.size,0);assert.equal(c.safePoints.size,0);assert.equal(c.upgrades.owned.size,0);assert.equal(fixture.options.settings.missionGuidance,'MINIMAL');});
+test('malformed content is bounded and multiple active missions normalize to one',()=>{const s=normalizeContent({lore:Array(1000).fill('same'),missions:{'story-1':{state:'ACTIVE',index:Infinity},'side-1':{state:'ACTIVE',index:-4},injected:{state:'ACTIVE'}}});assert.equal(s.lore.length,1);assert.equal(s.missions.injected,undefined);c.restore(s);assert.equal(c.missions.filter(m=>m.state==='ACTIVE').length,1);assert.equal(c.active.index,0);assert.equal(normalizeSave({version:2,seed:1989,player:{}}),null);});
+test('radio queue is bounded, pauses and releases its current line',()=>{const d=new DialogueSystem();for(let i=0;i<100;i++)d.say('Test',String(i),3);assert.equal(d.queue.length,6);d.update(0);assert.equal(d.current,null);d.update(.1);assert.ok(d.current);d.clear();assert.equal(d.queue.length,0);assert.equal(d.current,null);});
+test('world events are rare, singular, pause aware and restore rain',()=>{c.events.remaining=100;for(let i=0;i<100;i++)c.events.update(0);assert.equal(c.events.remaining,100);l.rain.intensity=.4;c.events.active={kind:'heavy-rain',remaining:.1,rain:.4};l.rain.setIntensity(1);c.events.update(.2);assert.equal(l.rain.intensity,.4);assert.equal(c.events.active,null);assert.ok(c.events.remaining>=180);});
+test('content decoration buffers stay bounded through zones and profiles',()=>{const decor=new ContentDecor(c),matrix=decor.props.mesh.instanceMatrix;for(const quality of [45,100,72]){l.performance.profile.art.near=quality;for(const id of ['garage','archive','maintenance','theatre']){c.teleport(c.locations.point(id));decor.update(1);assert.ok(decor.props.cursor<=128);assert.ok(decor.ink.cursor<=640);assert.equal(decor.props.mesh.instanceMatrix,matrix);}}decor.dispose();});
+test('mission encounters reuse the existing enemy pool and clear on restart',()=>{c.start('story-1');while(c.objective.kind!=='defeat')c.advance();c.teleport(c.objective);const pool=l.gameplay.enemies.pool;c.prepareStage();assert.ok(c.encounter);assert.ok(l.gameplay.enemies.enemies.some(e=>e.eventId===c.encounter.id));assert.ok(l.gameplay.enemies.enemies.length<=20);c.restart(false);assert.equal(c.encounter,null);assert.equal(l.gameplay.enemies.pool,pool);});

@@ -1,9 +1,9 @@
+import { pressed } from '../input/InputBindings.js';
 export function vehicleInput(keys) {
-  const down = (...names) => names.some(name => keys.has(name));
   return {
-    throttle: Number(down('KeyW', 'KeyZ', 'ArrowUp')) - Number(down('KeyS', 'ArrowDown')),
-    steering: Number(down('KeyA', 'KeyQ', 'ArrowLeft')) - Number(down('KeyD', 'ArrowRight')),
-    handbrake: down('Space'), boost: down('ShiftLeft', 'ShiftRight'),
+    throttle: Number(pressed(keys,'MOVE_FORWARD')) - Number(pressed(keys,'MOVE_BACK')),
+    steering: Number(pressed(keys,'MOVE_LEFT')) - Number(pressed(keys,'MOVE_RIGHT')),
+    handbrake: pressed(keys,'HANDBRAKE'), boost: pressed(keys,'BOOST'),
   };
 }
 

@@ -1,0 +1,201 @@
+{
+  "date": "2026-10-03T15:20:49.452Z",
+  "checks": "passed",
+  "layouts": [
+    {
+      "width": 1280,
+      "height": 720,
+      "layout": [
+        {
+          "id": "content-screen",
+          "left": 38.390625,
+          "top": 21.59375,
+          "right": 1241.609375,
+          "bottom": 698.40625,
+          "width": 1203.21875,
+          "height": 676.8125
+        },
+        {
+          "id": "content-close",
+          "left": 1093.75,
+          "top": 54.46875,
+          "right": 1216.609375,
+          "bottom": 99.46875,
+          "width": 122.859375,
+          "height": 45
+        },
+        {
+          "id": "",
+          "left": 59.390625,
+          "top": 194.34375,
+          "right": 628,
+          "bottom": 640.734375,
+          "width": 568.609375,
+          "height": 446.390625
+        },
+        {
+          "id": "content-list",
+          "left": 652,
+          "top": 194.34375,
+          "right": 1220.609375,
+          "bottom": 640.734375,
+          "width": 568.609375,
+          "height": 446.390625
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "layout": [
+        {
+          "id": "content-screen",
+          "left": 60,
+          "top": 32.390625,
+          "right": 1860,
+          "bottom": 1047.609375,
+          "width": 1800,
+          "height": 1015.21875
+        },
+        {
+          "id": "content-close",
+          "left": 1712.140625,
+          "top": 65.265625,
+          "right": 1835,
+          "bottom": 110.265625,
+          "width": 122.859375,
+          "height": 45
+        },
+        {
+          "id": "",
+          "left": 81,
+          "top": 205.140625,
+          "right": 948,
+          "bottom": 961.140625,
+          "width": 867,
+          "height": 756
+        },
+        {
+          "id": "content-list",
+          "left": 972,
+          "top": 205.140625,
+          "right": 1839,
+          "bottom": 961.140625,
+          "width": 867,
+          "height": 756
+        }
+      ]
+    },
+    {
+      "width": 2560,
+      "height": 1440,
+      "layout": [
+        {
+          "id": "content-screen",
+          "left": 380,
+          "top": 43.1875,
+          "right": 2180,
+          "bottom": 1396.8125,
+          "width": 1800,
+          "height": 1353.625
+        },
+        {
+          "id": "content-close",
+          "left": 2032.140625,
+          "top": 76.0625,
+          "right": 2155,
+          "bottom": 121.0625,
+          "width": 122.859375,
+          "height": 45
+        },
+        {
+          "id": "",
+          "left": 401,
+          "top": 215.9375,
+          "right": 1268,
+          "bottom": 1082.9375,
+          "width": 867,
+          "height": 867
+        },
+        {
+          "id": "content-list",
+          "left": 1292,
+          "top": 215.9375,
+          "right": 2159,
+          "bottom": 1223.9375,
+          "width": 867,
+          "height": 1008
+        }
+      ]
+    },
+    {
+      "width": 2560,
+      "height": 1080,
+      "layout": [
+        {
+          "id": "content-screen",
+          "left": 380,
+          "top": 32.390625,
+          "right": 2180,
+          "bottom": 1047.609375,
+          "width": 1800,
+          "height": 1015.21875
+        },
+        {
+          "id": "content-close",
+          "left": 2032.140625,
+          "top": 65.265625,
+          "right": 2155,
+          "bottom": 110.265625,
+          "width": 122.859375,
+          "height": 45
+        },
+        {
+          "id": "",
+          "left": 401,
+          "top": 205.140625,
+          "right": 1268,
+          "bottom": 961.140625,
+          "width": 867,
+          "height": 756
+        },
+        {
+          "id": "content-list",
+          "left": 1292,
+          "top": 205.140625,
+          "right": 2159,
+          "bottom": 961.140625,
+          "width": 867,
+          "height": 756
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "tutorials": "MINIMAL",
+    "subtitleSize": "LARGE",
+    "reduceFlashes": true,
+    "missionGuidance": "FULL",
+    "explorationContent": "OFF",
+    "colorGrading": "DEFAULT",
+    "stormEnabled": false,
+    "vignette": false,
+    "quality": "MEDIUM",
+    "volume": 0.22,
+    "ambienceVolume": 1,
+    "effectsVolume": 1,
+    "cameraMotion": 0,
+    "screenShake": 0.25,
+    "fov": 72,
+    "sensitivity": 0.65,
+    "minimapSize": 1,
+    "uiScale": 1.3,
+    "highContrast": false,
+    "mapRotation": false,
+    "rainEnabled": true,
+    "rainIntensity": 1
+  },
+  "backupRecovered": true,
+  "errors": [],
+  "warnings": []
+}

@@ -12,10 +12,11 @@ export class InteriorManager {
     }
   }
   enter(id,atRoof=false) {
+    if(this.failed?.has(id))return false;
     const spec=this.specs.find(s=>s.id===id);if(!spec)return;
     if(!this.cache.has(id)) {
       if(this.cache.size>=2) {const [key,old]=this.cache.entries().next().value;old.dispose(this.interaction);this.cache.delete(key);}
-      const interior=new Interior(spec,this.city.resources,this.interaction,this.physics,()=>this.exit(),()=>this.exit(true));
+      let interior;try{interior=new Interior(spec,this.city.resources,this.interaction,this.physics,()=>this.exit(),()=>this.exit(true));}catch(error){this.failed??=new Set();this.failed.add(id);console.error('Interior unavailable:',id,error);this.onFailure?.(id);return false;}
       this.cache.set(id,interior);this.scene.add(interior.group);
     }
     this.active=this.cache.get(id);this.active.group.visible=true;this.city.collisionWorld.domain=this.active;

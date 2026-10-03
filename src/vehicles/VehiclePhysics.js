@@ -81,7 +81,7 @@ export class VehiclePhysics {
     if(!input.boost)v.boostExhausted=false;
     if(v.boost<=1)v.boostExhausted=true;
     v.boosting = enabled && input.boost && throttle > 0 && !v.boostExhausted && v.boost > 1;
-    v.boost = Math.max(0, Math.min(100, v.boost + (v.boosting ? -24 : 12) * dt));
+    v.boost = Math.max(0, Math.min(100, v.boost + (v.boosting ? -(v.boostDrain??24) : 12) * dt));
     v.brakingInput = throttle !== 0 && Math.sign(throttle) !== Math.sign(v.speed) && Math.abs(v.speed) > .3;
     v.handbrake = input.handbrake;
     if (throttle) v.speed += throttle * (v.brakingInput ? v.braking : v.acceleration * (v.boosting ? 1.45 : 1)) * dt;

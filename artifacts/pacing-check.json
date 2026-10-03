@@ -1,0 +1,746 @@
+{
+  "date": "2026-10-03T08:22:36.706Z",
+  "method": "Straight-line distance is a lower bound; no claim of human playtime. Checkpoints at committed evidence, safe restart without repeated waiting.",
+  "missions": [
+    {
+      "id": "story-1",
+      "title": "Les heures effacées",
+      "objectives": 7,
+      "straightLineMetres": 158,
+      "combats": 1,
+      "waitingSeconds": 10,
+      "longLegs": [],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": true,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": true,
+        "underground": false,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "Rejoindre le toit municipal · échelle ou ascenseur",
+          "metres": 22,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "[V] Lire le signal au bord du toit",
+          "metres": 0,
+          "kind": "scan",
+          "checkpoint": true
+        },
+        {
+          "text": "Observer les manutentionnaires depuis la rue, sans les approcher",
+          "metres": 56,
+          "kind": "observe",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Examiner le compteur dans l’atelier",
+          "metres": 7,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Neutraliser les trois gardiens du chargement",
+          "metres": 7,
+          "kind": "defeat",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Transmettre le premier relevé à la radio du garage",
+          "metres": 66,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "story-2",
+      "title": "Le programme de minuit",
+      "objectives": 7,
+      "straightLineMetres": 392,
+      "combats": 0,
+      "waitingSeconds": 12,
+      "longLegs": [],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": true,
+        "underground": false,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[E] Lire le programme abandonné dans le théâtre",
+          "metres": 7,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[V] Relever la fréquence derrière les clefs de l’hôtel",
+          "metres": 147,
+          "kind": "scan",
+          "checkpoint": true
+        },
+        {
+          "text": "Rejoindre la cour haute près de la cathédrale",
+          "metres": 163,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Écouter la répétition du signal depuis le toit",
+          "metres": 0,
+          "kind": "observe",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Récupérer la bobine dans la cour haute",
+          "metres": 0,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Déposer la bobine au théâtre par la rue ou le toit",
+          "metres": 74,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "story-3",
+      "title": "Livraison sans chaleur",
+      "objectives": 8,
+      "straightLineMetres": 291,
+      "combats": 1,
+      "waitingSeconds": 2,
+      "longLegs": [],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": true,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": false,
+        "underground": true,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[E] Examiner les caisses derrière la porte du hangar",
+          "metres": 7,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[V] Mesurer la machine dans l’entrepôt",
+          "metres": 0,
+          "kind": "scan",
+          "checkpoint": true
+        },
+        {
+          "text": "Rejoindre la passerelle de maintenance sur le toit",
+          "metres": 11,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Descendre par la trappe industrielle : X −78, Z 71",
+          "metres": 170,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Relever le numéro de la soupape",
+          "metres": 32,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Comparer les ordres dans le bureau souterrain",
+          "metres": 38,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Remonter et sécuriser les compteurs de l’atelier",
+          "metres": 33,
+          "kind": "defeat",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "story-4",
+      "title": "Le manifeste des Brumes",
+      "objectives": 8,
+      "straightLineMetres": 760,
+      "combats": 0,
+      "waitingSeconds": 2,
+      "longLegs": [
+        {
+          "text": "Monter sur la grue par son échelle de maintenance",
+          "metres": 291,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Rejoindre NIGHTRIDER au garage",
+          "metres": 233,
+          "kind": "reach",
+          "checkpoint": true
+        }
+      ],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": false,
+        "driving": true,
+        "pursuit": true,
+        "rooftop": true,
+        "underground": false,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[E] Photographier le manifeste à l’intérieur du hangar",
+          "metres": 13,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Monter sur la grue par son échelle de maintenance",
+          "metres": 291,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "[V] Repérer le convoi entre les conteneurs",
+          "metres": 0,
+          "kind": "scan",
+          "checkpoint": true
+        },
+        {
+          "text": "Rejoindre NIGHTRIDER au garage",
+          "metres": 233,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Conduire NIGHTRIDER jusqu’à la route des quais",
+          "metres": 157,
+          "kind": "drive",
+          "checkpoint": true
+        },
+        {
+          "text": "Suivre le convoi dans NIGHTRIDER pendant huit secondes",
+          "metres": 54,
+          "kind": "vehicle",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Déposer les plaques du convoi dans le hangar",
+          "metres": 13,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "story-5",
+      "title": "Les hautes lignes",
+      "objectives": 8,
+      "straightLineMetres": 284,
+      "combats": 0,
+      "waitingSeconds": 4,
+      "longLegs": [],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": true,
+        "underground": false,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[E] Lire le plan des relais dans le hall",
+          "metres": 13,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Monter au Relais des Sept Nuits par l’échelle ou le grappin",
+          "metres": 133,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "[V] Calibrer le relais inférieur",
+          "metres": 0,
+          "kind": "scan",
+          "checkpoint": true
+        },
+        {
+          "text": "[G] Rejoindre le toit voisin ; utiliser un ancrage ou planer",
+          "metres": 18,
+          "kind": "traverse",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Récupérer le shunt sur le chantier suspendu",
+          "metres": 0,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Atteindre la couronne par le hall / ascenseur ou les ancrages",
+          "metres": 120,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "[V] Retracer la ligne maîtresse depuis la couronne",
+          "metres": 0,
+          "kind": "scan",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "story-6",
+      "title": "Le dernier circuit",
+      "objectives": 7,
+      "straightLineMetres": 523,
+      "combats": 0,
+      "waitingSeconds": 12,
+      "longLegs": [
+        {
+          "text": "[E] Retrouver le journal du dernier train sous terre",
+          "metres": 238,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": false,
+        "underground": true,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[E] Consulter le tableau des départs dans l’observatoire",
+          "metres": 7,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Rejoindre le quai aérien du dépôt des Lignes Basses",
+          "metres": 198,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Surveiller la ligne sans monter sur les voies",
+          "metres": 0,
+          "kind": "observe",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Retrouver le journal du dernier train sous terre",
+          "metres": 238,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Ouvrir la boîte étanche du collecteur",
+          "metres": 24,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Comparer les signatures aux archives municipales",
+          "metres": 56,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "story-7",
+      "title": "La ville témoigne",
+      "objectives": 10,
+      "straightLineMetres": 316,
+      "combats": 1,
+      "waitingSeconds": 0,
+      "longLegs": [],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": true,
+        "driving": true,
+        "pursuit": true,
+        "rooftop": true,
+        "underground": true,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "Récupérer NIGHTRIDER et le dossier au garage",
+          "metres": 29,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Livrer le dossier à l’atelier en NIGHTRIDER",
+          "metres": 109,
+          "kind": "drive",
+          "checkpoint": true
+        },
+        {
+          "text": "Semer la patrouille qui a repéré le dossier",
+          "metres": 45,
+          "kind": "vehicle",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Assembler les preuves à l’intérieur de l’atelier",
+          "metres": 7,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Isoler la ligne clandestine au sous-sol",
+          "metres": 34,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Préparer la transmission dans le bâtiment municipal",
+          "metres": 69,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Prendre l’ascenseur ou l’échelle jusqu’au toit municipal",
+          "metres": 23,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Neutraliser les gardiens de l’émetteur",
+          "metres": 0,
+          "kind": "defeat",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Diffuser les registres depuis le toit",
+          "metres": 0,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-1",
+      "title": "Les toits se souviennent",
+      "objectives": 3,
+      "straightLineMetres": 199,
+      "combats": 0,
+      "waitingSeconds": 2,
+      "longLegs": [],
+      "categories": {
+        "exploration": false,
+        "investigation": true,
+        "infiltration": true,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": true,
+        "underground": false,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[V] Lire les empreintes du relais",
+          "metres": 36,
+          "kind": "scan",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Comparer le carnet de l’hôtel",
+          "metres": 163,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-2",
+      "title": "Numéro de série",
+      "objectives": 3,
+      "straightLineMetres": 109,
+      "combats": 0,
+      "waitingSeconds": 0,
+      "longLegs": [],
+      "categories": {
+        "exploration": false,
+        "investigation": false,
+        "infiltration": false,
+        "combat": false,
+        "driving": true,
+        "pursuit": true,
+        "rooftop": false,
+        "underground": false,
+        "interior": false
+      },
+      "legs": [
+        {
+          "text": "Rejoindre les quais en NIGHTRIDER",
+          "metres": 54,
+          "kind": "drive",
+          "checkpoint": true
+        },
+        {
+          "text": "Intercepter le véhicule à moins de neuf mètres",
+          "metres": 54,
+          "kind": "vehicle",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-3",
+      "title": "Les portes muettes",
+      "objectives": 3,
+      "straightLineMetres": 14,
+      "combats": 1,
+      "waitingSeconds": 0,
+      "longLegs": [],
+      "categories": {
+        "exploration": false,
+        "investigation": true,
+        "infiltration": true,
+        "combat": true,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": false,
+        "underground": false,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[E] Lire la note laissée dans le hangar",
+          "metres": 7,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Sécuriser la sortie du hangar",
+          "metres": 7,
+          "kind": "defeat",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-4",
+      "title": "Une voix sans adresse",
+      "objectives": 3,
+      "straightLineMetres": 205,
+      "combats": 0,
+      "waitingSeconds": 2,
+      "longLegs": [],
+      "categories": {
+        "exploration": false,
+        "investigation": true,
+        "infiltration": false,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": false,
+        "underground": false,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[V] Isoler le signal dans le poste",
+          "metres": 7,
+          "kind": "scan",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Relever la plaque du quai",
+          "metres": 198,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-5",
+      "title": "Niveau des eaux",
+      "objectives": 3,
+      "straightLineMetres": 60,
+      "combats": 0,
+      "waitingSeconds": 0,
+      "longLegs": [],
+      "categories": {
+        "exploration": false,
+        "investigation": true,
+        "infiltration": true,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": false,
+        "underground": true,
+        "interior": false
+      },
+      "legs": [
+        {
+          "text": "[E] Mesurer la marque des eaux",
+          "metres": 36,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Vérifier la soupape de délestage",
+          "metres": 24,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-6",
+      "title": "Dernière veille",
+      "objectives": 3,
+      "straightLineMetres": 68,
+      "combats": 0,
+      "waitingSeconds": 15,
+      "longLegs": [],
+      "categories": {
+        "exploration": true,
+        "investigation": false,
+        "infiltration": false,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": true,
+        "underground": false,
+        "interior": false
+      },
+      "legs": [
+        {
+          "text": "Rejoindre le poste haut",
+          "metres": 68,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "Veiller sur les ruelles depuis le toit",
+          "metres": 0,
+          "kind": "observe",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-7",
+      "title": "Retour de quart",
+      "objectives": 3,
+      "straightLineMetres": 153,
+      "combats": 0,
+      "waitingSeconds": 0,
+      "longLegs": [],
+      "categories": {
+        "exploration": false,
+        "investigation": false,
+        "infiltration": false,
+        "combat": false,
+        "driving": true,
+        "pursuit": true,
+        "rooftop": false,
+        "underground": false,
+        "interior": false
+      },
+      "legs": [
+        {
+          "text": "Rejoindre l’atelier en véhicule",
+          "metres": 109,
+          "kind": "drive",
+          "checkpoint": true
+        },
+        {
+          "text": "Échapper à la poursuite",
+          "metres": 45,
+          "kind": "vehicle",
+          "checkpoint": true
+        }
+      ]
+    },
+    {
+      "id": "side-8",
+      "title": "Exercice des Veilleurs",
+      "objectives": 4,
+      "straightLineMetres": 114,
+      "combats": 0,
+      "waitingSeconds": 0,
+      "longLegs": [],
+      "categories": {
+        "exploration": true,
+        "investigation": true,
+        "infiltration": true,
+        "combat": false,
+        "driving": false,
+        "pursuit": false,
+        "rooftop": false,
+        "underground": true,
+        "interior": true
+      },
+      "legs": [
+        {
+          "text": "[E] Relever la balise de simulation",
+          "metres": 51,
+          "kind": "inspect",
+          "checkpoint": true
+        },
+        {
+          "text": "Rejoindre le point de rassemblement",
+          "metres": 51,
+          "kind": "reach",
+          "checkpoint": true
+        },
+        {
+          "text": "[E] Valider le compte rendu de l’exercice",
+          "metres": 13,
+          "kind": "inspect",
+          "checkpoint": true
+        }
+      ]
+    }
+  ]
+}

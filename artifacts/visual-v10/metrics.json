@@ -1,0 +1,434 @@
+{
+  "date": "2026-10-03T15:21:51.807Z",
+  "target": "http://127.0.0.1:5177/",
+  "viewport": [
+    1440,
+    900
+  ],
+  "checks": "passed",
+  "comparison": "No perceptual comparison implemented; fixed fixtures and render metrics only. V8 references preserved in artifacts/visual.",
+  "views": [
+    {
+      "name": "downtown",
+      "fixture": {
+        "position": [
+          64,
+          7,
+          -51
+        ],
+        "quaternion": [
+          0.34445191607102416,
+          -0.2118092019341912,
+          0.08007817735722421,
+          0.9110857396546967
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 324,
+      "triangles": 444121,
+      "visibleBuildings": 19,
+      "props": 100,
+      "signs": 7,
+      "lights": 7,
+      "facadeInstances": 14128,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "old-gotham",
+      "fixture": {
+        "position": [
+          -128,
+          4,
+          -134
+        ],
+        "quaternion": [
+          0.12373803818703484,
+          0.2980983918805741,
+          -0.039004980434496156,
+          0.9456769311795357
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 216,
+      "triangles": 232409,
+      "visibleBuildings": 3,
+      "props": 52,
+      "signs": 5,
+      "lights": 6,
+      "facadeInstances": 7896,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "industrial",
+      "fixture": {
+        "position": [
+          -128,
+          5,
+          129
+        ],
+        "quaternion": [
+          0.05278021518515793,
+          0.9195929471217967,
+          -0.1326009806947375,
+          0.36603284061358554
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 172,
+      "triangles": 50970,
+      "visibleBuildings": 3,
+      "props": 36,
+      "signs": 7,
+      "lights": 6,
+      "facadeInstances": 1034,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "docks",
+      "fixture": {
+        "position": [
+          195,
+          4,
+          128
+        ],
+        "quaternion": [
+          -0.05140147574407494,
+          0.8994345845382755,
+          -0.110124290879276,
+          -0.4198189573925022
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 94,
+      "triangles": 16933,
+      "visibleBuildings": 1,
+      "props": 10,
+      "signs": 2,
+      "lights": 6,
+      "facadeInstances": 76,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "cathedral",
+      "fixture": {
+        "position": [
+          -32,
+          5,
+          -57
+        ],
+        "quaternion": [
+          0.39419933663217077,
+          0,
+          0,
+          0.9190249632076142
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 340,
+      "triangles": 492603,
+      "visibleBuildings": 23,
+      "props": 64,
+      "signs": 2,
+      "lights": 7,
+      "facadeInstances": 14281,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "meridian",
+      "fixture": {
+        "position": [
+          32,
+          6,
+          -51
+        ],
+        "quaternion": [
+          0.5071277298774777,
+          0,
+          0,
+          0.8618709100493623
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 231,
+      "triangles": 360743,
+      "visibleBuildings": 21,
+      "props": 48,
+      "signs": 3,
+      "lights": 7,
+      "facadeInstances": 12269,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "municipal",
+      "fixture": {
+        "position": [
+          -59,
+          16,
+          76
+        ],
+        "quaternion": [
+          0.00931973636590245,
+          -0.27171991263639106,
+          0.002631492454704717,
+          0.962327650459241
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 501,
+      "triangles": 333707,
+      "visibleBuildings": 56,
+      "props": 64,
+      "signs": 21,
+      "lights": 7,
+      "facadeInstances": 3834,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "metro",
+      "fixture": {
+        "position": [
+          65,
+          12,
+          -104
+        ],
+        "quaternion": [
+          0.020797250465122038,
+          0.020815280167924707,
+          -0.00043308816057924346,
+          0.9995669116768855
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 314,
+      "triangles": 440715,
+      "visibleBuildings": 7,
+      "props": 88,
+      "signs": 20,
+      "lights": 6,
+      "facadeInstances": 16078,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "interior",
+      "fixture": {
+        "position": [
+          -32,
+          1.99,
+          38
+        ],
+        "quaternion": [
+          -0.01582738319333308,
+          0,
+          0,
+          0.9998747391254824
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 136,
+      "triangles": 95202,
+      "visibleBuildings": 0,
+      "props": 36,
+      "signs": 6,
+      "lights": 1,
+      "facadeInstances": 3024,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "rain",
+      "fixture": {
+        "position": [
+          64,
+          2,
+          -60
+        ],
+        "quaternion": [
+          0.06306864277471168,
+          -0.3817907174413824,
+          0.026123887197749482,
+          0.9217243280351396
+        ],
+        "time": 180,
+        "rain": 1,
+        "seed": 1989
+      },
+      "drawCalls": 342,
+      "triangles": 404522,
+      "visibleBuildings": 14,
+      "props": 96,
+      "signs": 25,
+      "lights": 7,
+      "facadeInstances": 12030,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "v9-theatre",
+      "fixture": {
+        "position": [
+          -26,
+          4,
+          -193
+        ],
+        "quaternion": [
+          0.07882238086390303,
+          -0.28879974186537755,
+          0.023865496633622415,
+          0.9538407516162579
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 205,
+      "triangles": 282875,
+      "visibleBuildings": 6,
+      "props": 44,
+      "signs": 13,
+      "lights": 6,
+      "facadeInstances": 9528,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "v9-docks-mission",
+      "fixture": {
+        "position": [
+          32,
+          4,
+          249
+        ],
+        "quaternion": [
+          0.07234272813946899,
+          0.18859362582994615,
+          -0.013931936465711219,
+          0.9792879429095247
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 584,
+      "triangles": 220238,
+      "visibleBuildings": 91,
+      "props": 44,
+      "signs": 19,
+      "lights": 6,
+      "facadeInstances": 518,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "v9-rooftop",
+      "fixture": {
+        "position": [
+          87.5,
+          101,
+          -161
+        ],
+        "quaternion": [
+          -0.02257215210972257,
+          -0.5562342956357389,
+          -0.015116406036686925,
+          0.8305813630080338
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 183,
+      "triangles": 315535,
+      "visibleBuildings": 4,
+      "props": 32,
+      "signs": 6,
+      "lights": 6,
+      "facadeInstances": 12008,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "v9-underground",
+      "fixture": {
+        "position": [
+          -64,
+          -6.25,
+          90
+        ],
+        "quaternion": [
+          0,
+          0.9998780115811826,
+          -0.015619281560321214,
+          0
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 32,
+      "triangles": 5998,
+      "visibleBuildings": 0,
+      "props": 0,
+      "signs": 0,
+      "lights": 0,
+      "facadeInstances": 0,
+      "geometries": 23,
+      "textures": 47
+    },
+    {
+      "name": "v9-garage",
+      "fixture": {
+        "position": [
+          -7,
+          3,
+          44
+        ],
+        "quaternion": [
+          -0.0415586438368745,
+          0,
+          0,
+          0.999136066370562
+        ],
+        "time": 180,
+        "rain": 0.45,
+        "seed": 1989
+      },
+      "drawCalls": 560,
+      "triangles": 549692,
+      "visibleBuildings": 54,
+      "props": 112,
+      "signs": 44,
+      "lights": 7,
+      "facadeInstances": 11560,
+      "geometries": 23,
+      "textures": 47
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

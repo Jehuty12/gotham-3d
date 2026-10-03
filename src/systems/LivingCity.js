@@ -49,8 +49,11 @@ export class LivingCity {
     const renderTime = this.time + Math.max(0, this.accumulator);
     this.rain.update(renderTime, p,!!this.gameplay?.vehicles?.driving,(x,z)=>this.city.groundHeight(x,z)); this.steam.update(renderTime, p);
     if(this.city.collisionWorld?.domain){this.rain.mesh.visible=false;this.rain.splashes.mesh.visible=false;}
-    this.rail.update(renderTime); this.traffic.render(renderTime, p); this.pedestrians.render(renderTime);
+    const events=this.content?.events;
+    if(events?.active?.kind==='train-delay')events.railDelay+=delta;
+    this.rail.update(renderTime-(events?.railDelay??0)); this.traffic.render(renderTime, p); this.pedestrians.render(renderTime);
     this.lights.update(p, renderTime);
+    if(events?.active?.kind==='blackout')for(const light of this.lights.localLights)if(light.position.distanceTo(events.active.position)<65)light.intensity=8;
     // Transitions and pause still render with delta=0. Apply domain visibility
     // then too, so an interior never briefly combines its light with street
     // lights (which also creates an unnecessary shader variant on first entry).

@@ -68,6 +68,12 @@ export class Minimap {
     }
     ctx.restore();
     // Edge-clamped markers retain the direction of distant city landmarks.
+    const content=this.vertical?.living.content;
+    if(content?.enabled&&content.objective&&settings?.missionGuidance!=='OFF'){
+      const target=content.guidancePoint().position,a=(target[0]-x)*scale,b=(target[2]-z)*scale;
+      const dx=a*Math.cos(rotation)-b*Math.sin(rotation),dz=a*Math.sin(rotation)+b*Math.cos(rotation),ratio=Math.max(1,Math.abs(dx)/(cx-12),Math.abs(dz)/(cy-12));
+      ctx.strokeStyle='#fff0a8';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx+dx/ratio,cy+dz/ratio,6,0,Math.PI*2);ctx.stroke();
+    }
     ctx.font = 'bold 8px sans-serif'; ctx.textAlign = 'center';
     for (const landmark of city.landmarks) {
       const a=(landmark.x-x)*scale,b=(landmark.z-z)*scale,dx=a*Math.cos(rotation)-b*Math.sin(rotation),dz=a*Math.sin(rotation)+b*Math.cos(rotation);

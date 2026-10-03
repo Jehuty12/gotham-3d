@@ -12,7 +12,7 @@ export class WorldPersistence {
   capture() {
     const l=this.living,g=l.gameplay,v=g.vehicles,p=this.player,domain=l.vertical.interiors.active;
     const mission=g.missions.active,event=g.crimes.events.find(e=>e.id===mission?.eventId),drive=g.vehicleMissions.active;
-    return normalizeSave({version:SAVE_VERSION,seed:l.city.seed,savedAt:Date.now(),mode:g.mode,
+    return normalizeSave({version:SAVE_VERSION,seed:l.city.seed,savedAt:Date.now(),mode:g.mode,content:l.content?.capture()??{},tutorials:l.runtime?.tutorials?.capture()??[],
       player:{position:l.camera.position.toArray(),rotation:[l.camera.rotation.x,l.camera.rotation.y,0],health:g.health.hp,driving:v.driving,domain:{kind:domain?'interior':l.vertical.underground.active?'underground':'exterior',id:domain?.spec.id}},
       safePoint:{position:g.health.safe.position.toArray(),district:g.health.safe.district},discoveries:[...l.vertical.discoveries.visited],landmarksVisited:[...l.vertical.discoveries.visited].filter(id=>['tower','cathedral','municipal'].includes(id)),
       completedMissions:[...this.completedMissions],completedCrimes:[...this.completedCrimes],settings:this.options.capture(),
@@ -27,7 +27,8 @@ export class WorldPersistence {
     return Number.isFinite(floor)&&capsuleClear(world,feet,1.9,.42,domain)&&feet.y>=floor-.2&&(!domain||feet.y-floor<2);
   }
   reset(mode='EXPLORATION') {
-    const l=this.living,g=l.gameplay;g.respawn(new Vector3(0,1.75,54));g.crimes.setEnabled(false);g.setMode(mode);
+    this.living.runtime?.tutorials?.restore();
+    const l=this.living,g=l.gameplay;l.content?.reset();g.respawn(new Vector3(0,1.75,54));g.crimes.setEnabled(false);g.setMode(mode);
     g.health.save(new Vector3(0,1.75,54),'Docks');g.health.hurt=0;g.health.timer=0;
     l.vertical.discoveries.visited.clear();this.completedMissions.clear();this.completedCrimes.clear();
     const v=g.vehicles.vehicle,garage=g.vehicles.garages[0];v.position.copy(garage.position);v.rotation=garage.rotation;v.integrity=100;v.boost=100;v.speed=0;v.velocity.set(0,0,0);v.vy=0;v.state='PARKED';v.active=true;
@@ -35,11 +36,11 @@ export class WorldPersistence {
   }
   restore(raw) {
     const s=normalizeSave(raw);if(!s)return false;
-    const l=this.living,g=l.gameplay,v=g.vehicles;this.reset(s.mode);this.options.apply(s.settings);
+    const l=this.living,g=l.gameplay,v=g.vehicles;this.reset(s.mode);this.options.apply(s.settings);l.content?.restore(s.content);l.runtime?.tutorials?.restore(s.tutorials);
     this.completedMissions=new Set(s.completedMissions);this.completedCrimes=new Set(s.completedCrimes);
     const known=new Set(l.vertical.discoveries.points.map(p=>p.id));l.vertical.discoveries.visited=new Set([...s.discoveries,...s.landmarksVisited].filter(id=>known.has(id)));
     const safe=new Vector3().fromArray(s.safePoint.position);if(!this.validPosition(safe))safe.set(0,1.75,54);
-    g.health.save(safe,l.city.districtAt(safe.x,safe.z).name);g.health.hp=s.player.health>0?s.player.health:100;
+    g.health.save(safe,l.city.districtAt(safe.x,safe.z).name);g.health.hp=s.player.health>0?Math.min(g.health.max,s.player.health):g.health.max;
     const vehicle=v.vehicle;vehicle.position.fromArray(s.vehicle.position);vehicle.rotation=s.vehicle.rotation;l.city.streaming?.ensureAt(vehicle.position);
     v.physics.prepare(vehicle.position);
     const ground=l.city.groundHeight(vehicle.position.x,vehicle.position.z);

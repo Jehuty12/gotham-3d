@@ -35,6 +35,7 @@ export class EnemyManager {
     }
   }
   move(enemy,direction,dt,speed) {
+    const before=enemy.position.clone();
     if(direction.lengthSq()<.01)return;
     direction.y=0;direction.normalize();enemy.direction.lerp(direction,1-Math.exp(-5*dt)).normalize();
     for(const axis of ['x','z']) {
@@ -43,6 +44,8 @@ export class EnemyManager {
       if(Math.abs(floor-enemy.position.y)>.35||next.distanceTo(enemy.home)>18)continue;next.y=floor;
       if(capsuleClear(this.world,next,1.8,.32,null))enemy.position.copy(next);
     }
+    enemy.stuckTime=enemy.position.distanceToSquared(before)<.00001?(enemy.stuckTime??0)+dt:0;
+    if(enemy.stuckTime>3){enemy.stuckTime=0;enemy.state='SEARCHING';enemy.timer=3;enemy.lastSeen.copy(enemy.home);enemy.direction.negate();}
   }
   update(dt,{position,direction,time,rain,noise,health,budget,hidden=false,dodging=false}) {
     const start=performance.now();this.activeAI=0;let attackChecks=0;
@@ -56,8 +59,9 @@ export class EnemyManager {
         this.move(e,position.clone().sub(e.position),dt,2.7);
         if(e.position.clone().add(new Vector3(0,1.2,0)).distanceTo(position)<1.65&&e.attackCooldown===0) {
           if(attackChecks++===0) {
-            if(!dodging&&!segmentBlocked(this.world,e.position.clone().add(new Vector3(0,1.5,0)),position,null))health.damage(8);
-            e.attackCooldown=1.1;
+            const introduction=e.eventId?.startsWith('content-story-1-');
+            if(!dodging&&!segmentBlocked(this.world,e.position.clone().add(new Vector3(0,1.5,0)),position,null))health.damage(introduction?6:8);
+            e.attackCooldown=introduction?1.35:1.1;
           } else e.attackCooldown=.1;
         }
       } else if(e.state==='PATROL') {

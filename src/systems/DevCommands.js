@@ -1,0 +1,2 @@
+// Imported only in import.meta.env.DEV. No menu and no global in production.
+export function installDevCommands(living){const c=living.content,g=living.gameplay;globalThis.cityDebug=Object.freeze({completeMission(){while(c.active)c.advance();},teleportLandmark(id){const l=c.locations.get(id);c.teleport(c.locations.point(l.id,'outside'));},spawnVehicle(){return g.vehicles.recover();},restoreHealth(){g.health.hp=g.health.max;g.health.dead=false;},clearSave(){living.runtime.save.clear();}});return ()=>{delete globalThis.cityDebug;};}

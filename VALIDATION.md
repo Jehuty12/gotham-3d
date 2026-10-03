@@ -1,175 +1,160 @@
-# Validation — Art Pass & Atmosphere V8
+# Validation — Playtest & Release Candidate V10
 
-## Résultats du 1er octobre 2026
+Version **0.10.0**, schéma **SAVE_VERSION = 2**, validation du **3 octobre 2026**. Les heures UTC exactes figurent dans les rapports liés. Aucun build n'a été publié.
 
-- **157 tests réussis**, aucun ignoré : **131 tests historiques V2–V7 inchangés**, plus 26 tests V8. [Résultat Node](artifacts/tests-v8.txt), [référence V7 avant modifications](artifacts/tests-v7-baseline.txt).
-- **Build réussi : 123 modules**, sans erreur ni avertissement. Application **232,87 kB / 76,56 kB gzip** ; Three.js core 220,25 / 58,12 kB ; renderer 352,36 / 84,71 kB ; CSS 12,21 / 3,72 kB. [Journal du build](artifacts/build-v8.txt).
-- **Chrome développement et production : contrôles complets réussis**, zéro erreur et zéro avertissement. Rapports : [développement](artifacts/benchmark-development.json), daté 2026-10-01T17:37:57.217Z ; [production](artifacts/benchmark-production.json), daté 2026-10-01T17:44:24.780Z.
-- **Visual-check réussi : dix captures déterministes**, images revues, zéro erreur et zéro avertissement. [Métriques des captures](artifacts/visual/metrics.json), datées 2026-10-01T17:49:00.970Z.
-- **Soak V2 réussi : 94,3 secondes**, neuf circuits, 45 échantillons de déplacement et 27 échantillons art : pluie, conduite réelle, huit intérieurs, souterrains, métro, pause et reload complet. Zéro erreur et zéro avertissement. [Rapport](artifacts/soak-development.json), daté 2026-10-01T12:56:03.919Z.
-- **CITY_SEED = 1989, 64 chunks, quatre quartiers, 210 bâtiments, trois landmarks, 53 toits accessibles, huit intérieurs et 27 escaliers conservés.** Sauvegarde/reprise, modes Exploration/Vigilante, grappin/planage, véhicules/poursuites, crimes/missions/ennemis, métro, mini-carte, F3, mémoire, pause/options restent couverts par les vérifications historiques.
-- Aucun nouveau système de gameplay majeur, aucune dépendance supplémentaire, aucun asset téléchargé.
+## État de la release candidate
 
-## Performances mesurées
+**210 tests passent : 185 tests historiques V2–V9 conservés, 25 tests V10.** Aucun ignoré. [Résultat Node](artifacts/tests-v10.txt).
 
-Chrome headless 154, Windows, **NVIDIA GeForce RTX 3070 via ANGLE D3D11**, 1440 × 900, DPR 1. Chaque mesure couvre environ six secondes après chauffe, session PLAYING, souris capturée. Ce matériel diffère de celui du rapport V7 : ces résultats ne constituent pas une comparaison de performances V7/V8 à matériel identique.
+**Campagne validée 7/7**, trois approches par mission, soit 21 parcours. Chaque objectif passe par les actions du runtime, avec sauvegarde/rechargement à chaque checkpoint et entre missions. Les déplacements, la distance de suivi du convoi et la dissimulation en poursuite utilisent des fixtures ; les scripts ne prétendent pas être un joueur humain. Ils n'appellent pas `ContentManager.advance()` pour valider directement les objectifs du parcours. [Rapport campagne](artifacts/campaign-check.json).
 
-À pied, Vigilante, vue fixe, **production** :
+| Mission | Résultat | Approches |
+| --- | --- | --- |
+| 1 — Les heures effacées | PASS | RUE / TOIT / INTÉRIEUR |
+| 2 — Le programme de minuit | PASS | RUE / TOIT / INTÉRIEUR |
+| 3 — Livraison sans chaleur | PASS | RUE / TOIT / INTÉRIEUR |
+| 4 — Le manifeste des Brumes | PASS | RUE / TOIT / INTÉRIEUR |
+| 5 — Les hautes lignes | PASS | RUE / TOIT / INTÉRIEUR |
+| 6 — Le dernier circuit | PASS | RUE / TOIT / INTÉRIEUR |
+| 7 — La ville témoigne | PASS | RUE / TOIT / INTÉRIEUR |
 
-| Profil | FPS moyen | 1 % low | Frame moyenne / max (ms) | Draw calls | Triangles/frame | Props | Enseignes | Lumières dynamiques |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| LOW | 60,02 | 59,00 | 16,66 / 17,2 | 249 | 74 152 | 3 | 4 | 2 |
-| MEDIUM | 60,01 | 58,06 | 16,66 / 18,1 | 281 | 80 400 | 16 | 10 | 6 |
-| HIGH | 60,02 | 59,08 | 16,66 / 17,0 | 383 | 121 757 | 36 | 22 | 8 |
-| AUTO | 60,01 | 59,17 | 16,66 / 16,9 | 383 | 121 746 | 36 | 22 | 7 |
+Contenu conservé : **CITY_SEED = 1989, 64 chunks, quatre quartiers, sept missions principales, huit secondaires, vingt collectibles, dix secrets, six upgrades, dix-huit lieux**. Exploration/Vigilante, streaming, sauvegarde V2, TAB/journal, voyage rapide, combat, véhicules, grappin/planage, météo et art V8 restent présents. Aucun nouveau quartier, véhicule, moteur physique ou système d'IA majeur.
 
-En développement, les quatre profils mesurent également 60,01–60,02 FPS. Leurs 1 % low respectifs sont 59,35 / 59,26 / 59,44 / 59,17 FPS, avec des maxima de 16,9 ms.
+## Vérifications
 
-Le FPS, le 1 % low et les temps de frame mesurés portent sur **la même fenêtre** de six secondes. Le 1 % low est le réciproque du temps moyen des 1 % de frames les plus lentes. F3 expose séparément une fenêtre glissante de 600 frames, susceptible d'inclure chargements et changements de qualité. Draw calls : moyenne des compteurs F3 échantillonnés. Triangles et décor à pied : dernier échantillon F3 agrégé, sans prétendre à une mesure par pixel. Les noms exacts de ces champs sont conservés dans les JSON.
+- **Build réussi**, 141 modules, sans erreur ni avertissement. Application 299,31 kB / 99,05 kB gzip ; CSS 15,83 / 4,52 kB ; Three core 220,25 / 58,12 kB ; renderer 352,36 / 84,71 kB. [Build](artifacts/build-v10.txt).
+- **Chrome développement et production** : suites historiques, contenu V9 et mesures de performances. [Développement](artifacts/benchmark-development.json), [production](artifacts/benchmark-production.json).
+- **Contrôles RC navigateur** : carte/journal en 1280×720, 1920×1080, 2560×1440 et 2560×1080, échelle 1,3 ; commandes ; options accessibles ; backup corrompu/reprise ; récupération voiture ; commandes de développement absentes de la production. Le contrôle développement vérifie aussi la présence des trois choix d'échec et exécute le retour à l'exploration libre ; les deux redémarrages sont exercés dans les tests runtime. [RC développement](artifacts/release-browser-development.json), [RC production](artifacts/release-browser-production.json).
+- **Content-check** : 102 étapes/access points, positions, sols/capsules, domaines, identifiants, routes, streaming, prérequis. [Contenu](artifacts/content-check.json).
+- **Traversal-check** : trente ancrages dans quatre quartiers, dont Meridian et grue ; quatre scénarios de planage ; vingt-neuf mouvements complets d'échelle ; graphe de cinquante-trois toits, aucune destination de ce graphe isolée. [Traversée](artifacts/traversal-check.json).
+- **Visual-check** : quinze caméras fixes dans `artifacts/visual-v10`, dont les cinq lieux V9. Les références `artifacts/visual` et `artifacts/visual-v9` restent conservées. [Captures et métriques](artifacts/visual-v10/metrics.json). Aucune comparaison perceptuelle automatique.
+- **Soak long réussi** : **307,124 secondes**, trente cycles, 150 échantillons de parcours, 90 d'art et 91 de contenu ; déplacements, grappin, planage, conduite réelle, combat, voyages rapides, intérieurs, souterrains, météo, missions, pause et reload. [Soak](artifacts/soak-development.json).
 
-Les compteurs de props, enseignes, néons et façades utilisent les lots visibles dans le frustum, sans occlusion individuelle. Les lumières dynamiques comptent les PointLight/SpotLight visibles d'intensité positive, y compris trafic et NIGHTRIDER ; ce total n'est pas seulement le pool des lampadaires. HIGH affiche ici 8 néons, 288 instances de façade, 105 détails de toit et 40 962 instances décoratives chargées sur 56 chunks. LOW/MEDIUM conservent 36 chunks. Ces nombres dépendent de la caméra.
+Les rapports de passage vérifient des listes d'erreurs et d'avertissements console vides. Les erreurs volontairement injectées dans les tests unitaires de corruption ou chargement sont capturées et vérifiées séparément.
 
-Au volant, caméra CHASE, poursuite active, **production** :
+## Corrections issues des contrôles
 
-| Profil | FPS moyen | 1 % low | Draw calls moyens | Triangles/frame moyens | CPU véhicules ms/frame | Police active |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| LOW | 60,02 | 56,74 | 318 | 220 403 | 0,155 | 2 |
-| MEDIUM | 60,02 | 59,17 | 343 | 239 034 | 0,240 | 3 |
-| HIGH | 60,02 | 58,65 | 487 | 385 369 | 0,217 | 4 |
+Le parcours complet a reproduit une collision des pieds au dernier bord de la liaison Relais → Chantier alors que le rayon du grappin était libre. La cible d'arrivée garde désormais une marge verticale de 0,85 m. Si une corniche bloque la traction directe, un dégagement vertical est choisi uniquement si les deux segments laissent passer la capsule ; toutes les étapes restent balayées contre les obstacles vivants. Les ancrages de sections dont l'arrivée est occupée par des escaliers ou des volumes ne sont plus proposés.
 
-Les maxima de frame en conduite sont respectivement 19,8 / 16,9 / 17,1 ms. En développement, les trois profils mesurent également environ 60,02 FPS, avec 59,17 / 59,52 / 59,35 FPS en 1 % low.
+Une demande de capture souris refusée par Chrome conserve maintenant la partie préparée en PAUSE et le bouton REPRENDRE ; elle ne relance pas une nouvelle partie. Le soak vérifie PLAYING à chaque reprise. Les erreurs de démarrage ont un écran explicite avec phase et rechargement. Un échec de chunk conserve les collisions, interrompt la session et évite une boucle de nouvelles tentatives ; un intérieur indisponible laisse le joueur dehors et n'est pas reconstruit sans fin.
 
-Les objectifs de FPS sont atteints dans ces fenêtres sur cette machine. AUTO reste au budget HIGH dans cette vue proche de 60 FPS ; sa réduction progressive sous charge est aussi testée avec des deltas synthétiques à 35 FPS. Aucun résultat n'est présenté comme une garantie pour tous les GPU ou toutes les scènes. Les draw calls incluent le post-traitement existant. LOW désactive le compositeur ; les autres profils ajoutent l'étalonnage dans la passe de sortie existante, sans passe supplémentaire.
+Les échecs narratifs préparent le checkpoint et présentent reprise, redémarrage ou retour à l'exploration libre. La récupération de NIGHTRIDER réutilise la même instance, vérifie les volumes et interdit les poursuites/étapes véhicule critiques. Le repositionnement R exige cinq secondes d'immobilisation sous accélération et une action du joueur.
 
-## Stabilité, streaming et mémoire
+## Performances et profilage CPU
 
-Comparaison après chauffe (cycle 2) et dernier retour au même point, après stabilisation et remise à la même résidence de chunks :
+Machine : **RTX 3070, Windows, Chrome headless 154, ANGLE D3D11, 1440×900, DPR 1**. Fenêtres d'environ six secondes après chauffe. FPS, 1 % low et spikes mesurés dans la même fenêtre ; le 1 % low est le réciproque de la moyenne des 1 % de frames les plus lentes.
 
-| Ressource | Après chauffe | Fin du soak |
+Dernier passage production, **15:20 UTC** :
+
+| Profil | FPS moyen | 1 % low | Frame moyenne | >20 / >33 / >50 ms | Draw calls | Triangles/frame |
+| --- | ---: | ---: | ---: | --- | ---: | ---: |
+| LOW | 57,14 | 55,10 | 17,50 ms | 0 / 0 / 0 | 251 | 74 248 |
+| MEDIUM | 57,07 | 54,79 | 17,52 ms | 0 / 0 / 0 | 283 | 80 544 |
+| HIGH | 57,14 | 55,25 | 17,50 ms | 0 / 0 / 0 | 385 | 121 901 |
+| AUTO | 57,28 | 55,10 | 17,46 ms | 0 / 0 / 0 | 385 | 121 890 |
+
+En conduite/poursuite : LOW **57,16 FPS / 55,17 low / 320 calls / 222 370 triangles**, MEDIUM **57,13 / 54,95 / 345 / 241 057**, HIGH **57,14 / 55,10 / 489 / 387 393**. Aucun dépassement de 20 ms sur ces trois fenêtres. Développement à pied : **57,07–57,28 FPS**, 1 % low **54,95 FPS**. Ces derniers résultats ne valident pas la cible HIGH/AUTO ≥59 FPS de manière stable.
+
+Les draw calls sont la moyenne des compteurs F3 échantillonnés. Les triangles à pied sont le dernier agrégat F3 de la fenêtre ; ceux de conduite sont moyennés. F3 affiche également les statistiques des 600 dernières frames, pouvant inclure chargements et changements de qualité. Les résultats courts sur vue fixe ne garantissent pas tous les lieux, toutes les machines ou une session de plusieurs heures.
+
+**Comparaisons A/B V9/V10** : le bundle production V9 a été conservé avant le premier build V10. Trois fenêtres de chaque version sont alternées, même caméra de départ, HIGH et Exploration, profileur CPU activé pour les deux. Premier passage : V9 **60,01–60,02 FPS**, V10 **60,02 FPS**. [Premier comparatif, 08:43 UTC](artifacts/performance-ab-first.json). Après reproduction des 57 FPS : V9 **56,78–56,91 FPS**, V10 **56,68–56,90 FPS**. [Dernier comparatif et échantillons CPU, 15:23 UTC](artifacts/performance-ab.json).
+
+Un contrôle sans aucun code du jeu, sans WebGL et sans profileur mesure ensuite **56,95 et 57,00 FPS sur page vide**, et **56,91 FPS sur un simple canvas 2D animé**. Les intervalles réels `performance.now()` confirment les timestamps `requestAnimationFrame` ; le document est visible. [Contrôle de cadence Chrome](artifacts/cadence-check.json). La cadence basse de cette session existe donc indépendamment de ContentManager et du rendu 3D. Le réglage ou mécanisme Chrome/Windows qui la provoque n'est pas isolé ; l'origine de l'ancien relevé V9 ne peut pas être rétroactivement prouvée.
+
+Sur les trois derniers relevés V10, CONTENT coûte **0,003–0,012 ms**, UPDATE **1,02–1,17 ms**, RENDER **2,35–2,68 ms** de CPU. Les profils CPU sont dominés par l'attente entre frames ; les échantillons actifs concernent notamment update, matrices et soumission du rendu. Ces observations ne justifient ni une dégradation des visuels, ni un gain garanti de trois FPS attribué aux modifications UI. La vérification ≥59 FPS reste ouverte sur une session Chrome avec une cadence de référence stable.
+
+Une dépense évitable a néanmoins été identifiée dans `ContentUI` : réécriture des textes, accents et projections à chaque frame. Les textes sont maintenant écrits seulement lorsqu'ils changent, le journal/canvas se met à jour lors des événements et les projections/contextes à 10 Hz. Aucun matériau ou niveau visuel V8 n'a été réduit. F3 mesure UPDATE, RENDER, STREAMING, CONTENT, MISSION, HUD, MARKERS et MAP ; IA et véhicules gardent leurs compteurs. Les moyennes exponentielles CPU se chevauchent : CONTENT inclut HUD/MISSION, UPDATE inclut ces sous-systèmes. Ce ne sont pas des durées GPU.
+
+## Mémoire et tendance sur cinq minutes
+
+Au cycle 2 après chauffe et au dernier retour au même point :
+
+| Ressource | Après chauffe | Fin |
 | --- | ---: | ---: |
-| Géométries GPU suivies | 23 | 23 |
-| Textures GPU suivies | 47 | 47 |
-| Programmes graphiques | 159 | 159 |
-| Objets de scène | 1 088 | 1 088 |
-| Instances décoratives chargées | 24 252 | 24 252 |
-| Chunks résidents | 36 | 36 |
-| Heap JS indicatif (MiB) | 101,56 | 98,58 |
+| Géométries GPU | 23 | 23 |
+| Textures GPU | 47 | 47 |
+| Programmes | 159 | 159 |
+| Objets de scène | 1 090 | 1 090 |
+| Instances décoratives V8 résidentes | 24 252 | 24 252 |
+| Chunks | 36 | 36 |
+| Heap JS (MiB) | 48,42 | 54,95 |
+| Listeners gérés par le runtime | 16 | 16 |
 
-La moyenne de résidence sur le parcours est **29,8 / 64 chunks**. Le pic observé de streaming est **3,9 ms**, pour un budget souple de 2 ms ; une reconstruction de lot ou une téléportation peut le dépasser. Le plus grand temps de frame récent enregistré parmi les échantillons du parcours est **33,2 ms**. Ce compteur glissant échantillonné ne constitue pas une trace exhaustive de toutes les frames depuis le démarrage.
+Sur les trente points comparables, heap **min 41,57 / max 79,36 MiB**. Les minima redescendent encore aux cycles 16, 20 et 22 ; on n'observe pas une croissance monotone à chaque reload de chunk. Le heap n'est pas constant et ce résultat ne prouve pas une absence de fuite sur plusieurs heures.
 
-Au point de comparaison : FPS moyen 60,02 → 60,01 ; 1 % low glissant 55,10 → 59,00 ; frame moyenne 16,66 → 16,66 ms ; maximum récent 23,1 → 17,2 ms. La sauvegarde progresse de 1 015 à 1 188 octets avec les découvertes et missions.
+Les compteurs CDP DOM varient avec la collecte : 56–60 listeners, retours répétés à 56 ; 859–2 013 nœuds, dernier relevé 886 ; un document après stabilisation, davantage brièvement autour des navigations. Les seize listeners gérés par WorldRuntime ne sont pas un recensement de tous les abonnements de l'application. Les capacités des pools sont vérifiées à chaque cycle.
 
-Les buffers d'instances décoratives sont réellement libérés au déchargement, puis reconstruits à l'identique depuis leurs recettes. Les matériaux, géométries partagées, recettes CPU et métadonnées restent bornés par les 64 chunks. Les intérieurs gardent le cache historique de deux entrées et libèrent leurs ressources locales. Pluie, éclaboussures, cônes et reflets utilisent des capacités fixes. Le catalogue commercial comporte seize noms, avec un cache de textures borné à quarante clés.
+Résidence moyenne **30,13 / 64 chunks**. Pic de streaming échantillonné **3,8 ms**, au-dessus du budget souple de 2 ms. Plus grand maximum de frame récent parmi les échantillons de parcours : **21 ms**. Le rapport contient tous les points, pas seulement les bornes. Aucun accroissement des compteurs GPU/objets après retour à la résidence de référence.
 
-Les combinaisons de shaders/lumières sont préparées derrière l'écran de chargement. Les transitions d'intérieur synchronisent leur visibilité même avec delta nul ; elles ne découvrent plus de programme temporaire combinant éclairage de rue et éclairage intérieur. Les acteurs disposent de leur buffer de couleur dès la création du pool.
+## Sauvegarde et robustesse
 
-Géométries/textures/programmes proviennent de renderer.info ; les objets sont comptés dans la scène. Le heap dépend du ramasse-miettes. **Aucune mesure précise des octets de mémoire GPU n'est prétendue.** Ce soak d'environ une minute et demie confirme le plateau sur neuf cycles, pas une stabilité démontrée sur plusieurs heures.
+Schéma V2 maintenu, migration V1 conservée. Clefs : `world-polish:save` et `world-polish:save:backup`. Avant une écriture valide, l'ancienne principale valide devient le backup ; une principale corrompue ne remplace jamais un backup valide. Si la principale ne se lit pas, le backup est essayé et une notification accompagne la reprise. Une erreur de quota pendant la copie du backup laisse la principale intacte.
 
-## Couverture et captures
+Le stress de **100 cycles save/load** compare mission/checkpoint, upgrade effectivement acquis, archive, secret, véhicule, position, options et tutoriels, en ignorant seulement l'horodatage. JSON invalide, version inconnue, NaN, positions hors monde, mission inconnue et upgrade invalide sont couverts. Les doublons de récompense et d'upgrade sont refusés. Nouvelle partie efface les deux générations et les conseils vus, conserve les options.
 
-Les 26 tests V8 couvrent profils/palettes, transitions continues, hiérarchie de skyline, déterminisme des façades et matériaux, silhouettes dans les parcelles, signalétique bornée, formats/teintes de fenêtres, budgets de distance, LOD des props et fenêtres lointaines, identité entre profils, streaming exact des transformations/couleurs/métadonnées, propriété des matériaux, pooling, paramètres de pluie et brouillard, éclaboussures, orages déterministes et désactivation, compatibilité des options sauvegardées, adaptation AUTO, collisions des ailes décalées et nettoyage de la préparation des shaders en succès comme en échec.
+## Rythme, variété et équilibre
 
-Le browser-check garde ses scénarios historiques et vérifie en plus les compteurs ART/RENDER/STREAMING, les trois profils de couleur, les options d'orage/vignette et leur sauvegarde/reprise. Les quatre quartiers, pluie, véhicule, intérieur, streaming, pause, reload et F3 sont couverts en développement. La production emploie les vraies commandes clavier/souris et l'interface publique ; les fixtures détaillées des quartiers restent propres au développement. Les fixtures Vite ne sont pas livrées comme globals dans l'application.
+[Audit des quinze missions](artifacts/pacing-check.json). Distances principales en ligne droite, incluant l'altitude :
 
-Le visual-check capture **Downtown, Old Gotham, Industrial, Docks, cathédrale, Meridian Tower, bâtiment municipal, métro, intérieur municipal et pluie** à des positions et orientations fixes. Chaque vue repart d'un chargement neuf, seed 1989, HIGH, horloge 180 s, grading DEFAULT et météo prescrite. Il écrit les PNG et les compteurs draw calls, triangles, bâtiments visibles, props, enseignes et lumières dans [artifacts/visual](artifacts/visual). **Aucune comparaison perceptuelle ou pixel à pixel n'est implémentée.** Les captures servent à la revue visuelle et les métriques à une comparaison quantitative explicite.
+| Mission | Distance minimale | Objectifs avec accès | Combats | Observation/scanner |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 158 m | 7 | 1 | 10 s |
+| 2 | 392 m | 7 | 0 | 12 s |
+| 3 | 291 m | 8 | 1 | 2 s |
+| 4 | 760 m | 8 | 0 | 2 s |
+| 5 | 284 m | 8 | 0 | 4 s |
+| 6 | 523 m | 7 | 0 | 12 s |
+| 7 | 316 m | 10 | 1 | 0 s |
 
-## Limites connues
+La mission 4 est la plus dispersée, notamment à cause du retour vers NIGHTRIDER ; la mission 6 demande une attention particulière à la variété des inspections. Les missions successives alternent enquête/rencontre, ruelles/toiture, industrie/souterrain, conduite/convoi, traversée verticale, métro/archives puis combinaison finale. Les checkpoints suivent les preuves et objectifs validés ; une reprise ne répète pas les séquences déjà acquises. Les petites étapes adjacentes peuvent donc créer des checkpoints rapprochés, sans animation d'attente supplémentaire.
 
-- Géométrie et textures procédurales stylisées : pas de matériaux photographiques ni d'intérieurs réels derrière les fenêtres. Les formes en L/U et cours reposent sur un socle continu qui conserve les accès historiques.
-- Reflets, profondeur des fenêtres et cônes lumineux sont des approximations. Aucun SSR, TAA complexe, éclairage volumétrique réel ou réflexion planaire. LOW ne conserve que l'exposition pour l'étalonnage.
-- Les niveaux de détail ont des seuils discrets ; les budgets AUTO évoluent progressivement mais un détail peut apparaître à une frontière de distance. Les petits accessoires restent décoratifs, sans nouveau collider.
-- La pluie est cachée en intérieur et sous terre, sans test individuel sous chaque pont. Le métro reste visuel, sans embarquement supplémentaire.
-- Les mesures sont courtes, sur une seule configuration matérielle. La préparation des shaders alourdit le chargement initial ; les téléportations peuvent dépasser le budget souple de streaming.
-- Une session manuelle complémentaire de 20–30 minutes reste utile pour juger confort du grappin, conduite, lisibilité, audio et préférences artistiques ; elle n'est pas revendiquée comme effectuée par les scripts.
+Les timings de combat sont des bornes mécaniques : trois coups de résistance, frappe toutes les 0,4 s, soit 0,8 s au minimum entre premier et dernier coup réussi ; esquive 0,18 s / recharge 0,85 s. Trois ennemis par rencontre. Mission 1 : dégâts 6 et intervalle 1,35 s ; ensuite 8 et 1,1 s. Vision/coups bloqués par murs, suspicion progressive, retour de recherche et récupération d'un ennemi bloqué sont testés. Ce ne sont pas des temps moyens humains de neutralisation.
 
-## Fichiers créés — 19, hors artefacts
+[Mesures de conduite sur route humide](artifacts/handling-check.json) : 0→15 m/s en 1,50 s ; frein à main depuis 15 m/s, 1,47 s / 9,53 m ; après une seconde, 14,5 m/s avec boost contre 10 sans ; rayon de virage estimé sur un arc de 0,5 s : 15,61 m. Simulation physique à 120 Hz, sans trafic ; conduite, collisions et poursuites avec trafic également couvertes dans Chrome.
 
-```text
-ART_DIRECTION.md
-scripts/art-browser-check.mjs
-scripts/visual-check.mjs
-src/art/ArtDirection.js
-src/art/ArtVisibility.js
-src/art/BuildingSilhouettes.js
-src/art/FacadeGenerator.js
-src/art/InteriorArt.js
-src/art/MaterialVariation.js
-src/art/SignageSystem.js
-src/art/TechnicalMarks.js
-src/rendering/BackgroundSkyline.js
-src/rendering/ColorGrading.js
-src/rendering/LightAtmosphere.js
-src/rendering/ShaderWarmup.js
-src/rendering/WeatherParameters.js
-src/systems/StormSystem.js
-src/world/StreetProps.js
-tests/art.test.js
-```
+## Accueil, accessibilité et préparation
 
-## Fichiers modifiés — 38, hors artefacts
+Tutoriels contextuels ON/MINIMAL/OFF, un conseil à la fois et une seule fois par sauvegarde. Marche/sprint/saut, interaction, campagne, scanner, grappin, planage, combat/esquive apparaissent selon contexte. Exploration ne propose pas de tutoriel de combat. Le HUD narratif ne cohabite plus avec une invitation contradictoire à accepter une mission locale.
 
-```text
-README.md
-VALIDATION.md
-index.html
-package.json
-package-lock.json
-scripts/browser-check.mjs
-scripts/cdp.mjs
-scripts/persistence-browser-check.mjs
-scripts/soak-test.mjs
-scripts/vertical-browser-check.mjs
-src/interiors/Interior.js
-src/lighting/CityLights.js
-src/main.js
-src/rendering/WeatherPolish.js
-src/save/SaveSchema.js
-src/systems/AudioManager.js
-src/systems/LivingCity.js
-src/systems/PerformanceManager.js
-src/systems/RainSystem.js
-src/systems/RuntimeDiagnostics.js
-src/systems/VisibilityManager.js
-src/systems/WorldRuntime.js
-src/ui/DebugPanel.js
-src/ui/Interface.js
-src/ui/OptionsController.js
-src/utils/DynamicInstances.js
-src/utils/procedural.js
-src/utils/windows.js
-src/world/Building.js
-src/world/ChunkStreamingManager.js
-src/world/CityChunk.js
-src/world/CityResources.js
-src/world/CollisionWorld.js
-src/world/ElevatedRail.js
-src/world/Landmarks.js
-src/world/Road.js
-src/world/RoofDetails.js
-src/world/Underground.js
-```
+COMMANDES utilise `InputBindings.js`, avec actions communes clavier/souris et contextes distincts. Aucun remapping complet ou gamepad n'est revendiqué. V et ESPACE sont explicitement contextuels. Radio toujours textuelle, SMALL/MEDIUM/LARGE, UI scale étendu, contraste et formes distinctes sur la carte. Les marqueurs masquent les projections occultées et indiquent altitude/entrée. CAMERA MOTION = 0 supprime les effets décoratifs ; REDUCE FLASHES atténue dégâts/scanner et retire les éclairs/sirènes clignotantes.
 
-Artefacts mis à jour : rapports développement/production/soak et captures historiques correspondantes. Artefacts créés : trois journaux de tests/build, dix captures V8 et leur fichier metrics.json. Les anciens artefacts non régénérés restent des références historiques ; seuls les rapports datés et cités ci-dessus constituent les mesures V8.
+Version centralisée dans `src/config/version.js`, textes communs dans `src/localization/fr.js`. Les textes d'histoire restent dans leurs catalogues. Menu et crédits factuels. Commandes `cityDebug` réservées au développement et absentes du bundle production : finir mission, téléporter vers lieu, récupérer véhicule, restaurer santé, effacer sauvegarde.
 
-## Reproduire
+## Release blockers et limites
 
-Depuis le dossier du projet, avec les dépendances installées :
+**Aucun BLOCKER technique reproduit n'est laissé ouvert dans les scénarios validés. La validation humaine reste à effectuer avant publication.** [PLAYTEST.md](PLAYTEST.md) contient les cases non cochées et les sévérités BLOCKER / MAJOR / MINOR / POLISH.
+
+- Les objectifs de durée 60–90 minutes de campagne et 5–10 minutes par secondaire ne sont pas certifiés. Le confort, la lisibilité et l'équilibrage demandent une partie humaine complète, notamment missions 4 et 6.
+- Les origines de test du grappin sont des fixtures aériennes. Les liens jump/glide du graphe sont des bornes géométriques conservatrices ; le contrôle ne prouve pas toutes les trajectoires humaines. Les accès d'échelle et la liaison narrative Relais → Chantier sont exécutés réellement.
+- Les contrôles de safe areas vérifient les rectangles et options ; toutes les combinaisons simultanées de HUD, radio, combat et traduction future ne sont pas couvertes. L'ergonomie clavier complète et le confort visuel nécessitent le playtest.
+- Le soak dure cinq minutes, pas plusieurs heures. Pas de garantie de performances universelle ni de comparaison perceptuelle automatique. La dernière validation plafonne autour de 57 FPS ; la page vide reproduit cette cadence, mais sa cause Chrome/Windows exacte reste à isoler. La cible HIGH/AUTO ≥59 FPS reste non validée de façon stable.
+- Un secteur dont la construction échoue nécessite un retour menu/reload ; aucune réparation automatique de géométrie corrompue n'est prétendue. Les logs techniques complets restent dans la console, accompagnés d'un message utilisable.
+
+La RC échoue si un crash, une mission principale impossible, une perte de sauvegarde, un blocage permanent, une voiture obligatoire inaccessible, une erreur console répétée ou une fuite claire est reproduit.
+
+## Reproduction
 
 ```powershell
 npm.cmd test
 npm.cmd run build
-# Dans deux terminaux dédiés :
-npm.cmd run dev -- --host 127.0.0.1 --port 5177
-npm.cmd run preview -- --host 127.0.0.1 --port 4177
+npm.cmd run test:content
+npm.cmd run test:campaign
+npm.cmd run test:traversal
+npm.cmd run test:pacing
+node scripts/handling-check.mjs
 ```
 
-Démarrer un Chrome de test distinct avec son profil dédié et le port DevTools 9222, comme décrit dans [README.md](README.md), puis exécuter **successivement** :
+Vite sur 5177, preview sur 4177, Chrome CDP sur 9222 avec profil de test isolé. Exécuter les suites navigateur successivement :
 
 ```powershell
-npm.cmd run test:browser -- http://127.0.0.1:5177/
-npm.cmd run test:browser -- http://127.0.0.1:4177/ --production
-npm.cmd run test:visual -- http://127.0.0.1:5177/
-npm.cmd run test:soak -- http://127.0.0.1:5177/
+node scripts/browser-check.mjs http://127.0.0.1:5177/
+node scripts/browser-check.mjs http://127.0.0.1:4177/ --production
+node scripts/release-browser-check.mjs http://127.0.0.1:5177/
+node scripts/release-browser-check.mjs http://127.0.0.1:4177/ --production
+node scripts/visual-check.mjs http://127.0.0.1:5177/
+node scripts/soak-test.mjs http://127.0.0.1:5177/
 ```
 
-Le visual-check et le soak instrumentent les modules du serveur de développement. Le browser-check valide séparément le build de production. Ne pas lancer simultanément plusieurs scripts sur le même port DevTools.
+Le comparatif A/B exige aussi le build V9 conservé séparément et servi sur 4199 : `node scripts/performance-check.mjs http://127.0.0.1:4199/ http://127.0.0.1:4177/`. Le bundle temporaire est dans `node_modules/.cache/v9-baseline`, hors sources et publication.
+
+`node scripts/cadence-check.mjs` mesure ensuite une page vide et un canvas 2D dans la même session Chrome. Aucun réglage de synchronisation ou de limitation CPU n'est modifié pour améliorer artificiellement les résultats.

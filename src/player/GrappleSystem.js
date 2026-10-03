@@ -1,5 +1,5 @@
 import { Ray, Sphere, Vector3 } from 'three';
-import { segmentBlocked, sweepPlayer } from '../utils/spatialQueries.js';
+import { segmentBlocked, sweepPlayer, capsuleClear } from '../utils/spatialQueries.js';
 import { releaseMomentum } from './Momentum.js';
 
 // V4 Exploration keeps its default; the Vigilante mode explicitly enables this system.
@@ -33,7 +33,14 @@ export class GrappleSystem {
     if(this.active){this.cancel();return true;}
     if(!this.enabled || !this.target || this.cooldown>0 || this.physics.motion || this.physics.carried || this.physics.world.domain)return false;
     if(this.camera.position.distanceTo(this.target.position)>this.maxDistance || segmentBlocked(this.physics.world,this.camera.position,this.target.position))return false;
-    this.destination=this.target.position.clone();this.active=true;this.state='pulling';this.speed=3;
+    // Eye clearance above a roof lip: a line-of-sight ray can be clear while
+    // the player's feet still strike the last platform edge on a diagonal pull.
+    this.destination=this.target.position.clone();this.destination.y+=.85;this.finalDestination=null;
+    const clear=(a,b)=>{const steps=Math.ceil(a.distanceTo(b)/.12);for(let i=1;i<=steps;i++){const feet=a.clone().lerp(b,i/steps);feet.y-=this.physics.height;if(!capsuleClear(this.physics.world,feet,this.physics.height+.15,this.physics.radius))return false;}return true;};
+    // If feet would catch a cornice, first lift alongside the facade. Both legs
+    // must be clear; every simulation step remains swept against live obstacles.
+    if(!clear(this.camera.position,this.destination)){const lift=this.camera.position.clone();lift.y=this.destination.y;if(clear(this.camera.position,lift)&&clear(lift,this.destination)){this.finalDestination=this.destination;this.destination=lift;}}
+    this.active=true;this.state='pulling';this.speed=3;
     this.physics.grounded=false;return true;
   }
   step(dt) {
@@ -44,10 +51,10 @@ export class GrappleSystem {
     this.velocity.copy(delta).normalize().multiplyScalar(this.speed);
     if(!sweepPlayer(this.physics,delta.normalize().multiplyScalar(Math.min(distance,this.speed*dt)))){this.cancel(false);this.state='blocked';return;}
     this.physics.vy=0;this.physics.state='grappling';
-    if(distance<.25)this.cancel();
+    if(distance<.25){if(this.finalDestination){this.destination=this.finalDestination;this.finalDestination=null;}else this.cancel();}
   }
   cancel(boost=true) {
     if(this.active)releaseMomentum(this.physics,this.velocity,boost);
-    this.active=false;this.cooldown=.18;this.state='idle';
+    this.active=false;this.cooldown=this.recharge??.18;this.state='idle';
   }
 }

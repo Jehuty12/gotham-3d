@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-03T15:24:42.949Z",
+  "method": "Same Chrome session; blank document and animated 2D canvas, no game code, no WebGL, three six-second windows. Browser scheduling control, not a hardware refresh-rate measurement.",
+  "runs": [
+    {
+      "mode": "empty",
+      "fps": 56.94684960703344,
+      "meanMs": 17.560233918128652,
+      "low1": 49.07975460122658,
+      "maxMs": 26.700000000000045,
+      "actualMeanMs": 17.531286549149897,
+      "over20": 1,
+      "over33": 0,
+      "over50": 0,
+      "frames": 342,
+      "visibility": "visible",
+      "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+    },
+    {
+      "mode": "canvas",
+      "fps": 56.914628057913134,
+      "meanMs": 17.57017543859649,
+      "low1": 54.71956224350178,
+      "maxMs": 18.399999999999636,
+      "actualMeanMs": 17.569005848371493,
+      "over20": 0,
+      "over33": 0,
+      "over50": 0,
+      "frames": 342,
+      "visibility": "visible",
+      "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+    },
+    {
+      "mode": "empty",
+      "fps": 57.00325732899024,
+      "meanMs": 17.54285714285714,
+      "low1": 54.71956224350042,
+      "maxMs": 18.30000000000109,
+      "actualMeanMs": 17.542274052478135,
+      "over20": 0,
+      "over33": 0,
+      "over50": 0,
+      "frames": 343,
+      "visibility": "visible",
+      "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

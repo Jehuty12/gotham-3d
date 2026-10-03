@@ -1,6 +1,48 @@
-# Art Pass & Atmosphere — V8
+# Playtest & Release Candidate — V10 / 0.10.0
 
-V8 enrichit l'architecture, les façades, les monuments et l'atmosphère nocturne de World Polish & Persistence V7. **CITY_SEED = 1989, quatre quartiers, 64 chunks, 210 bâtiments, trois landmarks et huit intérieurs** sont conservés. Aucun nouveau système de combat, véhicule majeur, mission ou IA n'est ajouté. Sauvegarde/reprise V7, Exploration/Vigilante, grappin/planage, conduite/poursuites, métro, mini-carte, pause/options et diagnostics restent disponibles.
+V10 conserve la campagne et le monde V9. Elle ajoute des conseils contextuels persistants, une page COMMANDES, une sauvegarde de secours, une récupération volontaire de NIGHTRIDER, des marqueurs d'étage et les options de sous-titres / réduction des flashes. La carte et le journal sont rafraîchis lors des changements utiles ; les projections de marqueurs sont limitées à dix mises à jour par seconde. Le grappin garde ses collisions balayées et dégage désormais les pieds avant une corniche quand un trajet sûr est possible.
+
+**Pour commencer :** choisir VIGILANTE, NOUVELLE PARTIE, puis TAB → MISSIONS → « Les heures effacées ». En Exploration, aucun combat n'est imposé. OPTIONS → COMMANDES explique les touches et leur contexte : V scanne à pied et change la caméra en voiture ; ESPACE saute, libère le grappin ou maintient le planage à pied, et sert de frein à main au volant.
+
+Les conseils ON / MINIMAL / OFF sont mémorisés dans la sauvegarde V2. La sauvegarde valide précédente est conservée dans `world-polish:save:backup` ; une principale invalide utilise ce secours. Une nouvelle partie efface les deux générations et les conseils vus, en conservant les options. Aucun changement de version du schéma : **SAVE_VERSION = 2** et migration V1 conservée.
+
+Pause → **RÉCUPÉRER NIGHTRIDER** ramène le véhicule au garage. Au volant, après cinq secondes d'accélération sans mouvement, **R** propose un repositionnement sur une route compatible. Ces actions sont volontaires et refusées en poursuite ou pendant une étape véhicule critique : utilisez alors le checkpoint. Un échec de mission propose reprise, redémarrage ou retour à l'exploration libre, sans recharger le jeu.
+
+**CAMERA MOTION = 0** supprime les secousses décoratives ; **REDUCE FLASHES** désactive les éclairs et sirènes clignotantes, et atténue scanner et dégâts. **SUBTITLE SIZE** et la taille UI concernent aussi radio et journal. Les refuges et missions ont des formes distinctes sur la carte.
+
+La campagne automatisée valide les sept missions avec trois approches et reload à chaque checkpoint. Le contrôle de traversée teste trente ancrages, quatre situations de planage, vingt-neuf échelles et le graphe des cinquante-trois toits. Ces fixtures ne remplacent pas une partie humaine : [PLAYTEST.md](PLAYTEST.md) définit la checklist et les critères de blocage avant publication. Les mesures, le comparatif V9/V10, les ressources et les limites sont dans [VALIDATION.md](VALIDATION.md).
+
+Les contrôles techniques passent, avec un soak de 307 secondes et des ressources GPU stables. La dernière session production mesure environ 57 FPS ; la même cadence est reproduite sur page Chrome vide et sur le build V9. La cible stable de 59 FPS et la validation humaine restent à confirmer avant publication.
+
+```powershell
+npm.cmd test
+npm.cmd run build
+npm.cmd run test:content
+npm.cmd run test:campaign
+npm.cmd run test:traversal
+npm.cmd run test:pacing
+node scripts/handling-check.mjs
+```
+
+F3 expose les coûts CPU UPDATE / RENDER / STREAMING / CONTENT / MISSION / HUD / MARKERS / MAP, ainsi que les frames >20 / >33 / >50 ms sur les 600 dernières frames. Les captures V10 sont dans `artifacts/visual-v10`, les références V8 et V9 sont conservées. Le soak dure au minimum cinq minutes par défaut. `cityDebug` n'existe que dans le build de développement ; ses commandes ne sont pas incluses en production.
+
+## Contenu et direction artistique conservés
+
+V9 ajoute **Les heures effacées**, une campagne originale de **sept missions**, **huit secondaires**, **dix-huit lieux**, **vingt archives**, **dix secrets** et **six améliorations légères**. La ville et la direction artistique V8 restent conservées : **CITY_SEED = 1989, quatre quartiers, 64 chunks, 210 bâtiments, trois landmarks et huit intérieurs**. Streaming, sauvegarde, Exploration/Vigilante, combat, grappin/planage, conduite/poursuites, météo, métro, mini-carte, pause/options et diagnostics restent disponibles. Aucun nouveau moteur physique, véhicule majeur ou système d'IA complexe.
+
+## Campagne et exploration V9
+
+En VIGILANTE, **TAB** ouvre la carte et le journal, puis **MISSIONS** permet de choisir une mission et son approche RUE / TOIT / INTÉRIEUR. L'introduction mène du toit municipal à l'atelier. La suite traverse le théâtre, les fonderies, les quais, les relais de Meridian et le métro, avant une transmission finale depuis le toit municipal. Les missions principales se débloquent dans l'ordre ; les interventions secondaires se rejouent sans récompense supplémentaire.
+
+**E** examine les archives et traces proches. La radio affiche locuteur et texte, avec un signal sonore léger. Le journal regroupe MISSIONS / LORE / DISCOVERIES / UPGRADES. Les secrets ne sont pas indiqués directement avant découverte. Les objectifs V9 s'ajoutent aux systèmes existants ; **M** conserve les missions procédurales lorsqu'aucune mission narrative n'est active.
+
+Chaque objectif validé crée un checkpoint persistant. La pause et le journal proposent **RESTART CHECKPOINT / RESTART MISSION**. Un KO ou un convoi perdu trop longtemps reprend le checkpoint. Cinq refuges permettent un voyage rapide après découverte, hors mission, poursuite ou combat proche, avec fondu et chargement de destination. NIGHTRIDER est garé si le voyage commence en voiture.
+
+OPTIONS ajoute **MISSION GUIDANCE : OFF / MINIMAL / FULL**, et **DISCOVERIES ONLY** pour explorer le contenu sans mission imposée. En Exploration, ce contenu est désactivé par défaut ; une campagne commencée reste sauvegardée et suspendue. Les petites récompenses améliorent santé, scanner, treuil ou boost, et peuvent changer l'accent du HUD en ambre. Aucun arbre RPG ou monnaie supplémentaire.
+
+La cible de durée est 60–90 minutes pour la campagne et 5–10 minutes par secondaire ; elle reste à confirmer par un playtest humain. Le [guide du contenu](CONTENT_GUIDE.md) détaille les quinze missions, les approches, les lieux et les limites. F3 ajoute **CONTENT / MISSION** : progression, objectif, checkpoint, variante, archives, secrets et événement actif.
+
+`npm.cmd run test:content` vérifie les points d'accès, les sols/capsules, les domaines, les identifiants, les routes de NIGHTRIDER et le lien entre les toits du parcours Downtown. Les descriptions sont séparées du générateur procédural ; seuls les petits décors proches des chunks chargés utilisent les deux nouveaux lots d'instances réutilisés.
 
 ## Art pass V8
 
@@ -23,13 +65,13 @@ OPTIONS ajoute **DEFAULT / CINEMATIC / HIGH_CONTRAST**, une vignette légère et
 
 F3 ajoute **ART**, **RENDER** et **STREAMING** : props, enseignes, néons, instances de façade/toit, objets lumineux/transparents, lumières dynamiques et décor chargé. Les compteurs visibles sont estimés au niveau des lots dans le frustum, sans occlusion individuelle.
 
-`npm run test:visual -- http://127.0.0.1:5177/` produit dix vues fixes dans [artifacts/visual](artifacts/visual), avec leurs métriques. Il ne réalise pas de comparaison perceptuelle. Le soak V2 ajoute les huit intérieurs, souterrains, métro et cycles météo. Les résultats mesurés et limites figurent dans [VALIDATION.md](VALIDATION.md).
+`npm.cmd run test:visual -- http://127.0.0.1:5177/` produit quinze vues fixes dans [artifacts/visual-v9](artifacts/visual-v9), avec leurs métriques : les dix caméras V8 et cinq lieux V9. Les [captures originales V8](artifacts/visual) restent intactes. Aucune comparaison perceptuelle n'est prétendue. Le soak V3 conserve pluie, conduite, huit intérieurs, souterrains et métro, et ajoute missions, checkpoints, voyage rapide et reprise V2. Les résultats mesurés figurent dans [VALIDATION.md](VALIDATION.md).
 
 ## Sauvegarde, menu et pause
 
 **NOUVELLE PARTIE** utilise le mode EXPLORATION ou VIGILANTE choisi dans le menu. Une confirmation est demandée seulement si une sauvegarde valide sera remplacée. **CONTINUER** apparaît uniquement lorsqu’une sauvegarde valide existe. Échap ouvre **REPRENDRE / OPTIONS / SAUVEGARDER / RETOUR AU MENU**. La pause arrête physique, IA, circulation, train et temps météo ; le rendu et la file de streaming restent disponibles. Les touches et accumulateurs sont réinitialisés à la reprise.
 
-La sauvegarde `localStorage['world-polish:save']`, `SAVE_VERSION = 1`, contient position/orientation, mode, santé, point sûr, découvertes, landmarks visités, missions terminées et mission active, événements résolus liés aux missions, réglages et NIGHTRIDER (position, rotation, intégrité, boost, caméra, garage). Les petits crimes et l’IA sont reconstruits, pas sérialisés. Les identifiants de progression sont dédupliqués et limités à 512 entrées par catégorie. Une future migration s’ajoute comme fonction pure dans `SaveMigrations.js` ; une version future inconnue est refusée.
+La sauvegarde `localStorage['world-polish:save']`, **SAVE_VERSION = 2**, conserve position/orientation, mode, santé, point sûr, découvertes, landmarks visités, missions historiques et NIGHTRIDER (position, rotation, intégrité, boost, caméra, garage). Elle ajoute missions narratives, checkpoints, archives, secrets, améliorations et refuges. **La migration V1 → V2 est automatique** et conserve les anciennes données. Nouvelle partie efface la progression de contenu en gardant les options. Les petits crimes et l'IA sont reconstruits, pas sérialisés. Les listes historiques sont limitées à 512 identifiants ; celles du contenu à 64, avec 32 états de mission au maximum. Les versions futures inconnues sont refusées.
 
 Autosauvegarde aux découvertes, points sûrs, fins de mission, retour au garage, pause, modifications des options et toutes les 40 secondes de jeu. Les demandes sont regroupées, avec au moins trois secondes entre écritures automatiques. Le bouton manuel et la fermeture de page effectuent une écriture immédiate. Les erreurs de quota ou de stockage sont signalées discrètement sans interrompre le jeu.
 
@@ -83,7 +125,7 @@ tests/persistence.test.js          Schéma, streaming, budget, caméra et ressou
 tests/resume.test.js               Reprise réelle des objets runtime et pause
 scripts/persistence-browser-check.mjs Scénario reload / continuer
 scripts/cdp.mjs                    Client DevTools léger
-scripts/soak-test.mjs              Circuits V8, météo, intérieurs et reload (~95 s)
+scripts/soak-test.mjs              Circuits V9, missions, voyage rapide et reload
 ```
 
 F3 conserve les compteurs historiques et ajoute chunks chargés/en attente, file, coût de streaming, FPS moyen, 1 % low approximatif, temps de frame, géométries, textures, programmes, objets et occupation des pools. Le heap JavaScript est affiché si Chrome le fournit ; aucune estimation précise de mémoire GPU n’est inventée. Le compteur de listeners couvre les abonnements possédés par la session, pas les internes de Three.js.
@@ -465,7 +507,7 @@ Les collisions des acteurs d’ambiance restent une approximation 2D ; celles du
 
 ## Validation et mesures
 
-`npm test` exécute **157 tests** : les **131 tests historiques V2–V7 inchangés** et 26 tests V8. Ils couvrent déterminisme artistique, palettes/matériaux, silhouettes et collisions, signalétique, transitions, LOD, reconstruction des décors, pools, météo, orages et budgets. La physique, le grappin, le planage et la conduite restent comparés à 30, 60 et 120 FPS ; les tests de persistance et reprise sont conservés.
+`npm test` exécute **210 tests** : les **185 tests historiques V2–V9 inchangés** et 25 tests V10. La RC ajoute notamment campagne runtime, cent cycles save/load, backup, corruption, tutoriels, échec/reprise, récupération véhicule, accessibilité et compteurs de spikes. Les tests artistiques, de physique, de grappin, de planage, de conduite à 30/60/120 FPS et de persistance historique restent conservés.
 
 Le contrôle Chrome V5 ajoute Exploration/Vigilante, apparition et activation de mission, scanner et HUD dans les deux builds. En développement, des fixtures sur les objets réels vérifient aussi neutralisation, dégâts, réapparition et transition grappin/planage. Elles ne sont pas exposées dans le produit. La procédure manuelle complémentaire et l’inventaire complet des fichiers figurent dans [VALIDATION.md](VALIDATION.md).
 
@@ -476,10 +518,15 @@ Le contrôle Chrome vérifie en développement et en production les commandes FP
 Pour reproduire, lancer Vite ou preview, puis Chrome avec un **profil de test dédié** et `--remote-debugging-port=9222`. Sous Windows :
 
 ```powershell
-Start-Process -FilePath 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' -WindowStyle Hidden -ArgumentList '--headless=new','--remote-debugging-port=9222','--user-data-dir=G:/DevProjects/town/gotham-3d/node_modules/.cache/v8-browser','--disable-extensions','--disable-features=BackForwardCache','--no-first-run','about:blank'
+Start-Process -FilePath 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' -WindowStyle Hidden -ArgumentList '--headless=new','--remote-debugging-port=9222','--user-data-dir=G:/DevProjects/town/gotham-3d/node_modules/.cache/v9-browser','--disable-extensions','--disable-features=BackForwardCache','--no-first-run','about:blank'
 # Avec Vite sur 5177 et preview sur 4177, lancer les scripts successivement :
 npm.cmd run test:browser -- http://127.0.0.1:5177/
 npm.cmd run test:browser -- http://127.0.0.1:4177/ --production
+npm.cmd run test:content
+npm.cmd run test:campaign
+npm.cmd run test:traversal
+node scripts/release-browser-check.mjs http://127.0.0.1:5177/
+node scripts/release-browser-check.mjs http://127.0.0.1:4177/ --production
 npm.cmd run test:visual -- http://127.0.0.1:5177/
 npm.cmd run test:soak -- http://127.0.0.1:5177/
 ```

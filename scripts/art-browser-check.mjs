@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 
 export async function checkArt({evaluate,stats,pause,production}) {
-  const before=await stats();
+  let before=await stats();
+  // Diagnostics sample once per second after shader warmup. Wait for that first
+  // sample rather than assuming a fixed navigation delay covers every machine.
+  for(let i=0;i<40&&!Number.isFinite(before.visibleProps);i++){await pause(100);before=await stats();}
   for(const field of ['visibleProps','visibleSigns','visibleNeon','facadeInstances','rooftopDetails','decorativeInstancesLoaded','dynamicLights','emissiveObjects','transparentObjects'])assert.ok(Number.isFinite(before[field]),field);
   assert.ok(before.decorativeInstancesLoaded>0);
   for(const preset of ['CINEMATIC','HIGH_CONTRAST','DEFAULT']){

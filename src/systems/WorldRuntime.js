@@ -1,4 +1,9 @@
 import { StormSystem } from './StormSystem.js';
+import { TutorialManager } from '../ui/TutorialManager.js';
+import { CpuProfiler } from './CpuProfiler.js';
+import { GAME_VERSION } from '../config/version.js';
+import { FR } from '../localization/fr.js';
+import { ContentManager } from '../content/ContentManager.js';
 import { BackgroundSkyline } from '../rendering/BackgroundSkyline.js';
 import { LightAtmosphere } from '../rendering/LightAtmosphere.js';
 import { SaveManager } from '../save/SaveManager.js';
@@ -14,9 +19,11 @@ import { LandmarkSilhouettes } from '../rendering/LandmarkSilhouettes.js';
 
 export class WorldRuntime {
   constructor(living,player,signal,showError) {
+    this.profiler=new CpuProfiler();
     Object.assign(this,{living,player,showError});living.runtime=this;this.state=new SessionState();this.transitions=new Transitions();this.cleanups=[];this.listenerCount=0;
     this.options=new OptionsController(living,player,signal);this.persistence=new WorldPersistence(living,player,this.options);
     this.streaming=new ChunkStreamingManager(living.city);this.weather=new WeatherPolish(living);this.camera=new CameraEffects(living.camera);this.diagnostics=new RuntimeDiagnostics(living);
+    this.streaming.onFailure=()=>{living.vertical.notify('Un secteur ne peut pas être affiché. Revenez au menu puis rechargez.');this.state.pause();player.controls.unlock();};living.vertical.interiors.onFailure=()=>living.vertical.notify('Accès temporairement indisponible. Votre position reste à l’extérieur.');
     this.silhouettes=new LandmarkSilhouettes(living.city);
     this.storm=new StormSystem(living.city.seed,living.audio);this.background=new BackgroundSkyline(living.city);this.atmosphere=new LightAtmosphere(living);
     living.gameplay.crimes.isLoaded=p=>living.city.isLoadedAt(p.x,p.z);living.gameplay.vehicles.camera.effectsManaged=true;
@@ -26,8 +33,9 @@ export class WorldRuntime {
     this.status=document.createElement('div');this.status.id='save-status';this.status.setAttribute('role','status');document.body.append(this.status);
     this.save=new SaveManager(storage,{capture:()=>this.persistence.capture(),onStatus:text=>{this.status.textContent=text;this.refreshMenu();}});
     this.options.onChange=()=>{if(this.state.started)this.save.request('settings');};
-    this.installMenu(signal);this.installHooks();this.refreshMenu();
-    this.previousAction=player.onAction;player.onAction=code=>{if(this.state.state==='PLAYING'&&!this.transitions.active)this.previousAction(code);};
+    this.installMenu(signal);new ContentManager(living,player,{signal});this.installHooks();this.refreshMenu();
+    this.tutorials=new TutorialManager(living,player);
+    this.previousAction=player.onAction;player.onAction=code=>{if(this.state.state==='PLAYING'&&!this.transitions.active){if(code==='KeyE'&&living.content.interact())return;this.previousAction(code);}};
   }
   on(target,event,callback,signal){target.addEventListener(event,callback,{signal});this.listenerCount++;}
   installMenu(signal){
@@ -35,15 +43,20 @@ export class WorldRuntime {
     enter.textContent='NOUVELLE PARTIE';
     const actions=document.createElement('div');actions.className='session-actions';actions.innerHTML='<button id="continue-game" hidden>CONTINUER</button><button id="new-game">NOUVELLE PARTIE</button><button id="menu-options">OPTIONS</button><button id="save-game" hidden>SAUVEGARDER</button><button id="return-menu" hidden>RETOUR AU MENU</button><div id="new-game-confirm" hidden><p>Remplacer la sauvegarde existante ?</p><button id="confirm-new">Confirmer</button><button id="cancel-new">Annuler</button></div>';
     enter.after(actions);this.actions=actions;
+    const extras=document.createElement('div');extras.innerHTML='<button id="explore-game">EXPLORATION</button><button id="credits-game">CRÉDITS</button><button id="recover-vehicle">RÉCUPÉRER NIGHTRIDER</button><p id="credits-text" hidden></p><p id="recovery-status" role="status"></p>';actions.append(extras);
+    extras.querySelector('#credits-text').textContent=FR.credits;
+    this.on(extras.querySelector('#credits-game'),'click',()=>{const e=extras.querySelector('#credits-text');e.hidden=!e.hidden;},signal);
+    this.on(extras.querySelector('#explore-game'),'click',()=>{document.querySelector('#game-mode').value='EXPLORATION';this.newGame();},signal);
+    this.on(extras.querySelector('#recover-vehicle'),'click',()=>{const v=this.living.gameplay.vehicles;const ok=v.recover();extras.querySelector('#recovery-status').textContent=ok?v.lastMessage:v.recoveryReason()||'Aucune destination compatible. Réessayez après déplacement.';},signal);
     this.on(enter,'click',()=>this.state.state==='PAUSED'?this.lock():this.newGame(),signal);
     this.on(actions.querySelector('#new-game'),'click',()=>this.newGame(),signal);
     this.on(actions.querySelector('#confirm-new'),'click',()=>this.newGame(true),signal);
     this.on(actions.querySelector('#cancel-new'),'click',()=>{document.querySelector('#new-game-confirm').hidden=true;},signal);
-    this.on(actions.querySelector('#continue-game'),'click',()=>{const save=this.save.read();if(save&&this.persistence.restore(save)){this.transitions.trigger();this.lock();}},signal);
+    this.on(actions.querySelector('#continue-game'),'click',()=>{const save=this.save.read(),recovered=this.save.recovered;if(save&&this.persistence.restore(save)){this.state.started=true;this.state.pause();this.refreshMenu();if(recovered)this.living.vertical.notify('Sauvegarde précédente récupérée.');this.transitions.trigger();this.lock();}},signal);
     this.on(actions.querySelector('#menu-options'),'click',()=>{document.querySelector('#settings-panel').hidden=false;},signal);
     this.on(actions.querySelector('#save-game'),'click',()=>this.save.write(),signal);
     this.on(actions.querySelector('#return-menu'),'click',()=>{this.save.write();this.state.menu();this.refreshMenu();},signal);
-    const lock=()=>{this.state.play();this.resetInputs();menu.hidden=true;document.body.classList.add('playing');document.querySelector('#game-mode').value=this.living.gameplay.mode;document.querySelector('#settings-panel').hidden=true;this.living.audio.setActive(true);};
+    const lock=()=>{this.state.play();this.resetInputs();menu.hidden=true;document.querySelector('#error').hidden=true;document.querySelector('#error').textContent='';document.body.classList.add('playing');document.querySelector('#game-mode').value=this.living.gameplay.mode;document.querySelector('#settings-panel').hidden=true;this.living.audio.setActive(true);};
     const unlock=()=>{this.state.pause();this.resetInputs();menu.hidden=false;document.body.classList.remove('playing');this.living.audio.setActive(false);if(this.state.started)this.save.request('pause');this.refreshMenu();};
     this.player.controls.addEventListener('lock',lock);this.player.controls.addEventListener('unlock',unlock);this.listenerCount+=2;
     this.cleanups.push(()=>{this.player.controls.removeEventListener('lock',lock);this.player.controls.removeEventListener('unlock',unlock);});
@@ -56,7 +69,7 @@ export class WorldRuntime {
     const existing=this.save.read();
     if(!confirmed&&existing){document.querySelector('#new-game-confirm').hidden=false;return;}
     if(!this.save.clear()&&existing){this.showError('La sauvegarde existante ne peut pas être remplacée.');return;}
-    this.persistence.reset(document.querySelector('#game-mode').value);this.state.started=true;this.save.request('new-game');document.querySelector('#new-game-confirm').hidden=true;this.transitions.trigger();this.lock();
+    this.persistence.reset(document.querySelector('#game-mode').value);this.state.started=true;this.state.pause?.();this.refreshMenu?.();this.save.request('new-game');document.querySelector('#new-game-confirm').hidden=true;this.transitions.trigger();this.lock();
   }
   refreshMenu(){if(!this.actions)return;const paused=this.state.state==='PAUSED';document.querySelector('#enter').textContent=paused?'REPRENDRE':'NOUVELLE PARTIE';document.querySelector('#continue-game').hidden=paused||!this.save.read();document.querySelector('#new-game').hidden=!paused;document.querySelector('#save-game').hidden=!this.state.started;document.querySelector('#return-menu').hidden=!paused;}
   resetInputs(){const l=this.living,p=this.player;p.resetInput();p.physics.accumulator=0;p.physics.jumpHeld=false;l.accumulator=0;l.gameplay.accumulator=0;l.gameplay.vehicles.physics.accumulator=0;}
@@ -75,7 +88,7 @@ export class WorldRuntime {
     const l=this.living,v=l.gameplay.vehicles,p=v.driving?v.vehicle.position:l.camera.position;
     const velocity=v.driving?v.vehicle.velocity:this.player.physics.velocity;
     this.streaming.radius=l.performance.profile.chunkPreloadRadius??224;
-    this.streaming.update(p,velocity,[...(l.gameplay.missions.active?[l.gameplay.missions.active.position]:[])]);
+    this.profiler.measure('streaming',()=>this.streaming.update(p,velocity,[...(l.gameplay.missions.active?[l.gameplay.missions.active.position]:[]),...(l.content?.enabled&&l.content.objective?[new p.constructor(...l.content.guidancePoint().position)]:[])]));
     this.silhouettes.update();
     const blocked=this.transitions.active;this.transitions.update(Math.min(raw,.05));if(blocked&&!this.transitions.active)this.player.resetInput();
     const delta=this.state.delta(raw,this.transitions.active);
@@ -83,11 +96,11 @@ export class WorldRuntime {
     const garage=v.garage?.id;if(garage&&garage!==this.garage&&this.state.started)this.save.request('garage');this.garage=garage;
     if(this.state.started)this.save.update(Math.min(raw,.1),delta>0);
     if(delta>0){this.weather.update(delta);this.atmosphere.update(delta);}
-    this.storm.enabled=this.options.settings.stormEnabled;this.storm.update(delta,l.rain.enabled?l.rain.intensity:0,!!l.city.collisionWorld.domain);
+    this.storm.enabled=this.options.settings.stormEnabled&&!this.options.settings.reduceFlashes;this.storm.update(delta,l.rain.enabled?l.rain.intensity:0,!!l.city.collisionWorld.domain);
     this.background.update(l.performance.profile.art,!!l.city.collisionWorld.domain);
     return delta;
   }
   afterFrame(raw){this.diagnostics.update(raw);if(this.living.performance.adjustAuto(raw))this.living.applyBudgets();}
-  snapshot(){return {...this.streaming.snapshot(),...this.diagnostics.snapshot(),sessionState:this.state.state,saveBytes:this.save.bytes,saveWrites:this.save.writes,wetness:this.weather.wet};}
-  dispose(){for(const cleanup of this.cleanups.reverse())cleanup();this.player.onAction=this.previousAction;this.silhouettes.dispose();this.background.dispose();this.atmosphere.dispose();this.weather.dispose();this.streaming.dispose();this.transitions.dispose();this.diagnostics.dispose();this.status.remove();this.actions.remove();}
+  snapshot(){return {...this.streaming.snapshot(),...this.diagnostics.snapshot(),...this.living.content?.snapshot(),...this.profiler.snapshot(),gameVersion:GAME_VERSION,sessionState:this.state.state,saveBytes:this.save.bytes,saveWrites:this.save.writes,wetness:this.weather.wet};}
+  dispose(){this.tutorials.dispose();this.living.content?.dispose();for(const cleanup of this.cleanups.reverse())cleanup();this.player.onAction=this.previousAction;this.silhouettes.dispose();this.background.dispose();this.atmosphere.dispose();this.weather.dispose();this.streaming.dispose();this.transitions.dispose();this.diagnostics.dispose();this.status.remove();this.actions.remove();}
 }

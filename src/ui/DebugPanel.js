@@ -13,7 +13,11 @@ export class DebugPanel {
     this.element.dataset.stats = JSON.stringify(s);
     if (this.element.hidden) return;
     this.element.textContent = [
-      `ART PASS & ATMOSPHERE V8 / ${s.quality}`,
+      `PLAYTEST & RELEASE CANDIDATE ${s.gameVersion} / ${s.quality}`,
+      `CPU update ${(s.updateMs??0).toFixed(2)} · render ${(s.renderMs??0).toFixed(2)} · streaming ${(s.streamingMs??0).toFixed(2)} ms`,
+      `CONTENT ${(s.contentUpdateMs??0).toFixed(3)} · MISSION ${(s.missionUpdateMs??0).toFixed(3)} · HUD ${(s.hudUpdateMs??0).toFixed(3)} ms`,
+      `MARKERS ${(s.markersUpdateMs??0).toFixed(3)} · MAP ${(s.mapUpdateMs??0).toFixed(3)} ms`,
+      `Frames >20 / >33 / >50 ms : ${s.framesOver20??0} / ${s.framesOver33??0} / ${s.framesOver50??0} (600 dernières)`,
       `FPS ${s.fps.toFixed(1)} · draw calls ${s.drawCalls.toFixed(0)}`,
       `Position ${s.position.map(v=>v.toFixed(1)).join(' / ')}`,
       `${s.district} · chunk ${s.chunk}`,
@@ -52,6 +56,10 @@ export class DebugPanel {
       `RENDER emissive ${s.emissiveObjects??0} ? dynamic lights ${s.dynamicLights??0}`,
       `Transparent ${s.transparentObjects??0} ? postprocessing ${s.postprocessingEnabled}`,
       `STREAMING decorative instances loaded ${s.decorativeInstancesLoaded??0}`,
+      `CONTENT story ${s.activeStoryMission??'—'} · ${s.storyProgress??0}/7 · side ${s.sideMissionsCompleted??0}/8`,
+      `Archives ${s.collectibles??0}/20 · secrets ${s.secrets??0}/10 · events ${s.activeWorldEvents??'—'}`,
+      `MISSION ${s.contentObjective??'—'}`,
+      `Checkpoint ${s.contentCheckpoint??0} · route ${s.routeVariant??'—'} · props ${s.contentProps??0}`,
       'F3 pour masquer',
     ].join('\n');
   }

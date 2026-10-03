@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-03T08:41:35.449Z",
+  "checks": "passed",
+  "wetness": 1,
+  "accelerationTo15Mps": 1.4999999999999971,
+  "brakingFromMps": 15.000000000000037,
+  "brakingSeconds": 1.466666666666664,
+  "stoppingDistance": 9.530063571539086,
+  "boostedSpeedAfter1s": 14.500000000000016,
+  "regularSpeedAfter1s": 10.000000000000002,
+  "boostRemaining": 75.99999999999966,
+  "turnRadiusMetres": 15.611346000545897,
+  "combat": {
+    "enemyResistance": 3,
+    "attackCooldown": 0.4,
+    "minimumNeutralizationSeconds": 0.8,
+    "dodgeCooldown": 0.85,
+    "dodgeDuration": 0.18,
+    "introDamage": 6,
+    "introAttackInterval": 1.35,
+    "standardDamage": 8,
+    "standardAttackInterval": 1.1,
+    "enemiesPerEncounter": 3
+  },
+  "method": "120 Hz physical simulation on existing wet road, no traffic. Turning radius is a half-second measured chord estimate. Combat timings are theoretical lower bounds, not human averages."
+}

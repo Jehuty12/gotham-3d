@@ -18,6 +18,7 @@ import { DebugPanel } from './ui/DebugPanel.js';
 import { mountInterface, bindSettings } from './ui/Interface.js';
 import { WorldRuntime } from './systems/WorldRuntime.js';
 import { LoadingScreen } from './ui/LoadingScreen.js';
+import { showFatal } from './ui/FatalScreen.js';
 import './style.css';
 
 mountInterface();
@@ -60,6 +61,7 @@ async function start() {
   bindSettings(living, events.signal);
   const runtime=new WorldRuntime(living,player,events.signal,showError);
   living.session=runtime;
+  if(import.meta.env.DEV){const {installDevCommands}=await import('./systems/DevCommands.js');runtime.cleanups.push(installDevCommands(living));}
   living.update(1/30);living.vertical.update(0);living.gameplay.update(0);
   city.resources.materialManager.adoptScene(scene);
   // Warm shader variants and shared textures behind the loading screen, before
@@ -83,19 +85,23 @@ async function start() {
   let previous = performance.now();
   let mapElapsed = 1;
   renderer.setAnimationLoop(now => {
+    const updateStart=performance.now();
     const rawDelta = (now - previous) / 1000; previous = now;
-    const delta = runtime.update(rawDelta);
+    const delta = runtime.profiler.measure('runtimeUpdate',()=>runtime.update(rawDelta));
     city.collisionWorld.raycasts=0;city.collisionWorld.extraTests=0;
     if(delta>0)living.gameplay.vehicles?.update(delta);
     if(delta>0&&!living.gameplay.vehicles?.driving)player.update(delta);
     if(delta>0){living.update(delta);living.vertical.update(delta);living.gameplay.update(delta);}else{living.update(0);living.gameplay.vehicles?.render(living.gameplay);}
+    living.content.update(delta);
+    runtime.tutorials.update(delta);
     mapElapsed += Math.min(rawDelta,.1);
-    if (mapElapsed > 0.1) { minimap.draw(); mapElapsed = 0; }
+    if (mapElapsed > 0.1) { runtime.profiler.measure('minimapUpdate',()=>minimap.draw()); mapElapsed = 0; }
+    runtime.profiler.record('update',performance.now()-updateStart);const renderStart=performance.now();
     renderer.info.reset();
     runtime.camera.apply(delta,living,player,runtime.options.settings);
     grading.update(delta,living,runtime.options.settings,runtime.storm.flash);
     if (living.performance.profile.bloom) composer.render(delta); else renderer.render(scene, camera);
-    runtime.camera.restore();runtime.afterFrame(rawDelta);
+    runtime.camera.restore();runtime.profiler.record('render',performance.now()-renderStart);runtime.afterFrame(rawDelta);
     living.performance.recordFrame(rawDelta, renderer.info.render.calls, renderer.info.render.triangles);
     debug.update(Math.min(rawDelta, 0.25));
   });
@@ -122,8 +128,6 @@ async function start() {
 }
 
 start().catch(cause => {
-  document.querySelector('#loading-screen')?.remove();
-  console.error(cause);
-  showError('Impossible de démarrer la scène 3D. Vérifiez que WebGL 2 et l’accélération graphique sont activés.');
+  showFatal(cause,document.querySelector('#loading-screen')?.textContent??'Initialisation');
   enter.disabled = true;
 });

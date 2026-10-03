@@ -2,6 +2,7 @@
 // No browser automation dependency is installed; this uses the native Chrome DevTools protocol.
 import assert from 'node:assert/strict';
 import { checkArt } from './art-browser-check.mjs';
+import { checkContent } from './content-browser-check.mjs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { checkVertical } from './vertical-browser-check.mjs';
 import { checkGameplay, selectMode } from './gameplay-browser-check.mjs';
@@ -97,7 +98,8 @@ try {
   assert.equal(sprinted.audio, 'running');
   await pause(300);
   const groundY=(await stats()).position[1];
-  await key('Space',' ',32,true);await pause(280);const jumped=await stats();
+  await key('Space',' ',32,true);let jumped=await stats();
+  for(let i=0;i<7&&jumped.position[1]<=groundY+.35;i++){await pause(80);jumped=await stats();}
   assert.ok(jumped.position[1]>groundY+.35,'jump lifts the player');
   await key('Space',' ',32,false);await pause(950);assert.equal((await stats()).grounded,true);
   await key('ControlLeft','Control',17,true);await pause(350);assert.equal((await stats()).crouching,true);
@@ -165,6 +167,7 @@ try {
   await checkArt({evaluate,stats,pause,production});
   await checkVehicles({evaluate,stats,key,press,pause,click,screenshot,send,production});
   await checkPersistence({evaluate,stats,key,press,pause,click,screenshot,send,production,target,approachGarage});
+  await checkContent({evaluate,stats,pause,press,click,send,screenshot,production,target});
   await send('Page.navigate',{url:target});await pause(3000);
   await selectMode(evaluate,pause,'VIGILANTE');
   const benchmarkMouse=await click('#enter');await pause(300);
@@ -180,7 +183,7 @@ try {
     await quality(level); state = await stats();
     assert.ok(state.cars>0&&state.cars<=({LOW:10,MEDIUM:20,HIGH:40,AUTO:40}[level]));
     assert.ok(state.pedestrians<=({LOW:0,MEDIUM:10,HIGH:25,AUTO:25}[level]));
-    const measured = await evaluate(`new Promise(resolve=>{let frames=0,start=null,last=0,calls=0,triangles=0,aiMs=0,activeAI=0;const frameTimes=[];let previousTime;const sample=t=>{if(previousTime!==undefined)frameTimes.push(t-previousTime);previousTime=t;if(start===null)start=t;frames++;last=t;calls+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).drawCalls;triangles+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).triangles;aiMs+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).aiUpdateMs;activeAI+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).activeAI;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(last-start),drawCalls:calls/frames,triangles:triangles/frames,aiMs:aiMs/frames,activeAI:activeAI/frames,measuredFrameTimeMean:frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length,measuredFrameTimeMax:Math.max(...frameTimes),measuredLow1FPS:1000/(frameTimes.slice().sort((a,b)=>b-a).slice(0,Math.max(1,Math.ceil(frameTimes.length*.01))).reduce((a,b)=>a+b,0)/Math.max(1,Math.ceil(frameTimes.length*.01))),seconds:(last-start)/1000})};requestAnimationFrame(sample)})`);
+    const measured = await evaluate(`new Promise(resolve=>{let frames=0,start=null,last=0,calls=0,triangles=0,aiMs=0,activeAI=0;const frameTimes=[];let previousTime;const sample=t=>{if(previousTime!==undefined)frameTimes.push(t-previousTime);previousTime=t;if(start===null)start=t;frames++;last=t;calls+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).drawCalls;triangles+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).triangles;aiMs+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).aiUpdateMs;activeAI+=JSON.parse(document.querySelector('#debug-panel').dataset.stats).activeAI;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(last-start),drawCalls:calls/frames,triangles:triangles/frames,aiMs:aiMs/frames,activeAI:activeAI/frames,measuredFrameTimeMean:frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length,measuredFrameTimeMax:Math.max(...frameTimes),measuredFramesOver20:frameTimes.filter(t=>t>20).length,measuredFramesOver33:frameTimes.filter(t=>t>33).length,measuredFramesOver50:frameTimes.filter(t=>t>50).length,measuredLow1FPS:1000/(frameTimes.slice().sort((a,b)=>b-a).slice(0,Math.max(1,Math.ceil(frameTimes.length*.01))).reduce((a,b)=>a+b,0)/Math.max(1,Math.ceil(frameTimes.length*.01))),seconds:(last-start)/1000})};requestAnimationFrame(sample)})`);
     benchmark.push({ level, ...measured, ...(await stats()), measuredFPS: measured.fps, measuredDrawCalls: measured.drawCalls });
     console.log(mode, level, measured);
   }
@@ -193,7 +196,7 @@ try {
     await quality(level);await selectMode(evaluate,pause,'EXPLORATION');await selectMode(evaluate,pause,'VIGILANTE');
     await evaluate(`(()=>{const s=document.querySelector('#vehicle-mission-choice');s.value='evade';s.dispatchEvent(new Event('change'))})()`);
     await press('KeyM','m',77);await pause(1000);
-    const measured=await evaluate(`new Promise(resolve=>{let start=null,frames=0,calls=0,triangles=0,cpu=0,units=0;const frameTimes=[];let previousTime;const sample=t=>{if(previousTime!==undefined)frameTimes.push(t-previousTime);previousTime=t;start??=t;frames++;const s=JSON.parse(document.querySelector('#debug-panel').dataset.stats);calls+=s.drawCalls;triangles+=s.triangles;cpu+=s.vehicleUpdateMs;units+=s.policeUnits;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(t-start),drawCalls:calls/frames,triangles:triangles/frames,vehicleMs:cpu/frames,policeUnits:units/frames,measuredFrameTimeMean:frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length,measuredFrameTimeMax:Math.max(...frameTimes),measuredLow1FPS:1000/(frameTimes.slice().sort((a,b)=>b-a).slice(0,Math.max(1,Math.ceil(frameTimes.length*.01))).reduce((a,b)=>a+b,0)/Math.max(1,Math.ceil(frameTimes.length*.01))),seconds:(t-start)/1000})};requestAnimationFrame(sample)})`);
+    const measured=await evaluate(`new Promise(resolve=>{let start=null,frames=0,calls=0,triangles=0,cpu=0,units=0;const frameTimes=[];let previousTime;const sample=t=>{if(previousTime!==undefined)frameTimes.push(t-previousTime);previousTime=t;start??=t;frames++;const s=JSON.parse(document.querySelector('#debug-panel').dataset.stats);calls+=s.drawCalls;triangles+=s.triangles;cpu+=s.vehicleUpdateMs;units+=s.policeUnits;if(t-start<6000)requestAnimationFrame(sample);else resolve({fps:(frames-1)*1000/(t-start),drawCalls:calls/frames,triangles:triangles/frames,vehicleMs:cpu/frames,policeUnits:units/frames,measuredFrameTimeMean:frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length,measuredFrameTimeMax:Math.max(...frameTimes),measuredFramesOver20:frameTimes.filter(t=>t>20).length,measuredFramesOver33:frameTimes.filter(t=>t>33).length,measuredFramesOver50:frameTimes.filter(t=>t>50).length,measuredLow1FPS:1000/(frameTimes.slice().sort((a,b)=>b-a).slice(0,Math.max(1,Math.ceil(frameTimes.length*.01))).reduce((a,b)=>a+b,0)/Math.max(1,Math.ceil(frameTimes.length*.01))),seconds:(t-start)/1000})};requestAnimationFrame(sample)})`);
     drivingBenchmark.push({level,...measured,stats:await stats()});console.log(mode,'DRIVING',level,measured);
   }
   await press('F3', 'F3', 114); await pause(350);
